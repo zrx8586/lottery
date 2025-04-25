@@ -5,7 +5,7 @@ import CacheManagement from "../views/CacheManagement.vue";
 import PrizeManagement from "@/views/PrizeManagement.vue";
 
 const routes = [
-    { path: "/", component: ActivityManagement },
+    { path: "/activity", component: ActivityManagement },
     { path: "/prizes", component: PrizeManagement },
     { path: "/cache", component: CacheManagement },
     { path: "/activityPrizeRelationship", component: ActivityPrizeRelationship },

@@ -42,4 +42,8 @@ public class LotteryPrizeService {
     public void deletePrize(Long prizeId) {
         prizeRepository.deleteById(prizeId);
     }
+
+    public List<LotteryPrize> getAvailablePrizes() {
+        return prizeRepository.findByIsActiveTrue();
+    }
 }

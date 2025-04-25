@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryPrize;
+import com.example.demo.service.ActivityPrizeRelationshipService;
 import com.example.demo.service.LotteryPrizeService;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,9 @@ public class LotteryPrizeController {
 
     @Resource
     private LotteryPrizeService prizeService;
+
+    @Resource
+    private ActivityPrizeRelationshipService activityPrizeRelationshipService;
 
     @GetMapping("/all")
     public ResponseEntity<List<LotteryPrize>> getAllPrizes() {
@@ -42,4 +47,11 @@ public class LotteryPrizeController {
         prizeService.deletePrize(prizeId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<LotteryPrize>> getAvailablePrizes() {
+        List<LotteryPrize> availablePrizes = prizeService.getAvailablePrizes();
+        return ResponseEntity.ok(availablePrizes);
+    }
+
 }

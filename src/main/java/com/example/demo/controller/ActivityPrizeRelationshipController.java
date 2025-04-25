@@ -9,10 +9,7 @@ import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class ActivityPrizeRelationshipController {
     private ActivityPrizeRelationshipService activityPrizeRelationshipService;
 
     @Autowired
-    private LotteryActivityPrizeService prizeService;
+    private LotteryActivityPrizeService activityPrizeService;
 
     // 查询所有活动
     @GetMapping("/all")
@@ -43,6 +40,30 @@ public class ActivityPrizeRelationshipController {
         return ResponseEntity.ok(activityWithPrizes);
     }
 
+    @PutMapping("/{activityId}")
+    public ResponseEntity<String> updateActivityPrizeRelationship(
+            @PathVariable Long activityId,
+            @RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
+        try {
+            // 确保活动 ID 一致
+            if (!activityId.equals(relationshipDTO.getActivityId())) {
+                return ResponseEntity.badRequest().body("活动 ID 不匹配");
+            }
+
+            // 清除旧的奖品关系
+            activityPrizeService.deletePrizesByActivityId(activityId);
+
+            // 创建新的奖品关系
+            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
+
+            return ResponseEntity.ok("活动与奖品绑定关系更新成功");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("更新绑定关系失败: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("更新绑定关系失败: " + e.getMessage());
+        }
+    }
+
     /**
      * 根据活动 ID 查询活动详情和奖品信息
      * @param activityId 活动 ID
@@ -53,7 +74,7 @@ public class ActivityPrizeRelationshipController {
         LotteryActivity activity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
 
-        List<LotteryActivityPrize> prizes = prizeService.getPrizesByActivityId(activityId);
+        List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
 
         ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
         activityDetailDTO.setActivityId(activity.getActivityId());
@@ -64,6 +85,19 @@ public class ActivityPrizeRelationshipController {
         activityDetailDTO.setPrizes(prizes);
 
         return ResponseEntity.ok(activityDetailDTO);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createActivityPrizeRelationship(@RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
+        try {
+            // 调用服务层方法保存绑定关系
+            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
+            return ResponseEntity.ok("活动与奖品绑定关系创建成功");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("创建绑定关系失败: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("创建绑定关系失败: " + e.getMessage());
+        }
     }
 
 }

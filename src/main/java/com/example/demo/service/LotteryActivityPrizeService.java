@@ -19,7 +19,7 @@ import java.util.Optional;
 public class LotteryActivityPrizeService {
 
     @Resource
-    private LotteryActivityPrizeRepository prizeRepository;
+    private LotteryActivityPrizeRepository activityPrizeRepository;
 
     /**
      * 根据活动 ID 查询奖品列表
@@ -27,7 +27,7 @@ public class LotteryActivityPrizeService {
      * @return 奖品列表
      */
     public List<LotteryActivityPrize> getPrizesByActivityId(Long activityId) {
-        return prizeRepository.findByActivityId(activityId);
+        return activityPrizeRepository.findByActivityId(activityId);
     }
 
     /**
@@ -37,7 +37,7 @@ public class LotteryActivityPrizeService {
      */
     @Transactional
     public void updatePrizes(Long activityId, List<PrizeUpdateRequest> updates) {
-        List<LotteryActivityPrize> prizes = prizeRepository.findByActivityId(activityId);
+        List<LotteryActivityPrize> prizes = activityPrizeRepository.findByActivityId(activityId);
 
         for (PrizeUpdateRequest update : updates) {
             Optional<LotteryActivityPrize> prizeOptional = prizes.stream()
@@ -48,7 +48,7 @@ public class LotteryActivityPrizeService {
                 LotteryActivityPrize prize = prizeOptional.get();
                 prize.setProbability(update.getProbability());
                 prize.setQuantity(update.getQuantity());
-                prizeRepository.save(prize);
+                activityPrizeRepository.save(prize);
             }
         }
     }
@@ -59,7 +59,16 @@ public class LotteryActivityPrizeService {
      * @return 奖品详情
      */
     public LotteryActivityPrize getPrizeById(Long prizeId) {
-        return prizeRepository.findById(prizeId)
+        return activityPrizeRepository.findById(prizeId)
                 .orElseThrow(() -> new IllegalArgumentException("奖品不存在"));
+    }
+
+
+    /**
+     * 根据活动 ID 删除所有奖品关系
+     * @param activityId 活动 ID
+     */
+    public void deletePrizesByActivityId(Long activityId) {
+        activityPrizeRepository.deleteByActivityId(activityId);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.IdempotentRecord;
 import com.example.demo.model.LotteryActivityPrize;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -20,4 +20,12 @@ public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryAct
      */
     @Query("SELECT p FROM LotteryActivityPrize p WHERE p.activity.activityId = :activityId")
     List<LotteryActivityPrize> findByActivityId(Long activityId);
+
+    /**
+     * 根据活动 ID 删除所有奖品关系
+     * @param activityId 活动 ID
+     */
+    @Modifying
+    @Query("DELETE FROM LotteryActivityPrize p WHERE p.activity.activityId = :activityId")
+    void deleteByActivityId(Long activityId);
 }

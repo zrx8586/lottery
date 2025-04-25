@@ -86,8 +86,20 @@
           <div class="form-group">
             <label>奖品列表:</label>
             <div v-for="(prize, index) in formData.prizes" :key="index" class="prize-item">
-              <input v-model="prize.prize.prizeName" placeholder="奖品名称" required />
-              <input type="number" v-model="prize.probability" placeholder="概率" required />
+              <select v-model="prize.prize.prizeId" required>
+                <option v-for="availablePrize in availablePrizes" :key="availablePrize.prizeId" :value="availablePrize.prizeId">
+                  {{ availablePrize.prizeName }}
+                </option>
+              </select>
+              <input
+                  type="number"
+                  v-model="prize.probability"
+                  placeholder="概率"
+                  min="0"
+                  max="1"
+                  step="0.00001"
+                  required
+              />
               <input type="number" v-model="prize.quantity" placeholder="库存" required />
               <button type="button" @click="removePrize(index)">删除</button>
             </div>
@@ -108,6 +120,7 @@ export default {
   data() {
     return {
       activities: [],
+      availablePrizes: [], // 可用奖品列表
       selectedActivity: null,
       showCreateForm: false,
       editingActivity: null,
@@ -140,7 +153,8 @@ export default {
   },
   methods: {
     addPrize() {
-      this.formData.prizes.push({ prizeName: "", probability: 0, quantity: 0 });
+      // 添加一个新的奖品选择项
+      this.formData.prizes.push({ prizeId: null, probability: 0, quantity: 0 });
     },
     removePrize(index) {
       this.formData.prizes.splice(index, 1);
@@ -173,11 +187,23 @@ export default {
           activityDesc: activityDetails.activityDesc,
           startDate: moment(activityDetails.startDate).format("YYYY-MM-DD"),
           endDate: moment(activityDetails.endDate).format("YYYY-MM-DD"),
-          prizes: activityDetails.prizes // 加载奖品列表
+          prizes: activityDetails.prizes || [] // 如果没有奖品，初始化为空数组
         };
+
+        // 加载可用奖品列表
+        await this.fetchAvailablePrizes();
+
         this.showCreateForm = true;
       } catch (error) {
         console.error("编辑活动时加载活动详情失败：", error);
+      }
+    },
+    async fetchAvailablePrizes() {
+      try {
+        const response = await axios.get("/api/prize/available");
+        this.availablePrizes = response.data;
+      } catch (error) {
+        console.error("加载可用奖品列表失败：", error);
       }
     },
     async deleteActivity(activityId) {
@@ -192,17 +218,34 @@ export default {
     },
     async submitForm() {
       try {
+        const payload = {
+          activityId: this.editingActivity ? this.editingActivity.activityId : null,
+          activityName: this.formData.activityName,
+          activityDesc: this.formData.activityDesc,
+          startDate: this.formData.startDate,
+          endDate: this.formData.endDate,
+          prizes: this.formData.prizes.map(prize => ({
+            prizeId: prize.prize.prizeId,
+            prizeName: prize.prize.prizeName,
+            probability: prize.probability,
+            quantity: prize.quantity
+          }))
+        };
+
         if (this.editingActivity) {
-          const response = await axios.put(`/api/activity/${this.editingActivity.activityId}`, this.formData);
+          // 编辑模式
+          const response = await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, payload);
           const index = this.activities.findIndex(a => a.activityId === this.editingActivity.activityId);
           this.activities.splice(index, 1, response.data);
         } else {
-          const response = await axios.post("/api/activity/create", this.formData);
+          // 创建模式
+          const response = await axios.post("/api/activity-prize-relationship/create", payload);
           this.activities.push(response.data);
         }
+
         this.closeForm();
       } catch (error) {
-        console.error("保存活动失败：", error);
+        console.error("保存活动奖品关系失败：", error);
       }
     },
     closeForm() {

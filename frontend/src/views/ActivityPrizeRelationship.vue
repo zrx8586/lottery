@@ -226,6 +226,9 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/styles/buttons.css";
+@import "@/assets/styles/common.css";
+
 .activity-management {
   font-family: Arial, sans-serif;
   padding: 20px;
@@ -235,12 +238,6 @@ export default {
 h1 {
   text-align: center;
   color: #333;
-}
-
-.action-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
 }
 
 .search-input {
@@ -275,92 +272,4 @@ h1 {
   background-color: #f1f1f1;
 }
 
-.btn {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-create {
-  background: linear-gradient(45deg, #28a745, #218838);
-  color: white;
-}
-
-.btn-create:hover {
-  background: linear-gradient(45deg, #218838, #1e7e34);
-}
-
-.btn-view {
-  background: linear-gradient(45deg, #007bff, #0056b3);
-  color: white;
-}
-
-.btn-view:hover {
-  background: linear-gradient(45deg, #0056b3, #003f7f);
-}
-
-.btn-edit {
-  background: linear-gradient(45deg, #ffc107, #e0a800);
-  color: black;
-}
-
-.btn-edit:hover {
-  background: linear-gradient(45deg, #e0a800, #d39e00);
-}
-
-.btn-delete {
-  background: linear-gradient(45deg, #dc3545, #c82333);
-  color: white;
-}
-
-.btn-delete:hover {
-  background: linear-gradient(45deg, #c82333, #bd2130);
-}
-
-.btn-pagination {
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  padding: 8px 16px;
-  margin: 0 5px;
-}
-
-.btn-pagination:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 500px;
-  max-width: 90%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.close {
-  float: right;
-  cursor: pointer;
-  font-size: 1.5em;
-}
-
-.pagination {
-  margin-top: 20px;
-  text-align: center;
-}
 </style>

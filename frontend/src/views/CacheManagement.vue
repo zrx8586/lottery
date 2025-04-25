@@ -60,6 +60,9 @@ export default {
 </script>
 
 <style scoped>
+@import "@/assets/styles/buttons.css";
+@import "@/assets/styles/common.css";
+
 .cache-management {
   padding: 20px;
   font-family: Arial, sans-serif;

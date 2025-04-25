@@ -48,7 +48,7 @@ public class LotteryActivityService {
         ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
         activityDetailDTO.setActivityId(activity.getActivityId());
         activityDetailDTO.setActivityName(activity.getActivityName());
-        activityDetailDTO.setDescription(activity.getActivityDesc());
+        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
         activityDetailDTO.setStartDate(activity.getStartDate());
         activityDetailDTO.setEndDate(activity.getEndDate());
         activityDetailDTO.setPrizes(prizes);

@@ -47,7 +47,7 @@
     <div v-if="selectedActivity" class="modal">
       <div class="modal-content">
         <span class="close" @click="selectedActivity = null">&times;</span>
-        <h2>活动详情</h2>
+        <h2>活动奖品关系</h2>
         <p><strong>活动名称:</strong> {{ selectedActivity.activityName }}</p>
         <p><strong>描述:</strong> {{ selectedActivity.activityDesc }}</p>
         <p><strong>开始日期:</strong> {{ formatDate(selectedActivity.startDate) }}</p>
@@ -65,7 +65,7 @@
     <div v-if="showCreateForm || editingActivity" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeForm">&times;</span>
-        <h2>{{ editingActivity ? '编辑活动' : '创建新活动' }}</h2>
+        <h2>{{ editingActivity ? '编辑活动奖品关系' : '创建活动奖品关系' }}</h2>
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>活动名称:</label>
@@ -86,7 +86,7 @@
           <div class="form-group">
             <label>奖品列表:</label>
             <div v-for="(prize, index) in formData.prizes" :key="index" class="prize-item">
-              <input v-model="prize.prizeName" placeholder="奖品名称" required />
+              <input v-model="prize.prize.prizeName" placeholder="奖品名称" required />
               <input type="number" v-model="prize.probability" placeholder="概率" required />
               <input type="number" v-model="prize.quantity" placeholder="库存" required />
               <button type="button" @click="removePrize(index)">删除</button>
@@ -170,7 +170,7 @@ export default {
         this.editingActivity = activity;
         this.formData = {
           activityName: activityDetails.activityName,
-          activityDesc: activityDetails.description,
+          activityDesc: activityDetails.activityDesc,
           startDate: moment(activityDetails.startDate).format("YYYY-MM-DD"),
           endDate: moment(activityDetails.endDate).format("YYYY-MM-DD"),
           prizes: activityDetails.prizes // 加载奖品列表

@@ -14,7 +14,7 @@ import java.util.List;
 public class ActivityDetailDTO {
     private Long activityId;
     private String activityName;
-    private String description;
+    private String activityDesc;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private List<LotteryActivityPrize> prizes;

@@ -138,9 +138,10 @@ export default {
   },
   computed: {
     filteredActivities() {
-      return this.activities.filter(activity =>
-          activity.activityName.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.activities.filter(activity => {
+        return activity.activityName && activity.activityName.toLowerCase().includes(query);
+      });
     },
     paginatedActivities() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -234,9 +235,7 @@ export default {
 
         if (this.editingActivity) {
           // 编辑模式
-          const response = await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, payload);
-          const index = this.activities.findIndex(a => a.activityId === this.editingActivity.activityId);
-          this.activities.splice(index, 1, response.data);
+          await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, payload);
         } else {
           // 创建模式
           const response = await axios.post("/api/activity-prize-relationship/create", payload);

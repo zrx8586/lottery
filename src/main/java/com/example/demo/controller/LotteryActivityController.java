@@ -32,11 +32,11 @@ public class LotteryActivityController {
         return ResponseEntity.ok(activities);
     }
 
-    // 根据活动ID查询活动
+    // 根据活动 ID 查询活动详情（包含奖品信息）
     @GetMapping("/{activityId}")
-    public ResponseEntity<LotteryActivity> getActivityById(@PathVariable Long activityId) {
-        Optional<LotteryActivity> activity = activityService.getActivityById(activityId);
-        return activity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ActivityDetailDTO> getActivityById(@PathVariable Long activityId) {
+        ActivityDetailDTO activityDetailDTO = activityService.getActivityWithPrizes(activityId);
+        return ResponseEntity.ok(activityDetailDTO);
     }
 
     // 创建新活动

@@ -1,16 +1,63 @@
 -- 插入赛季数据
 INSERT IGNORE INTO season (season_id, season_name, start_date, end_date) VALUES
                                                                              (1, 'Spring Season', '2023-03-01 00:00:00', '2023-05-31 23:59:59'),
-                                                                             (2, 'Summer Season', '2023-06-01 00:00:00', '2023-08-31 23:59:59');
+                                                                             (2, 'Summer Season', '2023-06-01 00:00:00', '2023-08-31 23:59:59'),
+                                                                             (3, 'Autumn Season', '2023-09-01 00:00:00', '2023-11-30 23:59:59'),
+                                                                             (4, 'Winter Season', '2023-12-01 00:00:00', '2024-02-28 23:59:59'),
+                                                                             (5, 'Spring Season 2024', '2024-03-01 00:00:00', '2024-05-31 23:59:59'),
+                                                                             (6, 'Summer Season 2024', '2024-06-01 00:00:00', '2024-08-31 23:59:59'),
+                                                                             (7, 'Autumn Season 2024', '2024-09-01 00:00:00', '2024-11-30 23:59:59'),
+                                                                             (8, 'Winter Season 2024', '2024-12-01 00:00:00', '2025-02-28 23:59:59'),
+                                                                             (9, 'Spring Season 2025', '2025-03-01 00:00:00', '2025-05-31 23:59:59'),
+                                                                             (10, 'Summer Season 2025', '2025-06-01 00:00:00', '2025-08-31 23:59:59'),
+                                                                             (11, 'Autumn Season 2025', '2025-09-01 00:00:00', '2025-11-30 23:59:59'),
+                                                                             (12, 'Winter Season 2025', '2025-12-01 00:00:00', '2026-02-28 23:59:59'),
+                                                                             (13, 'Spring Season 2026', '2026-03-01 00:00:00', '2026-05-31 23:59:59'),
+                                                                             (14, 'Summer Season 2026', '2026-06-01 00:00:00', '2026-08-31 23:59:59'),
+                                                                             (15, 'Autumn Season 2026', '2026-09-01 00:00:00', '2026-11-30 23:59:59'),
+                                                                             (16, 'Winter Season 2026', '2026-12-01 00:00:00', '2027-02-28 23:59:59'),
+                                                                             (17, 'Spring Season 2027', '2027-03-01 00:00:00', '2027-05-31 23:59:59'),
+                                                                             (18, 'Summer Season 2027', '2027-06-01 00:00:00', '2027-08-31 23:59:59'),
+                                                                             (19, 'Autumn Season 2027', '2027-09-01 00:00:00', '2027-11-30 23:59:59'),
+                                                                             (20, 'Winter Season 2027', '2027-12-01 00:00:00', '2028-02-28 23:59:59'),
+                                                                             (21, 'Spring Season 2028', '2028-03-01 00:00:00', '2028-05-31 23:59:59'),
+                                                                             (22, 'Summer Season 2028', '2028-06-01 00:00:00', '2028-08-31 23:59:59'),
+                                                                             (23, 'Autumn Season 2028', '2028-09-01 00:00:00', '2028-11-30 23:59:59'),
+                                                                             (24, 'Winter Season 2028', '2028-12-01 00:00:00', '2029-02-28 23:59:59'),
+                                                                             (25, 'Spring Season 2029', '2029-03-01 00:00:00', '2029-05-31 23:59:59');
 
 -- 插入用户数据
 INSERT IGNORE INTO game_user (user_id, username, email) VALUES
                                                             (1, 'alice', 'alice@example.com'),
                                                             (2, 'bob', 'bob@example.com'),
-                                                            (3, 'charlie', 'charlie@example.com');
+                                                            (3, 'charlie', 'charlie@example.com'),
+                                                            (4, 'david', 'david@example.com'),
+                                                            (5, 'eve', 'eve@example.com'),
+                                                            (6, 'frank', 'frank@example.com'),
+                                                            (7, 'grace', 'grace@example.com'),
+                                                            (8, 'hank', 'hank@example.com'),
+                                                            (9, 'irene', 'irene@example.com'),
+                                                            (10, 'jack', 'jack@example.com'),
+                                                            (11, 'kate', 'kate@example.com'),
+                                                            (12, 'leo', 'leo@example.com'),
+                                                            (13, 'mike', 'mike@example.com'),
+                                                            (14, 'nina', 'nina@example.com'),
+                                                            (15, 'oliver', 'oliver@example.com'),
+                                                            (16, 'paul', 'paul@example.com'),
+                                                            (17, 'quinn', 'quinn@example.com'),
+                                                            (18, 'rachel', 'rachel@example.com'),
+                                                            (19, 'steve', 'steve@example.com'),
+                                                            (20, 'tina', 'tina@example.com'),
+                                                            (21, 'ursula', 'ursula@example.com'),
+                                                            (22, 'victor', 'victor@example.com'),
+                                                            (23, 'wendy', 'wendy@example.com'),
+                                                            (24, 'xander', 'xander@example.com'),
+                                                            (25, 'yara', 'yara@example.com');
 
 -- 插入赛季排行榜记录数据
 INSERT IGNORE INTO season_leaderboard_record (record_id, season_id, user_id, score) VALUES
-                                                                                        (1, 1, 1, 1500.0), -- Alice's score in Spring Season
-                                                                                        (2, 1, 2, 1200.0), -- Bob's score in Spring Season
-                                                                                        (3, 2, 3, 1800.0); -- Charlie's score in Summer Season
+                                                                                        (1, 1, 1, 1500.0), (2, 1, 2, 1200.0), (3, 1, 3, 1800.0), (4, 2, 4, 1700.0), (5, 2, 5, 1600.0),
+                                                                                        (6, 2, 6, 1500.0), (7, 3, 7, 1400.0), (8, 3, 8, 1300.0), (9, 3, 9, 1200.0), (10, 4, 10, 1100.0),
+                                                                                        (11, 4, 11, 1000.0), (12, 4, 12, 900.0), (13, 5, 13, 800.0), (14, 5, 14, 700.0), (15, 5, 15, 600.0),
+                                                                                        (16, 6, 16, 500.0), (17, 6, 17, 400.0), (18, 6, 18, 300.0), (19, 7, 19, 200.0), (20, 7, 20, 100.0),
+                                                                                        (21, 8, 21, 50.0), (22, 8, 22, 40.0), (23, 8, 23, 30.0), (24, 9, 24, 20.0), (25, 9, 25, 10.0);

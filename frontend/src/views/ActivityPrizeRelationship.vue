@@ -224,11 +224,11 @@ export default {
           activityDesc: this.formData.activityDesc,
           startDate: this.formData.startDate,
           endDate: this.formData.endDate,
-          prizes: this.formData.prizes.map(prize => ({
-            prizeId: prize.prize.prizeId,
-            prizeName: prize.prize.prizeName,
-            probability: prize.probability,
-            quantity: prize.quantity
+          prizes: this.formData.prizes.map(item => ({
+            prizeId: item.prize.prizeId,
+            prizeName: item.prize.prizeName,
+            probability: item.probability,
+            quantity: item.quantity
           }))
         };
 

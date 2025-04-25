@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
+import com.example.demo.dto.PrizeDTO;
 import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 import com.example.demo.model.LotteryPrize;
 import com.example.demo.repository.LotteryActivityPrizeRepository;
 import com.example.demo.repository.LotteryActivityRepository;
 import com.example.demo.repository.LotteryPrizeRepository;
+import com.example.demo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,12 +49,12 @@ public class ActivityPrizeRelationshipService {
         dto.setActivityId(activity.getActivityId());
         dto.setActivityName(activity.getActivityName());
         dto.setActivityDesc(activity.getActivityDesc());
-        dto.setStartDate(activity.getStartDate());
-        dto.setEndDate(activity.getEndDate());
+        dto.setStartDate(TimeUtil.formatDate(activity.getStartDate(), TimeUtil.DATE_FORMAT_SHORT));
+        dto.setEndDate(TimeUtil.formatDate(activity.getEndDate(), TimeUtil.DATE_FORMAT_SHORT));
 
         // 将奖品信息转换为 PrizeDTO 列表
-        List<ActivityPrizeRelationshipDTO.PrizeDTO> prizeDTOs = prizes.stream().map(prize -> {
-            ActivityPrizeRelationshipDTO.PrizeDTO prizeDTO = new ActivityPrizeRelationshipDTO.PrizeDTO();
+        List<PrizeDTO> prizeDTOs = prizes.stream().map(prize -> {
+            PrizeDTO prizeDTO = new PrizeDTO();
             prizeDTO.setPrizeName(prize.getPrize().getPrizeName());
             prizeDTO.setProbability(prize.getProbability());
             prizeDTO.setQuantity(prize.getQuantity());
@@ -73,7 +75,7 @@ public class ActivityPrizeRelationshipService {
         LotteryActivity activity = activityOptional.get();
 
         // 遍历奖品列表，创建绑定关系
-        for (ActivityPrizeRelationshipDTO.PrizeDTO prizeDTO : relationshipDTO.getPrizes()) {
+        for (PrizeDTO prizeDTO : relationshipDTO.getPrizes()) {
             Optional<LotteryPrize> prizeOptional = prizeRepository.findById(prizeDTO.getPrizeId());
             if (prizeOptional.isEmpty()) {
                 throw new IllegalArgumentException("奖品不存在，ID: " + prizeDTO.getPrizeId());

@@ -4,6 +4,7 @@ import com.example.demo.model.LotteryActivityPrize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryAct
      * @param activityId 活动 ID
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM LotteryActivityPrize p WHERE p.activity.activityId = :activityId")
     void deleteByActivityId(Long activityId);
 }

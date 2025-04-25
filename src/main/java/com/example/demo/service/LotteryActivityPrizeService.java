@@ -68,6 +68,7 @@ public class LotteryActivityPrizeService {
      * 根据活动 ID 删除所有奖品关系
      * @param activityId 活动 ID
      */
+    @Transactional
     public void deletePrizesByActivityId(Long activityId) {
         activityPrizeRepository.deleteByActivityId(activityId);
     }

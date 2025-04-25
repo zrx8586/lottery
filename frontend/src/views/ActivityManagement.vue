@@ -147,7 +147,7 @@ export default {
     async deleteActivity(activityId) {
       if (confirm("确定要删除这个活动吗？")) {
         try {
-          await axios.delete(`/api/activity-prize-relationship/${activityId}`);
+          await axios.delete(`/api/activity/${activityId}`);
           this.activities = this.activities.filter(a => a.activityId !== activityId);
         } catch (error) {
           console.error("删除活动失败：", error);
@@ -157,11 +157,11 @@ export default {
     async submitForm() {
       try {
         if (this.editingActivity) {
-          const response = await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, this.formData);
+          const response = await axios.put(`/api/activity/${this.editingActivity.activityId}`, this.formData);
           const index = this.activities.findIndex(a => a.activityId === this.editingActivity.activityId);
           this.activities.splice(index, 1, response.data);
         } else {
-          const response = await axios.post("/api/activity-prize-relationship/create", this.formData);
+          const response = await axios.post("/api/activity/create", this.formData);
           this.activities.push(response.data);
         }
         this.closeForm();

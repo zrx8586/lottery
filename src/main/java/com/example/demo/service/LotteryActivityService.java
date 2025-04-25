@@ -55,4 +55,8 @@ public class LotteryActivityService {
 
         return activityDetailDTO;
     }
+
+    public void deleteActivity(Long activityId) {
+        activityRepository.deleteById(activityId);
+    }
 }

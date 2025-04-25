@@ -5,7 +5,7 @@
     <!-- 搜索和创建按钮 -->
     <div class="action-bar">
       <input v-model="searchQuery" placeholder="搜索活动名称..." class="search-input" />
-      <button class="btn btn-create" @click="showCreateForm = true">创建新活动</button>
+      <button class="btn btn-create" @click="showCreateForm = true">创建新的绑定关系</button>
     </div>
 
     <!-- 活动列表 -->

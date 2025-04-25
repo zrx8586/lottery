@@ -9,11 +9,16 @@ CREATE TABLE IF NOT EXISTS lottery_activity (
                                                 datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 奖品表
+-- 重新设计的 lottery_prize 表
 CREATE TABLE IF NOT EXISTS lottery_prize (
                                              prize_id INT AUTO_INCREMENT PRIMARY KEY,
                                              prize_name VARCHAR(100) NOT NULL,
                                              prize_desc TEXT, -- 奖品描述
+                                             prize_image_url VARCHAR(255), -- 奖品图片链接
+                                             prize_category VARCHAR(50), -- 奖品类别
+                                             prize_value DECIMAL(10, 2), -- 奖品市场价值
+                                             stock_quantity INT NOT NULL DEFAULT 0, -- 奖品库存数量
+                                             is_active BOOLEAN NOT NULL DEFAULT TRUE, -- 奖品是否可用
                                              datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                              datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

@@ -27,32 +27,12 @@ INSERT IGNORE INTO lottery_activity (activity_id, activity_name, activity_desc, 
                                                                                                           (25, 'Eco-Friendly Challenge', 'Prizes for going green!', '2024-04-01 00:00:00', '2024-04-30 23:59:59');
 
 -- 插入奖品数据
-INSERT IGNORE INTO lottery_prize (prize_id, prize_name, prize_desc) VALUES
-                                                                        (1, 'Smartphone', 'A high-end smartphone with the latest features'),
-                                                                        (2, 'Laptop', 'A powerful laptop for all your computing needs'),
-                                                                        (3, 'Gift Card', 'A gift card worth $50 for shopping'),
-                                                                        (4, 'Tablet', 'A versatile tablet for work and play'),
-                                                                        (5, 'Headphones', 'Noise-cancelling headphones for immersive sound'),
-                                                                        (6, 'Smartwatch', 'A smartwatch to track your fitness and notifications'),
-                                                                        (7, 'Camera', 'A high-resolution camera for photography enthusiasts'),
-                                                                        (8, 'Gaming Console', 'A next-gen gaming console for gamers'),
-                                                                        (9, 'TV', 'A 4K Ultra HD TV for your home entertainment'),
-                                                                        (10, 'Bluetooth Speaker', 'A portable Bluetooth speaker with great sound'),
-                                                                        (11, 'Fitness Tracker', 'A fitness tracker to monitor your health'),
-                                                                        (12, 'E-Reader', 'An e-reader for book lovers'),
-                                                                        (13, 'Backpack', 'A durable and stylish backpack'),
-                                                                        (14, 'Desk Chair', 'An ergonomic desk chair for comfort'),
-                                                                        (15, 'Coffee Maker', 'A coffee maker for your daily brew'),
-                                                                        (16, 'Blender', 'A high-performance blender for smoothies'),
-                                                                        (17, 'Air Purifier', 'An air purifier for clean air at home'),
-                                                                        (18, 'Vacuum Cleaner', 'A powerful vacuum cleaner for your home'),
-                                                                        (19, 'Microwave', 'A compact microwave for your kitchen'),
-                                                                        (20, 'Cookware Set', 'A premium cookware set for your kitchen'),
-                                                                        (21, 'Board Game', 'A fun board game for family and friends'),
-                                                                        (22, 'Puzzle', 'A challenging puzzle for your leisure time'),
-                                                                        (23, 'Gift Basket', 'A gift basket filled with goodies'),
-                                                                        (24, 'Wine Set', 'A wine set for special occasions'),
-                                                                        (25, 'No Prize', 'No prize won this time');
+INSERT IGNORE INTO lottery_prize (prize_id, prize_name, prize_desc, prize_image_url, prize_category, prize_value, stock_quantity, is_active) VALUES
+                                                                                                                                                 (1, 'Smartphone', 'A high-end smartphone with the latest features', 'https://example.com/images/smartphone.jpg', 'Electronics', 699.99, 50, TRUE),
+                                                                                                                                                 (2, 'Laptop', 'A powerful laptop for all your computing needs', 'https://example.com/images/laptop.jpg', 'Electronics', 999.99, 30, TRUE),
+                                                                                                                                                 (3, 'Gift Card', 'A gift card worth $50 for shopping', 'https://example.com/images/giftcard.jpg', 'Gift', 50.00, 100, TRUE),
+                                                                                                                                                 (4, 'Tablet', 'A versatile tablet for work and play', 'https://example.com/images/tablet.jpg', 'Electronics', 499.99, 20, TRUE),
+                                                                                                                                                 (5, 'Headphones', 'Noise-cancelling headphones for immersive sound', 'https://example.com/images/headphones.jpg', 'Accessories', 199.99, 40, TRUE);
 
 -- 插入活动奖品数据
 INSERT IGNORE INTO lottery_activity_prize (activity_prize_id, activity_id, prize_id, probability, quantity) VALUES

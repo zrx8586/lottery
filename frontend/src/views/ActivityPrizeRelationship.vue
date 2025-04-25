@@ -292,6 +292,15 @@ h1 {
   background: linear-gradient(45deg, #218838, #1e7e34);
 }
 
+.btn-view {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  color: white;
+}
+
+.btn-view:hover {
+  background: linear-gradient(45deg, #0056b3, #003f7f);
+}
+
 .btn-edit {
   background: linear-gradient(45deg, #ffc107, #e0a800);
   color: black;

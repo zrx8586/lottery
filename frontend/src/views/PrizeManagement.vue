@@ -4,7 +4,7 @@
 
     <!-- 搜索和创建按钮 -->
     <div class="action-bar">
-      <input v-model="searchQuery" placeholder="搜索奖品名称..." class="search-input"/>
+      <input v-model="searchQuery" placeholder="搜索奖品名称..." class="search-input" />
       <button class="btn btn-create" @click="showCreateForm = true">创建新奖品</button>
     </div>
 
@@ -14,20 +14,28 @@
         <thead>
         <tr>
           <th>奖品名称</th>
-          <th>概率</th>
+          <th>描述</th>
+          <th>图片链接</th>
+          <th>类别</th>
+          <th>价值</th>
           <th>库存</th>
+          <th>是否激活</th>
           <th>操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="prize in paginatedPrizes" :key="prize.id">
-          <td>{{ prize.prize.prizeName }}</td>
-          <td>{{ prize.probability }}%</td>
-          <td>{{ prize.quantity }}</td>
+        <tr v-for="prize in paginatedPrizes" :key="prize.prizeId">
+          <td>{{ prize.prizeName }}</td>
+          <td>{{ prize.prizeDesc }}</td>
+          <td>{{ prize.prizeImageUrl }}</td>
+          <td>{{ prize.prizeCategory }}</td>
+          <td>{{ prize.prizeValue }}</td>
+          <td>{{ prize.stockQuantity }}</td>
+          <td>{{ prize.isActive ? '是' : '否' }}</td>
           <td>
-            <button class="btn btn-view" @click="viewPrize(prize.prize.prizeId)">查看</button>
+            <button class="btn btn-view" @click="viewPrize(prize)">查看</button>
             <button class="btn btn-edit" @click="editPrize(prize)">编辑</button>
-            <button class="btn btn-delete" @click="deletePrize(prize.id)">删除</button>
+            <button class="btn btn-delete" @click="deletePrize(prize.prizeId)">删除</button>
           </td>
         </tr>
         </tbody>
@@ -41,14 +49,18 @@
       </div>
     </div>
 
-    <!-- 奖品详情模态框 -->
-    <div v-if="selectedPrize" class="modal">
+    <!-- 查看奖品模态框 -->
+    <div v-if="viewingPrize" class="modal">
       <div class="modal-content">
-        <span class="close" @click="selectedPrize = null">&times;</span>
+        <span class="close" @click="closeView">&times;</span>
         <h2>奖品详情</h2>
-        <p><strong>奖品名称:</strong> {{ selectedPrize.name }}</p>
-        <p><strong>概率:</strong> {{ selectedPrize.probability }}%</p>
-        <p><strong>库存:</strong> {{ selectedPrize.quantity }}</p>
+        <p><strong>奖品名称:</strong> {{ formData.prizeName }}</p>
+        <p><strong>描述:</strong> {{ formData.prizeDesc }}</p>
+        <p><strong>图片链接:</strong> {{ formData.prizeImageUrl }}</p>
+        <p><strong>类别:</strong> {{ formData.prizeCategory }}</p>
+        <p><strong>价值:</strong> {{ formData.prizeValue }}</p>
+        <p><strong>库存:</strong> {{ formData.stockQuantity }}</p>
+        <p><strong>是否激活:</strong> {{ formData.isActive ? '是' : '否' }}</p>
       </div>
     </div>
 
@@ -60,15 +72,34 @@
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>奖品名称:</label>
-            <input v-model="formData.name" required/>
+            <input v-model="formData.prizeName" required />
           </div>
           <div class="form-group">
-            <label>概率:</label>
-            <input type="number" v-model="formData.probability" required/>
+            <label>描述:</label>
+            <textarea v-model="formData.prizeDesc" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>图片链接:</label>
+            <input v-model="formData.prizeImageUrl" />
+          </div>
+          <div class="form-group">
+            <label>类别:</label>
+            <input v-model="formData.prizeCategory" />
+          </div>
+          <div class="form-group">
+            <label>价值:</label>
+            <input type="number" v-model="formData.prizeValue" />
           </div>
           <div class="form-group">
             <label>库存:</label>
-            <input type="number" v-model="formData.quantity" required/>
+            <input type="number" v-model="formData.stockQuantity" required />
+          </div>
+          <div class="form-group">
+            <label>是否激活:</label>
+            <select v-model="formData.isActive">
+              <option :value="true">是</option>
+              <option :value="false">否</option>
+            </select>
           </div>
           <button type="submit" class="btn btn-submit">{{ editingPrize ? '更新' : '创建' }}</button>
         </form>
@@ -84,26 +115,28 @@ export default {
   data() {
     return {
       prizes: [],
-      selectedPrize: null,
-      showCreateForm: false,
-      editingPrize: null,
-      formData: {
-        prizeName: "",
-        probability: 0,
-        quantity: 0
-      },
       searchQuery: "",
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      showCreateForm: false,
+      editingPrize: null,
+      viewingPrize: false,
+      formData: {
+        prizeName: "",
+        prizeDesc: "",
+        prizeImageUrl: "",
+        prizeCategory: "",
+        prizeValue: 0,
+        stockQuantity: 0,
+        isActive: true,
+      },
     };
   },
   computed: {
     filteredPrizes() {
-      console.log(this.prizes);
-      // return this.prizes;
-      // 修复过滤逻辑，确保根据搜索查询过滤奖品名称
-      return this.prizes.filter(item =>
-          item.prize.prizeName.toLowerCase().includes(this.searchQuery.toLowerCase())
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.prizes.filter(prize =>
+          prize.prizeName.toLowerCase().includes(query)
       );
     },
     paginatedPrizes() {
@@ -113,35 +146,31 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.filteredPrizes.length / this.itemsPerPage);
-    }
+    },
   },
   methods: {
     async fetchPrizes() {
       try {
-        const response = await axios.get("/api/activity-prizes/1"); // 示例活动ID
+        const response = await axios.get("/api/prize/all");
         this.prizes = response.data;
       } catch (error) {
-        console.error("加载奖品数据失败：", error);
+        console.error("加载奖品列表失败：", error);
       }
     },
-    async viewPrize(prizeId) {
-      try {
-        const response = await axios.get(`/api/activity-prizes/prize/${prizeId}`);
-        this.selectedPrize = response.data;
-      } catch (error) {
-        console.error("获取奖品详情失败：", error);
-      }
+    viewPrize(prize) {
+      this.viewingPrize = true;
+      this.formData = { ...prize };
     },
-    async editPrize(prize) {
+    editPrize(prize) {
       this.editingPrize = prize;
-      this.formData = {...prize};
+      this.formData = { ...prize };
       this.showCreateForm = true;
     },
     async deletePrize(prizeId) {
       if (confirm("确定要删除这个奖品吗？")) {
         try {
-          await axios.delete(`/api/activity-prizes/prize/${prizeId}`);
-          this.prizes = this.prizes.filter(p => p.id !== prizeId);
+          await axios.delete(`/api/prize/${prizeId}`);
+          this.prizes = this.prizes.filter(prize => prize.prizeId !== prizeId);
         } catch (error) {
           console.error("删除奖品失败：", error);
         }
@@ -150,11 +179,11 @@ export default {
     async submitForm() {
       try {
         if (this.editingPrize) {
-          const response = await axios.put(`/api/activity-prizes/prize/${this.editingPrize.id}`, this.formData);
-          const index = this.prizes.findIndex(p => p.id === this.editingPrize.id);
+          const response = await axios.put(`/api/prize/${this.editingPrize.prizeId}`, this.formData);
+          const index = this.prizes.findIndex(prize => prize.prizeId === this.editingPrize.prizeId);
           this.prizes.splice(index, 1, response.data);
         } else {
-          const response = await axios.post("/api/activity-prizes/create", this.formData);
+          const response = await axios.post("/api/prize/create", this.formData);
           this.prizes.push(response.data);
         }
         this.closeForm();
@@ -166,26 +195,27 @@ export default {
       this.showCreateForm = false;
       this.editingPrize = null;
       this.formData = {
-        name: "",
-        probability: 0,
-        quantity: 0
+        prizeName: "",
+        prizeDesc: "",
+        prizeImageUrl: "",
+        prizeCategory: "",
+        prizeValue: 0,
+        stockQuantity: 0,
+        isActive: true,
       };
-    }
+    },
+    closeView() {
+      this.viewingPrize = false;
+    },
   },
   mounted() {
     this.fetchPrizes();
-  }
+  },
 };
 </script>
 
 <style scoped>
-/* 样式与 ActivityManagement.vue 类似 */
-.prize-management {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f9f9f9;
-}
-
+/* 样式与 ActivityManagement.vue 保持一致 */
 .action-bar {
   display: flex;
   justify-content: space-between;
@@ -232,13 +262,13 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.btn-create {
-  background: linear-gradient(45deg, #28a745, #218838);
+.btn-view {
+  background: linear-gradient(45deg, #007bff, #0056b3);
   color: white;
 }
 
-.btn-create:hover {
-  background: linear-gradient(45deg, #218838, #1e7e34);
+.btn-view:hover {
+  background: linear-gradient(45deg, #0056b3, #003f7f);
 }
 
 .btn-edit {

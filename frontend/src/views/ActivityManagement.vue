@@ -1,5 +1,5 @@
 <template>
-  <div class="activity-prize-relationship">
+  <div class="activity-management">
     <h1>活动管理</h1>
 
     <!-- 搜索框 -->
@@ -27,7 +27,7 @@
           <td>{{ formatDate(activity.startDate) }}</td>
           <td>{{ formatDate(activity.endDate) }}</td>
           <td>
-            <button class="btn btn-view" @click="viewActivity(activity.activityId)">查看活动</button>
+            <button class="btn btn-view" @click="viewActivity(activity)">查看活动</button>
             <button class="btn btn-edit" @click="editActivity(activity)">编辑</button>
             <button class="btn btn-delete" @click="deleteActivity(activity.activityId)">删除</button>
           </td>
@@ -43,30 +43,36 @@
       </div>
     </div>
 
-    <!-- 创建/编辑活动表单 -->
-    <div v-if="showCreateForm || editingActivity" class="modal">
+    <!-- 创建/编辑/查看活动表单 -->
+    <div v-if="showCreateForm || editingActivity || viewingActivity" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeForm">&times;</span>
-        <h2>{{ editingActivity ? '编辑活动' : '创建新活动' }}</h2>
-        <form @submit.prevent="submitForm">
+        <h2>{{ viewingActivity ? '查看活动' : editingActivity ? '编辑活动' : '创建新活动' }}</h2>
+        <form @submit.prevent="submitForm" v-if="!viewingActivity">
           <div class="form-group">
             <label>活动名称:</label>
-            <input v-model="formData.activityName" required />
+            <input v-model="formData.activityName" :readonly="viewingActivity" required />
           </div>
           <div class="form-group">
             <label>活动描述:</label>
-            <textarea v-model="formData.activityDesc" required></textarea>
+            <textarea v-model="formData.activityDesc" :readonly="viewingActivity" required></textarea>
           </div>
           <div class="form-group">
             <label>开始时间:</label>
-            <input type="datetime-local" v-model="formData.startDate" required />
+            <input type="datetime-local" v-model="formData.startDate" :readonly="viewingActivity" required />
           </div>
           <div class="form-group">
             <label>结束时间:</label>
-            <input type="datetime-local" v-model="formData.endDate" required />
+            <input type="datetime-local" v-model="formData.endDate" :readonly="viewingActivity" required />
           </div>
-          <button type="submit" class="btn btn-submit">{{ editingActivity ? '更新' : '创建' }}</button>
+          <button type="submit" class="btn btn-submit" v-if="!viewingActivity">{{ editingActivity ? '更新' : '创建' }}</button>
         </form>
+        <div v-else>
+          <p><strong>活动名称:</strong> {{ formData.activityName }}</p>
+          <p><strong>活动描述:</strong> {{ formData.activityDesc }}</p>
+          <p><strong>开始时间:</strong> {{ formData.startDate }}</p>
+          <p><strong>结束时间:</strong> {{ formData.endDate }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -85,6 +91,7 @@ export default {
       itemsPerPage: 5,
       showCreateForm: false,
       editingActivity: null,
+      viewingActivity: false,
       formData: {
         activityName: "",
         activityDesc: "",
@@ -118,15 +125,16 @@ export default {
         console.error("加载活动列表失败：", error);
       }
     },
-    async viewActivity(activityId) {
-      try {
-        const response = await axios.get(`/api/activity/${activityId}`);
-        this.selectedActivity = response.data;
-      } catch (error) {
-        console.error("获取活动详情失败：", error);
-      }
+    viewActivity(activity) {
+      this.viewingActivity = true;
+      this.formData = {
+        activityName: activity.activityName,
+        activityDesc: activity.activityDesc,
+        startDate: moment(activity.startDate).format("YYYY-MM-DDTHH:mm"),
+        endDate: moment(activity.endDate).format("YYYY-MM-DDTHH:mm"),
+      };
     },
-    async editActivity(activity) {
+    editActivity(activity) {
       this.editingActivity = activity;
       this.formData = {
         activityName: activity.activityName,
@@ -164,6 +172,7 @@ export default {
     closeForm() {
       this.showCreateForm = false;
       this.editingActivity = null;
+      this.viewingActivity = false;
       this.formData = {
         activityName: "",
         activityDesc: "",

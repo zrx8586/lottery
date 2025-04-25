@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * @author long_w
+ * 奖品实体类
  */
 @Entity
 @Table(name = "lottery_prize")
@@ -15,8 +15,14 @@ public class LotteryPrize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long prizeId;
+
     private String prizeName;
     private String prizeDesc;
+    private String prizeImageUrl;
+    private String prizeCategory;
+    private Double prizeValue;
+    private Integer stockQuantity;
+    private Boolean isActive;
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

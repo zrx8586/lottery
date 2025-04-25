@@ -46,7 +46,7 @@
       <div class="modal-content">
         <span class="close" @click="selectedPrize = null">&times;</span>
         <h2>奖品详情</h2>
-        <p><strong>奖品名称:</strong> {{ selectedPrize.prize.prizeName }}</p>
+        <p><strong>奖品名称:</strong> {{ selectedPrize.name }}</p>
         <p><strong>概率:</strong> {{ selectedPrize.probability }}%</p>
         <p><strong>库存:</strong> {{ selectedPrize.quantity }}</p>
       </div>
@@ -60,7 +60,7 @@
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>奖品名称:</label>
-            <input v-model="formData.prize.prizeName" required/>
+            <input v-model="formData.name" required/>
           </div>
           <div class="form-group">
             <label>概率:</label>

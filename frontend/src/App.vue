@@ -3,6 +3,7 @@
     <nav>
       <router-link to="/">活动管理</router-link>
       <router-link to="/prizes">奖品管理</router-link>
+      <router-link to="/activityPrizeRelationship">活动奖品关系</router-link>
       <router-link to="/cache">缓存管理</router-link>
     </nav>
     <router-view />

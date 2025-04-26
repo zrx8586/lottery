@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -13,6 +14,7 @@ public class JwtUtil {
 
     private static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
+    // 生成 JWT
     public static String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -21,12 +23,21 @@ public class JwtUtil {
                 .compact();
     }
 
+    // 验证 JWT 并返回用户名
     public static String validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (ExpiredJwtException e) {
+            // Token 已过期
+            throw new RuntimeException("Token 已过期，请重新登录", e);
+        } catch (Exception e) {
+            // 其他异常
+            throw new RuntimeException("Token 无效", e);
+        }
     }
 }

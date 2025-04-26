@@ -2,8 +2,9 @@
   <div id="app">
     <header class="header">
       <div class="user-info">
+        <img class="avatar" src="https://via.placeholder.com/30" alt="用户头像" />
         <span>当前用户：{{ username }}</span>
-        <button @click="logout">登出</button>
+        <button @click="confirmLogout">登出</button>
       </div>
     </header>
     <div class="main-container">
@@ -47,6 +48,11 @@ export default {
     }
   },
   methods: {
+    confirmLogout() {
+      if (confirm("确定要登出吗？")) {
+        this.logout();
+      }
+    },
     logout() {
       localStorage.removeItem("token"); // 清除本地存储的Token
       this.$router.push("/login"); // 跳转到登录页面

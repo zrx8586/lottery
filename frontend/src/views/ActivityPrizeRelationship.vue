@@ -246,11 +246,11 @@ export default {
         if (this.editingActivity) {
           await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, payload);
         } else {
-          const response = await axios.post("/api/activity-prize-relationship/create", payload);
-          this.activities.push(response.data);
+          await axios.post("/api/activity-prize-relationship/create", payload);
         }
 
         this.closeForm();
+        await this.fetchActivities(); // 刷新活动列表
       } catch (error) {
         console.error("保存活动奖品关系失败：", error);
       }

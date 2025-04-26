@@ -35,6 +35,21 @@ public class ActivityPrizeRelationshipController {
         return ResponseEntity.ok(allActivityPrizeRelationships);
     }
 
+    @GetMapping("/{activityId}/details")
+    public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
+        LotteryActivity activity = activityService.getActivityById(activityId)
+                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+
+        List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
+
+        List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);
+        ;
+
+        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
+
+        return ResponseEntity.ok(activityDetailDTO);
+    }
+
     // 根据活动 ID 查询活动详情（包含奖品信息）
     @GetMapping("/{activityId}")
     public ResponseEntity<ActivityPrizeRelationshipDTO> getActivityById(@PathVariable Long activityId) {
@@ -42,6 +57,21 @@ public class ActivityPrizeRelationshipController {
         return ResponseEntity.ok(activityWithPrizes);
     }
 
+    // 创建活动与奖品绑定关系
+    @PostMapping("/create")
+    public ResponseEntity<String> createActivityPrizeRelationship(@RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
+        try {
+            // 调用服务层方法保存绑定关系
+            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
+            return ResponseEntity.ok("活动与奖品绑定关系创建成功");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("创建绑定关系失败: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("创建绑定关系失败: " + e.getMessage());
+        }
+    }
+
+    // 更新活动与奖品绑定关系
     @PutMapping("/{activityId}")
     public ResponseEntity<String> updateActivityPrizeRelationship(
             @PathVariable Long activityId,
@@ -66,39 +96,16 @@ public class ActivityPrizeRelationshipController {
         }
     }
 
-    @GetMapping("/{activityId}/details")
-    public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
-        LotteryActivity activity = activityService.getActivityById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-
-        List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
-
-        List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);
-        ;
-
-        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
-
-        return ResponseEntity.ok(activityDetailDTO);
-    }
-
-
-    @PostMapping("/create")
-    public ResponseEntity<String> createActivityPrizeRelationship(@RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
+    /**
+     * 删除活动奖品关系
+     * @param activityId 活动 ID
+     * @return 删除结果
+     */
+    @DeleteMapping("/{activityId}")
+    public ResponseEntity<String> deleteActivityPrizeRelationshipsByActivityId(@PathVariable Long activityId) {
         try {
-            // 调用服务层方法保存绑定关系
-            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
-            return ResponseEntity.ok("活动与奖品绑定关系创建成功");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("创建绑定关系失败: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("创建绑定关系失败: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/relationship/{activityPrizeId}")
-    public ResponseEntity<String> deleteActivityPrizeRelationship(@PathVariable Long activityPrizeId) {
-        try {
-            activityPrizeService.deletePrizeById(activityPrizeId);
+            // 根据活动 ID 删除所有奖品关系
+            activityPrizeService.deletePrizesByActivityId(activityId);
             return ResponseEntity.ok("活动奖品关系删除成功");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("删除活动奖品关系失败: " + e.getMessage());
@@ -106,4 +113,5 @@ public class ActivityPrizeRelationshipController {
             return ResponseEntity.status(500).body("删除活动奖品关系失败: " + e.getMessage());
         }
     }
+
 }

@@ -2,6 +2,10 @@
   <div id="app">
     <aside class="sidebar">
       <div class="logo">管理后台</div>
+      <div class="user-info">
+        <p>当前用户：{{ username }}</p>
+        <button @click="logout">登出</button>
+      </div>
       <ul class="menu">
         <li><router-link to="/activity" active-class="active">活动管理</router-link></li>
         <li><router-link to="/activityPrizeRelationship" active-class="active">活动奖品关系管理</router-link></li>
@@ -17,8 +21,33 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "App",
+  data() {
+    return {
+      username: "", // 当前登录用户
+    };
+  },
+  async created() {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await axios.get("/api/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.username = response.data.username;
+      }
+    } catch (error) {
+      console.error("获取用户信息失败", error);
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("token"); // 清除本地存储的Token
+      this.$router.push("/login"); // 跳转到登录页面
+    },
+  },
 };
 </script>
 
@@ -96,5 +125,26 @@ html, body {
   background-color: #ecf0f1;
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+.user-info {
+  padding: 20px;
+  background-color: #1a252f;
+  color: white;
+  text-align: center;
+}
+
+.user-info button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.user-info button:hover {
+  background-color: #c0392b;
 }
 </style>

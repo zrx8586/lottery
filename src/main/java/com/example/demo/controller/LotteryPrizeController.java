@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryPrize;
 import com.example.demo.service.ActivityPrizeRelationshipService;
 import com.example.demo.service.LotteryPrizeService;

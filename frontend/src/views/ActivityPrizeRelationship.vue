@@ -5,7 +5,7 @@
     <!-- 搜索和创建按钮 -->
     <div class="action-bar">
       <input v-model="searchQuery" placeholder="搜索活动名称..." class="search-input" />
-      <button class="btn btn-create" @click="showCreateForm = true">创建新的绑定关系</button>
+      <button class="btn btn-create" @click="createNewBinding">创建新的绑定关系</button>
     </div>
 
     <!-- 活动列表 -->
@@ -44,7 +44,7 @@
     </div>
 
     <!-- 活动详情模态框 -->
-    <div v-if="selectedActivity" class="modal">
+    <div v-if="selectedActivity && !showCreateForm" class="modal">
       <div class="modal-content">
         <span class="close" @click="selectedActivity = null">&times;</span>
         <h2>活动奖品关系</h2>
@@ -62,26 +62,18 @@
     </div>
 
     <!-- 创建/编辑活动表单 -->
-    <div v-if="showCreateForm || editingActivity" class="modal">
+    <div v-if="showCreateForm" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeForm">&times;</span>
         <h2>{{ editingActivity ? '编辑活动奖品关系' : '创建活动奖品关系' }}</h2>
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label>活动名称:</label>
-            <input v-model="formData.activityName" required />
-          </div>
-          <div class="form-group">
-            <label>描述:</label>
-            <textarea v-model="formData.activityDesc" required></textarea>
-          </div>
-          <div class="form-group">
-            <label>开始日期:</label>
-            <input type="date" v-model="formData.startDate" required />
-          </div>
-          <div class="form-group">
-            <label>结束日期:</label>
-            <input type="date" v-model="formData.endDate" required />
+            <label>选择活动:</label>
+            <select v-model="selectedActivityId" required>
+              <option v-for="activity in availableActivities" :key="activity.activityId" :value="activity.activityId">
+                {{ activity.activityName }}
+              </option>
+            </select>
           </div>
           <div class="form-group">
             <label>可用奖品:</label>
@@ -134,16 +126,14 @@ export default {
   data() {
     return {
       activities: [],
+      availableActivities: [], // 可用活动列表
       availablePrizes: [], // 可用奖品列表
+      selectedActivityId: null, // 用户选择的活动ID
       selectedPrizeId: null, // 用户选择的奖品ID
       selectedActivity: null,
       showCreateForm: false,
       editingActivity: null,
       formData: {
-        activityName: "",
-        activityDesc: "",
-        startDate: "",
-        endDate: "",
         prizes: [] // 初始化为空数组
       },
       searchQuery: "",
@@ -168,6 +158,14 @@ export default {
     }
   },
   methods: {
+    async fetchAvailableActivities() {
+      try {
+        const response = await axios.get("/api/activity/all");
+        this.availableActivities = response.data;
+      } catch (error) {
+        console.error("加载可用活动列表失败：", error);
+      }
+    },
     async fetchAvailablePrizes() {
       try {
         const response = await axios.get("/api/prize/available");
@@ -175,6 +173,9 @@ export default {
       } catch (error) {
         console.error("加载可用奖品列表失败：", error);
       }
+    },
+    createNewBinding() {
+      this.showCreateForm = true; // 显示奖品选择表单
     },
     addPrize() {
       const selectedPrize = this.availablePrizes.find(prize => prize.prizeId === this.selectedPrizeId);
@@ -212,13 +213,8 @@ export default {
         const activityDetails = response.data;
 
         this.editingActivity = activity;
-        this.formData = {
-          activityName: activityDetails.activityName,
-          activityDesc: activityDetails.activityDesc,
-          startDate: moment(activityDetails.startDate).format("YYYY-MM-DD"),
-          endDate: moment(activityDetails.endDate).format("YYYY-MM-DD"),
-          prizes: activityDetails.prizes || []
-        };
+        this.selectedActivityId = activity.activityId;
+        this.formData.prizes = activityDetails.prizes || [];
 
         await this.fetchAvailablePrizes();
         this.showCreateForm = true;
@@ -239,11 +235,7 @@ export default {
     async submitForm() {
       try {
         const payload = {
-          activityId: this.editingActivity ? this.editingActivity.activityId : null,
-          activityName: this.formData.activityName,
-          activityDesc: this.formData.activityDesc,
-          startDate: this.formData.startDate,
-          endDate: this.formData.endDate,
+          activityId: this.selectedActivityId,
           prizes: this.formData.prizes.map(item => ({
             prizeId: item.prizeId,
             probability: item.probability,
@@ -259,7 +251,6 @@ export default {
         }
 
         this.closeForm();
-        this.selectedPrizeId = null; // 重置下拉框选择
       } catch (error) {
         console.error("保存活动奖品关系失败：", error);
       }
@@ -267,13 +258,8 @@ export default {
     closeForm() {
       this.showCreateForm = false;
       this.editingActivity = null;
-      this.formData = {
-        activityName: "",
-        activityDesc: "",
-        startDate: "",
-        endDate: "",
-        prizes: []
-      };
+      this.formData.prizes = [];
+      this.selectedActivityId = null;
     },
     formatDate(date) {
       return moment(date).format("YYYY-MM-DD");
@@ -281,10 +267,12 @@ export default {
   },
   mounted() {
     this.fetchActivities();
+    this.fetchAvailableActivities();
     this.fetchAvailablePrizes();
   }
 };
 </script>
+
 
 <style scoped>
 @import "@/assets/styles/buttons.css";

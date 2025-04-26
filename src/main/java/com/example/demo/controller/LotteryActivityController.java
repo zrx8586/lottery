@@ -5,12 +5,12 @@ import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
+import com.example.demo.util.CommonUtil;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author long_w
@@ -60,6 +60,7 @@ public class LotteryActivityController {
 
     /**
      * 根据活动 ID 查询活动详情和奖品信息
+     *
      * @param activityId 活动 ID
      * @return 活动详情 DTO
      */
@@ -70,13 +71,14 @@ public class LotteryActivityController {
 
         List<LotteryActivityPrize> prizes = prizeService.getPrizesByActivityId(activityId);
 
-        ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
-        activityDetailDTO.setActivityId(activity.getActivityId());
-        activityDetailDTO.setActivityName(activity.getActivityName());
-        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
-        activityDetailDTO.setStartDate(activity.getStartDate());
-        activityDetailDTO.setEndDate(activity.getEndDate());
-        activityDetailDTO.setPrizes(prizes);
+//        ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
+//        activityDetailDTO.setActivityId(activity.getActivityId());
+//        activityDetailDTO.setActivityName(activity.getActivityName());
+//        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
+//        activityDetailDTO.setStartDate(activity.getStartDate());
+//        activityDetailDTO.setEndDate(activity.getEndDate());
+//        activityDetailDTO.setPrizes(CommonUtil.getActivityPrizeDTOS(prizes));
+        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, CommonUtil.getActivityPrizeDTOS(prizes));
 
         return ResponseEntity.ok(activityDetailDTO);
     }

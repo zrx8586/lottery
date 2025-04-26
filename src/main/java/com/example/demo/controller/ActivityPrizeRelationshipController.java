@@ -1,12 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ActivityDetailDTO;
+import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 import com.example.demo.service.ActivityPrizeRelationshipService;
 import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
+import com.example.demo.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,11 +66,6 @@ public class ActivityPrizeRelationshipController {
         }
     }
 
-    /**
-     * 根据活动 ID 查询活动详情和奖品信息
-     * @param activityId 活动 ID
-     * @return 活动详情 DTO
-     */
     @GetMapping("/{activityId}/details")
     public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
         LotteryActivity activity = activityService.getActivityById(activityId)
@@ -76,16 +73,14 @@ public class ActivityPrizeRelationshipController {
 
         List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
 
-        ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
-        activityDetailDTO.setActivityId(activity.getActivityId());
-        activityDetailDTO.setActivityName(activity.getActivityName());
-        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
-        activityDetailDTO.setStartDate(activity.getStartDate());
-        activityDetailDTO.setEndDate(activity.getEndDate());
-        activityDetailDTO.setPrizes(prizes);
+        List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);;
+
+        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
 
         return ResponseEntity.ok(activityDetailDTO);
     }
+
+
 
     @PostMapping("/create")
     public ResponseEntity<String> createActivityPrizeRelationship(@RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {

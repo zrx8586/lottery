@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ActivityDetailDTO;
+import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 import com.example.demo.repository.LotteryActivityRepository;
+import com.example.demo.util.CommonUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -45,16 +47,13 @@ public class LotteryActivityService {
 
         List<LotteryActivityPrize> prizes = prizeService.getPrizesByActivityId(activityId);
 
-        ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
-        activityDetailDTO.setActivityId(activity.getActivityId());
-        activityDetailDTO.setActivityName(activity.getActivityName());
-        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
-        activityDetailDTO.setStartDate(activity.getStartDate());
-        activityDetailDTO.setEndDate(activity.getEndDate());
-        activityDetailDTO.setPrizes(prizes);
+        // 将 LotteryActivityPrize 转换为 ActivityPrizeDTO
+        List<ActivityPrizeDTO> prizeDTOs =  CommonUtil.getActivityPrizeDTOS(prizes);
 
-        return activityDetailDTO;
+        return CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
     }
+
+
 
     public void deleteActivity(Long activityId) {
         activityRepository.deleteById(activityId);

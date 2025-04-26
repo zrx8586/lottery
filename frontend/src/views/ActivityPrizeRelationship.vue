@@ -55,7 +55,7 @@
         <h3>奖品列表</h3>
         <ul>
           <li v-for="prize in selectedActivity.prizes" :key="prize.prizeId">
-            {{ prize.prize.prizeName }} | 概率: {{ prize.probability }}% | 库存: {{ prize.quantity }}
+            {{ prize.prizeName }} | 概率: {{ prize.probability }}% | 库存: {{ prize.quantity }}
           </li>
         </ul>
       </div>
@@ -84,13 +84,20 @@
             <input type="date" v-model="formData.endDate" required />
           </div>
           <div class="form-group">
+            <label>可用奖品:</label>
+            <select v-model="selectedPrizeId">
+              <option v-for="prize in availablePrizes" :key="prize.prizeId" :value="prize.prizeId">
+                {{ prize.prizeName }}
+              </option>
+            </select>
+            <button type="button" @click="addPrize">添加奖品</button>
+          </div>
+          <div class="form-group">
             <label>奖品列表:</label>
             <div v-for="(prize, index) in formData.prizes" :key="index" class="prize-item">
-              <select v-model="prize.prize.prizeId" required>
-                <option v-for="availablePrize in availablePrizes" :key="availablePrize.prizeId" :value="availablePrize.prizeId">
-                  {{ availablePrize.prizeName }}
-                </option>
-              </select>
+              <label>奖品名称:</label>
+              <span>{{ prize.prizeName }}</span>
+              <label> 概率:</label>
               <input
                   type="number"
                   v-model="prize.probability"
@@ -99,11 +106,18 @@
                   max="1"
                   step="0.00001"
                   required
+                  style="width: 80px"
               />
-              <input type="number" v-model="prize.quantity" placeholder="库存" required />
+              <label> 库存:</label>
+              <input
+                  type="number"
+                  v-model="prize.quantity"
+                  placeholder="库存"
+                  required
+                  style="width: 80px"
+              />
               <button type="button" @click="removePrize(index)">删除</button>
             </div>
-            <button type="button" @click="addPrize">添加奖品</button>
           </div>
           <button type="submit" class="btn btn-submit">{{ editingActivity ? '更新' : '创建' }}</button>
         </form>
@@ -121,6 +135,7 @@ export default {
     return {
       activities: [],
       availablePrizes: [], // 可用奖品列表
+      selectedPrizeId: null, // 用户选择的奖品ID
       selectedActivity: null,
       showCreateForm: false,
       editingActivity: null,
@@ -153,9 +168,24 @@ export default {
     }
   },
   methods: {
+    async fetchAvailablePrizes() {
+      try {
+        const response = await axios.get("/api/prize/available");
+        this.availablePrizes = response.data;
+      } catch (error) {
+        console.error("加载可用奖品列表失败：", error);
+      }
+    },
     addPrize() {
-      // 添加一个新的奖品选择项
-      this.formData.prizes.push({ prizeId: null, probability: 0, quantity: 0 });
+      const selectedPrize = this.availablePrizes.find(prize => prize.prizeId === this.selectedPrizeId);
+      if (selectedPrize) {
+        this.formData.prizes.push({
+          prizeId: selectedPrize.prizeId,
+          prizeName: selectedPrize.prizeName,
+          probability: 0,
+          quantity: 0
+        });
+      }
     },
     removePrize(index) {
       this.formData.prizes.splice(index, 1);
@@ -178,7 +208,6 @@ export default {
     },
     async editActivity(activity) {
       try {
-        // 调用后端接口获取活动详情（包括奖品列表）
         const response = await axios.get(`/api/activity/${activity.activityId}/details`);
         const activityDetails = response.data;
 
@@ -188,23 +217,13 @@ export default {
           activityDesc: activityDetails.activityDesc,
           startDate: moment(activityDetails.startDate).format("YYYY-MM-DD"),
           endDate: moment(activityDetails.endDate).format("YYYY-MM-DD"),
-          prizes: activityDetails.prizes || [] // 如果没有奖品，初始化为空数组
+          prizes: activityDetails.prizes || []
         };
 
-        // 加载可用奖品列表
         await this.fetchAvailablePrizes();
-
         this.showCreateForm = true;
       } catch (error) {
         console.error("编辑活动时加载活动详情失败：", error);
-      }
-    },
-    async fetchAvailablePrizes() {
-      try {
-        const response = await axios.get("/api/prize/available");
-        this.availablePrizes = response.data;
-      } catch (error) {
-        console.error("加载可用奖品列表失败：", error);
       }
     },
     async deleteActivity(activityId) {
@@ -226,18 +245,15 @@ export default {
           startDate: this.formData.startDate,
           endDate: this.formData.endDate,
           prizes: this.formData.prizes.map(item => ({
-            prizeId: item.prize.prizeId,
-            prizeName: item.prize.prizeName,
+            prizeId: item.prizeId,
             probability: item.probability,
             quantity: item.quantity
           }))
         };
 
         if (this.editingActivity) {
-          // 编辑模式
           await axios.put(`/api/activity-prize-relationship/${this.editingActivity.activityId}`, payload);
         } else {
-          // 创建模式
           const response = await axios.post("/api/activity-prize-relationship/create", payload);
           this.activities.push(response.data);
         }
@@ -254,7 +270,8 @@ export default {
         activityName: "",
         activityDesc: "",
         startDate: "",
-        endDate: ""
+        endDate: "",
+        prizes: []
       };
     },
     formatDate(date) {
@@ -263,6 +280,7 @@ export default {
   },
   mounted() {
     this.fetchActivities();
+    this.fetchAvailablePrizes();
   }
 };
 </script>

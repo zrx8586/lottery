@@ -17,6 +17,5 @@ public class ActivityDetailDTO {
     private String activityDesc;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private List<LotteryActivityPrize> prizes;
-
+    private List<ActivityPrizeDTO> prizes;
 }

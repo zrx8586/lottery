@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.LotteryPrize;
+import com.example.demo.dao.model.LotteryPrize;
 import com.example.demo.service.LotteryPrizeService;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;

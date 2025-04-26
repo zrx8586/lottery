@@ -1,6 +1,6 @@
-package com.example.demo.repository;
+package com.example.demo.dao.repository;
 
-import com.example.demo.model.IdempotentRecord;
+import com.example.demo.dao.model.IdempotentRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

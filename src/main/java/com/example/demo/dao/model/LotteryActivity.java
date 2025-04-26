@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,13 +8,14 @@ import java.time.LocalDateTime;
  * @author long_w
  */
 @Entity
-@Table(name = "season")
+@Table(name = "lottery_activity")
 @Data
-public class Season {
+public class LotteryActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seasonId;
-    private String seasonName;
+    private Long activityId;
+    private String activityName;
+    private String activityDesc;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 

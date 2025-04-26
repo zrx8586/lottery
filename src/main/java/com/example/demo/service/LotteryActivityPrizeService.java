@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.PrizeUpdateRequest;
-import com.example.demo.model.LotteryActivityPrize;
-import com.example.demo.repository.LotteryActivityPrizeRepository;
+import com.example.demo.dao.model.LotteryActivityPrize;
+import com.example.demo.dao.repository.LotteryActivityPrizeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

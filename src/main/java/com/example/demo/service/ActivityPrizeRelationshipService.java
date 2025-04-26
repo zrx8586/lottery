@@ -2,12 +2,12 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
-import com.example.demo.model.LotteryActivity;
-import com.example.demo.model.LotteryActivityPrize;
-import com.example.demo.model.LotteryPrize;
-import com.example.demo.repository.LotteryActivityPrizeRepository;
-import com.example.demo.repository.LotteryActivityRepository;
-import com.example.demo.repository.LotteryPrizeRepository;
+import com.example.demo.dao.model.LotteryActivity;
+import com.example.demo.dao.model.LotteryActivityPrize;
+import com.example.demo.dao.model.LotteryPrize;
+import com.example.demo.dao.repository.LotteryActivityPrizeRepository;
+import com.example.demo.dao.repository.LotteryActivityRepository;
+import com.example.demo.dao.repository.LotteryPrizeRepository;
 import com.example.demo.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -4,9 +4,9 @@ import com.example.demo.dto.ActivityDetailDTO;
 import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.dto.LotteryActivityUserDTO;
-import com.example.demo.model.LotteryActivity;
-import com.example.demo.model.LotteryActivityPrize;
-import com.example.demo.model.LotteryActivityUser;
+import com.example.demo.dao.model.LotteryActivity;
+import com.example.demo.dao.model.LotteryActivityPrize;
+import com.example.demo.dao.model.LotteryActivityUser;
 
 import java.util.List;
 

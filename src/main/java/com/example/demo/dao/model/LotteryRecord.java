@@ -1,27 +1,30 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
-import lombok.Data;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "season_leaderboard_record")
 @Data
-public class SeasonLeaderboardRecord {
+public class LotteryRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recordId;
 
     @ManyToOne
-    @JoinColumn(name = "season_id")
-    private Season season;
+    @JoinColumn(name = "user_id", nullable = false) // 外键列名为 user_id
+    private LotteryUser lotteryUser;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private GameUser user;
+    @JoinColumn(name = "activity_id")
+    private LotteryActivity lotteryActivity;
 
-    private double score;
+    @ManyToOne
+    @JoinColumn(name = "prize_id")
+    private LotteryPrize lotteryPrize;
+
+    private LocalDateTime wonAt = LocalDateTime.now();
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

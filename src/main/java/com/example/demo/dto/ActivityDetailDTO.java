@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.LotteryActivityPrize;
 import lombok.Data;
 
 import java.time.LocalDateTime;

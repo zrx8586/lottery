@@ -1,7 +1,7 @@
 package com.example.demo.job;
 
-import com.example.demo.model.SeasonLeaderboardRecord;
-import com.example.demo.repository.SeasonLeaderboardRecordRepository;
+import com.example.demo.dao.model.SeasonLeaderboardRecord;
+import com.example.demo.dao.repository.SeasonLeaderboardRecordRepository;
 import com.example.demo.service.LeaderboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

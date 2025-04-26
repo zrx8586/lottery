@@ -1,32 +1,27 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * @author long_w
- */
 @Entity
-@Table(name = "lottery_activity_prize")
+@Table(name = "lottery_activity_user")
 @Data
-public class LotteryActivityPrize {
+public class LotteryActivityUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long activityPrizeId;
+    private Long activityUserId;
 
     @ManyToOne
     @JoinColumn(name = "activity_id")
     private LotteryActivity activity;
 
     @ManyToOne
-    @JoinColumn(name = "prize_id")
-    private LotteryPrize prize;
+    @JoinColumn(name = "user_id")
+    private LotteryUser user;
 
-    private double probability;
-
-    private int quantity;
+    private LocalDateTime participationDate;
+    private int lotteryAttempts; // 可用抽奖次数
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

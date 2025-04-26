@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.LotteryUser;
+import com.example.demo.dao.model.LotteryUser;
 import com.example.demo.service.UserService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

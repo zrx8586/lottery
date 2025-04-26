@@ -1,18 +1,27 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "lottery_user")
+@Table(name = "season_leaderboard_record")
 @Data
-public class LotteryUser {
+public class SeasonLeaderboardRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    private String username;
-    private String email;
+    private Long recordId;
+
+    @ManyToOne
+    @JoinColumn(name = "season_id")
+    private Season season;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private GameUser user;
+
+    private double score;
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

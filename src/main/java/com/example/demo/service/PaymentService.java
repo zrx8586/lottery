@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.common.PaymentStatusEnum;
 import com.example.demo.dto.request.ProcessPaymentRequest;
-import com.example.demo.model.IdempotentRecord;
-import com.example.demo.repository.IdempotentRecordRepository;
+import com.example.demo.dao.model.IdempotentRecord;
+import com.example.demo.dao.repository.IdempotentRecordRepository;
 import com.example.demo.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

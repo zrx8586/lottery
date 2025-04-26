@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.dao.model.*;
+import com.example.demo.dao.repository.*;
 import com.example.demo.dto.response.LotteryDrawResponse;
 import com.example.demo.dto.response.LotteryRecordResponse;
 import com.example.demo.exception.BusinessException;
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
 import com.example.demo.util.JsonUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +30,7 @@ public class LotteryService {
     private static final Logger logger = LoggerFactory.getLogger(LotteryService.class);
 
     @Resource
-    private LotteryUserRepository userRepository;
+    private LotteryUserRepository lotteryUserRepository;
 
     @Resource
     private LotteryActivityUserRepository activityUserRepository;
@@ -105,7 +105,7 @@ public class LotteryService {
     }
 
     private LotteryUser validateUser(String username) {
-        return userRepository.findByUsername(username)
+        return lotteryUserRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
     }
 

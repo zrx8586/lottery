@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
 import lombok.Data;
 import jakarta.persistence.*;

@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.dao.model.*;
+import com.example.demo.dao.repository.LotteryActivityPrizeRepository;
+import com.example.demo.dao.repository.LotteryActivityUserRepository;
+import com.example.demo.dao.repository.LotteryRecordRepository;
 import com.example.demo.util.JsonUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;

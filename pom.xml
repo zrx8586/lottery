@@ -46,6 +46,32 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- JWT Start -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- JWT End -->
+
 
 		<!-- Spring Boot Starter Web -->
 		<dependency>
@@ -137,44 +163,44 @@
 			</plugin>
 
 			<!-- 前端构建插件 -->
-<!--			<plugin>-->
-<!--				<groupId>com.github.eirslett</groupId>-->
-<!--				<artifactId>frontend-maven-plugin</artifactId>-->
-<!--				<version>1.12.0</version>-->
-<!--				<executions>-->
-<!--					&lt;!&ndash; 安装 Node.js 和 npm &ndash;&gt;-->
-<!--					<execution>-->
-<!--						<id>install-node-and-npm</id>-->
-<!--						<goals>-->
-<!--							<goal>install-node-and-npm</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<nodeVersion>v16.20.0</nodeVersion>-->
-<!--							<npmVersion>8.19.4</npmVersion>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--					&lt;!&ndash; 安装前端依赖 &ndash;&gt;-->
-<!--					<execution>-->
-<!--						<id>npm-install</id>-->
-<!--						<goals>-->
-<!--							<goal>npm</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<arguments>install</arguments>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--					&lt;!&ndash; 构建前端项目 &ndash;&gt;-->
-<!--					<execution>-->
-<!--						<id>npm-build</id>-->
-<!--						<goals>-->
-<!--							<goal>npm</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<arguments>run build</arguments>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<!--			<plugin>-->
+			<!--				<groupId>com.github.eirslett</groupId>-->
+			<!--				<artifactId>frontend-maven-plugin</artifactId>-->
+			<!--				<version>1.12.0</version>-->
+			<!--				<executions>-->
+			<!--					&lt;!&ndash; 安装 Node.js 和 npm &ndash;&gt;-->
+			<!--					<execution>-->
+			<!--						<id>install-node-and-npm</id>-->
+			<!--						<goals>-->
+			<!--							<goal>install-node-and-npm</goal>-->
+			<!--						</goals>-->
+			<!--						<configuration>-->
+			<!--							<nodeVersion>v16.20.0</nodeVersion>-->
+			<!--							<npmVersion>8.19.4</npmVersion>-->
+			<!--						</configuration>-->
+			<!--					</execution>-->
+			<!--					&lt;!&ndash; 安装前端依赖 &ndash;&gt;-->
+			<!--					<execution>-->
+			<!--						<id>npm-install</id>-->
+			<!--						<goals>-->
+			<!--							<goal>npm</goal>-->
+			<!--						</goals>-->
+			<!--						<configuration>-->
+			<!--							<arguments>install</arguments>-->
+			<!--						</configuration>-->
+			<!--					</execution>-->
+			<!--					&lt;!&ndash; 构建前端项目 &ndash;&gt;-->
+			<!--					<execution>-->
+			<!--						<id>npm-build</id>-->
+			<!--						<goals>-->
+			<!--							<goal>npm</goal>-->
+			<!--						</goals>-->
+			<!--						<configuration>-->
+			<!--							<arguments>run build</arguments>-->
+			<!--						</configuration>-->
+			<!--					</execution>-->
+			<!--				</executions>-->
+			<!--			</plugin>-->
 		</plugins>
 	</build>
 </project>

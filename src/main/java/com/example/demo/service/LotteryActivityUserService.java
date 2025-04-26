@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.LotteryActivityUserDTO;
-import com.example.demo.model.LotteryActivityUser;
-import com.example.demo.repository.LotteryActivityUserRepository;
+import com.example.demo.dao.model.LotteryActivityUser;
+import com.example.demo.dao.repository.LotteryActivityUserRepository;
 import com.example.demo.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

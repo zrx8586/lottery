@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.PrizeUpdateRequest;
-import com.example.demo.model.LotteryActivityPrize;
+import com.example.demo.dao.model.LotteryActivityPrize;
 import com.example.demo.service.LotteryActivityPrizeService;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;

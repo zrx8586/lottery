@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LotteryActivityUserDTO;
-import com.example.demo.model.LotteryActivityUser;
+import com.example.demo.dao.model.LotteryActivityUser;
 import com.example.demo.service.LotteryActivityUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

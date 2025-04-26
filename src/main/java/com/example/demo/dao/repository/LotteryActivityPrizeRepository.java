@@ -1,6 +1,6 @@
-package com.example.demo.repository;
+package com.example.demo.dao.repository;
 
-import com.example.demo.model.LotteryActivityPrize;
+import com.example.demo.dao.model.LotteryActivityPrize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.model.LotteryPrize;
-import com.example.demo.repository.LotteryPrizeRepository;
+import com.example.demo.dao.model.LotteryPrize;
+import com.example.demo.dao.repository.LotteryPrizeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 

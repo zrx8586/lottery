@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.dao.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,25 +6,21 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 @Data
-public class LotteryRecord {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long recordId;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // 外键列名为 user_id
-    private LotteryUser lotteryUser;
+    @Column(nullable = false, unique = true)
+    private String username;
 
-    @ManyToOne
-    @JoinColumn(name = "activity_id")
-    private LotteryActivity lotteryActivity;
+    @Column(nullable = false)
+    private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "prize_id")
-    private LotteryPrize lotteryPrize;
-
-    private LocalDateTime wonAt = LocalDateTime.now();
+    private String role;
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

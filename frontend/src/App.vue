@@ -53,9 +53,26 @@ export default {
         this.logout();
       }
     },
-    logout() {
-      localStorage.removeItem("token"); // 清除本地存储的Token
-      this.$router.push("/login"); // 跳转到登录页面
+    async logout() {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          // 调用后端登出接口
+          await axios.post(
+              "/api/auth/logout",
+              {},
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+          );
+        }
+      } catch (error) {
+        console.error("登出失败", error);
+      } finally {
+        // 清除本地存储的 Token 并跳转到登录页面
+        localStorage.removeItem("token");
+        this.$router.push("/login");
+      }
     },
   },
 };
@@ -101,6 +118,13 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.header .user-info .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
 }
 
 .header .user-info button {

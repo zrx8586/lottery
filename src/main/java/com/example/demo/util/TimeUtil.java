@@ -17,10 +17,9 @@ public class TimeUtil {
 
     public static String formatDate(LocalDateTime localDateTime, String dateFormat) {
         // 定义格式化器
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 
         // 转换为字符串
-        String formattedDateTime = localDateTime.format(formatter);
-        return formattedDateTime;
+        return localDateTime.format(formatter);
     }
 }

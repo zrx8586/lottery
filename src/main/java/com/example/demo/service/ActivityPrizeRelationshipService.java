@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ActivityDetailDTO;
 import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryActivity;
@@ -48,16 +47,7 @@ public class ActivityPrizeRelationshipService {
         // 构建 DTO
         ActivityPrizeRelationshipDTO dto = CommonUtil.buildActivityPrizeRelationshipDTO(activity);
 
-        // 将奖品信息转换为 PrizeDTO 列表
-        List<ActivityPrizeDTO> prizeDTOs = prizes.stream().map(prize -> {
-            ActivityPrizeDTO activityPrizeDTO = new ActivityPrizeDTO();
-            activityPrizeDTO.setPrizeName(prize.getPrize().getPrizeName());
-            activityPrizeDTO.setProbability(prize.getProbability());
-            activityPrizeDTO.setQuantity(prize.getQuantity());
-            return activityPrizeDTO;
-        }).toList();
-
-        dto.setPrizes(prizeDTOs);
+        dto.setPrizes(CommonUtil.getActivityPrizeDTOS(prizes));
 
         return dto;
     }

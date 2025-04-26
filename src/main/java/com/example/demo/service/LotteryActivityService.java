@@ -21,9 +21,6 @@ public class LotteryActivityService {
     @Resource
     private LotteryActivityRepository activityRepository;
 
-    @Resource
-    private LotteryActivityPrizeService prizeService;
-
     // 查询所有活动
     public List<LotteryActivity> getAllActivities() {
         return activityRepository.findAll();
@@ -39,7 +36,7 @@ public class LotteryActivityService {
         return activityRepository.save(activity);
     }
 
-
+    // 更新活动信息
     public void deleteActivity(Long activityId) {
         activityRepository.deleteById(activityId);
     }

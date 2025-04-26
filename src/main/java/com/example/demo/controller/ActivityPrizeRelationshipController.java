@@ -9,6 +9,7 @@ import com.example.demo.service.ActivityPrizeRelationshipService;
 import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
 import com.example.demo.util.CommonUtil;
+import com.example.demo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +29,11 @@ public class ActivityPrizeRelationshipController {
     @Autowired
     private LotteryActivityPrizeService activityPrizeService;
 
-    // 查询所有活动
+    // 查询所有活动奖品关系
     @GetMapping("/all")
-    public ResponseEntity<List<LotteryActivity>> getAllActivities() {
-        List<LotteryActivity> activities = activityService.getAllActivities();
-        return ResponseEntity.ok(activities);
+    public ResponseEntity<List<ActivityPrizeRelationshipDTO>> getAllActivityPrizeRelationships() {
+        List<ActivityPrizeRelationshipDTO> allActivityPrizeRelationships = activityPrizeRelationshipService.getAll();
+        return ResponseEntity.ok(allActivityPrizeRelationships);
     }
 
     // 根据活动 ID 查询活动详情（包含奖品信息）
@@ -73,13 +74,13 @@ public class ActivityPrizeRelationshipController {
 
         List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
 
-        List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);;
+        List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);
+        ;
 
         ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
 
         return ResponseEntity.ok(activityDetailDTO);
     }
-
 
 
     @PostMapping("/create")

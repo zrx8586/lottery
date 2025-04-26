@@ -16,7 +16,7 @@ public class ActivityPrizeRelationshipDTO {
     private String startDate; // 开始时间
     private String endDate; // 结束时间
 
-    private List<PrizeDTO> prizes; // 奖品列表
+    private List<ActivityPrizeDTO> prizes; // 奖品列表
 
 
 }

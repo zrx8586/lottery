@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
-import com.example.demo.dto.PrizeDTO;
 import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 import com.example.demo.model.LotteryPrize;
 import com.example.demo.repository.LotteryActivityPrizeRepository;
 import com.example.demo.repository.LotteryActivityRepository;
 import com.example.demo.repository.LotteryPrizeRepository;
-import com.example.demo.util.TimeUtil;
+import com.example.demo.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,26 +45,23 @@ public class ActivityPrizeRelationshipService {
         List<LotteryActivityPrize> prizes = activityPrizeRepository.findByActivityId(activityId);
 
         // 构建 DTO
-        ActivityPrizeRelationshipDTO dto = new ActivityPrizeRelationshipDTO();
-        dto.setActivityId(activity.getActivityId());
-        dto.setActivityName(activity.getActivityName());
-        dto.setActivityDesc(activity.getActivityDesc());
-        dto.setStartDate(TimeUtil.formatDate(activity.getStartDate(), TimeUtil.DATE_FORMAT_SHORT));
-        dto.setEndDate(TimeUtil.formatDate(activity.getEndDate(), TimeUtil.DATE_FORMAT_SHORT));
+        ActivityPrizeRelationshipDTO dto = CommonUtil.buildActivityPrizeRelationshipDTO(activity);
 
         // 将奖品信息转换为 PrizeDTO 列表
-        List<PrizeDTO> prizeDTOs = prizes.stream().map(prize -> {
-            PrizeDTO prizeDTO = new PrizeDTO();
-            prizeDTO.setPrizeName(prize.getPrize().getPrizeName());
-            prizeDTO.setProbability(prize.getProbability());
-            prizeDTO.setQuantity(prize.getQuantity());
-            return prizeDTO;
+        List<ActivityPrizeDTO> prizeDTOs = prizes.stream().map(prize -> {
+            ActivityPrizeDTO activityPrizeDTO = new ActivityPrizeDTO();
+            activityPrizeDTO.setPrizeName(prize.getPrize().getPrizeName());
+            activityPrizeDTO.setProbability(prize.getProbability());
+            activityPrizeDTO.setQuantity(prize.getQuantity());
+            return activityPrizeDTO;
         }).toList();
 
         dto.setPrizes(prizeDTOs);
 
         return dto;
     }
+
+
 
     public void createActivityPrizeRelationship(ActivityPrizeRelationshipDTO relationshipDTO) {
         // 查询活动对象
@@ -75,7 +72,7 @@ public class ActivityPrizeRelationshipService {
         LotteryActivity activity = activityOptional.get();
 
         // 遍历奖品列表，创建绑定关系
-        for (PrizeDTO prizeDTO : relationshipDTO.getPrizes()) {
+        for (ActivityPrizeDTO prizeDTO : relationshipDTO.getPrizes()) {
             Optional<LotteryPrize> prizeOptional = prizeRepository.findById(prizeDTO.getPrizeId());
             if (prizeOptional.isEmpty()) {
                 throw new IllegalArgumentException("奖品不存在，ID: " + prizeDTO.getPrizeId());
@@ -90,5 +87,28 @@ public class ActivityPrizeRelationshipService {
             activityPrize.setQuantity(prizeDTO.getQuantity());
             activityPrizeRepository.save(activityPrize);
         }
+    }
+
+    public List<ActivityPrizeRelationshipDTO> getAll() {
+        // 查询所有活动奖品关系
+        List<LotteryActivityPrize> activityPrizes = activityPrizeRepository.findAll();
+
+        // 遍历活动奖品关系列表，构建 DTO
+        return activityPrizes.stream().map(activityPrize -> {
+            // 获取活动信息
+            LotteryActivity activity = activityPrize.getActivity();
+
+            // 构建活动 DTO
+            ActivityPrizeRelationshipDTO dto = CommonUtil.buildActivityPrizeRelationshipDTO(activity);
+
+            // 查询当前活动的所有奖品信息
+            List<LotteryActivityPrize> prizes = activityPrizeRepository.findByActivityId(activity.getActivityId());
+
+            // 将奖品信息转换为 PrizeDTO 列表
+            List<ActivityPrizeDTO> activityPrizeDTOS = CommonUtil.getActivityPrizeDTOS(prizes);
+
+            dto.setPrizes(activityPrizeDTOS);
+            return dto;
+        }).distinct().toList(); // 去重，确保每个活动只返回一次
     }
 }

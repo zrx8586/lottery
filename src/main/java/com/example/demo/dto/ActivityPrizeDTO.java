@@ -8,8 +8,8 @@ import lombok.Data;
  */
 @Data
 public class ActivityPrizeDTO {
-    private Long prizeId;
-    private String prizeName;
-    private double probability;
-    private int quantity;
+    private Long prizeId; // 奖品 ID
+    private String prizeName; // 奖品名称
+    private double probability; // 奖品概率
+    private int quantity; // 奖品库存
 }

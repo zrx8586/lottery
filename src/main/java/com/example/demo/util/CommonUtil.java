@@ -2,6 +2,7 @@ package com.example.demo.util;
 
 import com.example.demo.dto.ActivityDetailDTO;
 import com.example.demo.dto.ActivityPrizeDTO;
+import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryActivity;
 import com.example.demo.model.LotteryActivityPrize;
 
@@ -36,4 +37,13 @@ public class CommonUtil {
         return activityDetailDTO;
     }
 
+    public static ActivityPrizeRelationshipDTO buildActivityPrizeRelationshipDTO(LotteryActivity activity) {
+        ActivityPrizeRelationshipDTO dto = new ActivityPrizeRelationshipDTO();
+        dto.setActivityId(activity.getActivityId());
+        dto.setActivityName(activity.getActivityName());
+        dto.setActivityDesc(activity.getActivityDesc());
+        dto.setStartDate(TimeUtil.formatDate(activity.getStartDate(), TimeUtil.DATE_FORMAT_SHORT));
+        dto.setEndDate(TimeUtil.formatDate(activity.getEndDate(), TimeUtil.DATE_FORMAT_SHORT));
+        return dto;
+    }
 }

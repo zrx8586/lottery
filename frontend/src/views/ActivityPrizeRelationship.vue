@@ -192,7 +192,7 @@ export default {
     },
     async fetchActivities() {
       try {
-        const response = await axios.get("/api/activity/all");
+        const response = await axios.get("/api/activity-prize-relationship/all");
         this.activities = response.data;
       } catch (error) {
         console.error("获取活动列表失败：", error);

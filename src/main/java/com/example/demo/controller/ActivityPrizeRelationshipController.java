@@ -95,4 +95,15 @@ public class ActivityPrizeRelationshipController {
         }
     }
 
+    @DeleteMapping("/relationship/{activityPrizeId}")
+    public ResponseEntity<String> deleteActivityPrizeRelationship(@PathVariable Long activityPrizeId) {
+        try {
+            activityPrizeService.deletePrizeById(activityPrizeId);
+            return ResponseEntity.ok("活动奖品关系删除成功");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("删除活动奖品关系失败: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("删除活动奖品关系失败: " + e.getMessage());
+        }
+    }
 }

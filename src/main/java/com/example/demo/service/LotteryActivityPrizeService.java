@@ -72,4 +72,11 @@ public class LotteryActivityPrizeService {
     public void deletePrizesByActivityId(Long activityId) {
         activityPrizeRepository.deleteByActivityId(activityId);
     }
+
+    public void deletePrizeById(Long activityPrizeId) {
+        if (!activityPrizeRepository.existsById(activityPrizeId)) {
+            throw new IllegalArgumentException("活动奖品关系不存在，ID: " + activityPrizeId);
+        }
+        activityPrizeRepository.deleteById(activityPrizeId);
+    }
 }

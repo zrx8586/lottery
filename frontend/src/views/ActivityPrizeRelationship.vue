@@ -259,6 +259,7 @@ export default {
         }
 
         this.closeForm();
+        this.selectedPrizeId = null; // 重置下拉框选择
       } catch (error) {
         console.error("保存活动奖品关系失败：", error);
       }

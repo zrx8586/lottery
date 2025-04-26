@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ActivityDetailDTO;
 import com.example.demo.dto.ActivityPrizeDTO;
 import com.example.demo.dto.ActivityPrizeRelationshipDTO;
 import com.example.demo.model.LotteryActivity;
@@ -28,7 +29,7 @@ public class ActivityPrizeRelationshipService {
     private LotteryPrizeRepository prizeRepository;
 
     /**
-     * 根据活动 ID 获取活动及其奖品信息
+     * 获取活动及其奖品绑定关系信息
      * @param activityId 活动 ID
      * @return 活动奖品关系 DTO
      */
@@ -111,4 +112,5 @@ public class ActivityPrizeRelationshipService {
             return dto;
         }).distinct().toList(); // 去重，确保每个活动只返回一次
     }
+
 }

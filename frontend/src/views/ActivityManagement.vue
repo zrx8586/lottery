@@ -119,7 +119,7 @@ export default {
   methods: {
     async fetchActivities() {
       try {
-        const response = await axios.get("/api/activity-prize-relationship/all");
+        const response = await axios.get("/api/activity/all");
         this.activities = response.data;
       } catch (error) {
         console.error("加载活动列表失败：", error);

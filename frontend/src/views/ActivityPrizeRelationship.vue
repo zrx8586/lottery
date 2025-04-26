@@ -200,7 +200,7 @@ export default {
     },
     async viewActivity(activityId) {
       try {
-        const response = await axios.get(`/api/activity/${activityId}`);
+        const response = await axios.get(`/api/activity-prize-relationship/${activityId}`);
         this.selectedActivity = response.data;
       } catch (error) {
         console.error("获取活动详情失败：", error);
@@ -208,7 +208,7 @@ export default {
     },
     async editActivity(activity) {
       try {
-        const response = await axios.get(`/api/activity/${activity.activityId}/details`);
+        const response = await axios.get(`/api/activity-prize-relationship/${activity.activityId}/details`);
         const activityDetails = response.data;
 
         this.editingActivity = activity;
@@ -229,7 +229,7 @@ export default {
     async deleteActivity(activityId) {
       if (confirm("确定要删除这个活动吗？")) {
         try {
-          await axios.delete(`/api/activity/${activityId}`);
+          await axios.delete(`/api/activity-prize-relationship/${activityId}`);
           this.activities = this.activities.filter(a => a.activityId !== activityId);
         } catch (error) {
           console.error("删除活动失败：", error);

@@ -1,11 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ActivityDetailDTO;
 import com.example.demo.model.LotteryActivity;
-import com.example.demo.model.LotteryActivityPrize;
-import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
-import com.example.demo.util.CommonUtil;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +18,21 @@ public class LotteryActivityController {
     @Resource
     private LotteryActivityService activityService;
 
-    @Resource
-    private LotteryActivityPrizeService prizeService;
+    /**
+     * @return 所有活动列表
+     */
+    // 查询所有活动
+    @GetMapping("/all")
+    public ResponseEntity<List<LotteryActivity>> getAllActivities() {
+        List<LotteryActivity> activities = activityService.getAllActivities();
+        return ResponseEntity.ok(activities);
+    }
 
+    /**
+     * 创建活动
+     * @param activity 活动信息
+     * @return 创建的活动信息
+     */
     // 创建新活动
     @PostMapping("/create")
     public ResponseEntity<LotteryActivity> createActivity(@RequestBody LotteryActivity activity) {
@@ -32,6 +40,12 @@ public class LotteryActivityController {
         return ResponseEntity.ok(createdActivity);
     }
 
+    /**
+     * 更新活动信息
+     * @param activityId 活动ID
+     * @param updatedActivity 更新的活动信息
+     * @return 更新后的活动信息
+     */
     // 更新活动
     @PutMapping("/{activityId}")
     public ResponseEntity<LotteryActivity> updateActivity(
@@ -44,45 +58,12 @@ public class LotteryActivityController {
         return ResponseEntity.ok(savedActivity);
     }
 
-    // 根据活动 ID 查询活动详情（包含奖品信息）
-    @GetMapping("/{activityId}")
-    public ResponseEntity<ActivityDetailDTO> getActivityById(@PathVariable Long activityId) {
-        ActivityDetailDTO activityDetailDTO = activityService.getActivityWithPrizes(activityId);
-        return ResponseEntity.ok(activityDetailDTO);
-    }
-
-    // 查询所有活动
-    @GetMapping("/all")
-    public ResponseEntity<List<LotteryActivity>> getAllActivities() {
-        List<LotteryActivity> activities = activityService.getAllActivities();
-        return ResponseEntity.ok(activities);
-    }
 
     /**
-     * 根据活动 ID 查询活动详情和奖品信息
-     *
-     * @param activityId 活动 ID
-     * @return 活动详情 DTO
+     * 删除活动
+     * @param activityId 活动ID
+     * @return 删除结果
      */
-    @GetMapping("/{activityId}/details")
-    public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
-        LotteryActivity activity = activityService.getActivityById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-
-        List<LotteryActivityPrize> prizes = prizeService.getPrizesByActivityId(activityId);
-
-//        ActivityDetailDTO activityDetailDTO = new ActivityDetailDTO();
-//        activityDetailDTO.setActivityId(activity.getActivityId());
-//        activityDetailDTO.setActivityName(activity.getActivityName());
-//        activityDetailDTO.setActivityDesc(activity.getActivityDesc());
-//        activityDetailDTO.setStartDate(activity.getStartDate());
-//        activityDetailDTO.setEndDate(activity.getEndDate());
-//        activityDetailDTO.setPrizes(CommonUtil.getActivityPrizeDTOS(prizes));
-        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, CommonUtil.getActivityPrizeDTOS(prizes));
-
-        return ResponseEntity.ok(activityDetailDTO);
-    }
-
     @DeleteMapping("/{activityId}")
     public ResponseEntity<String> deleteActivity(@PathVariable Long activityId) {
         activityService.getActivityById(activityId)

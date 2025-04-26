@@ -9,7 +9,6 @@ import com.example.demo.service.ActivityPrizeRelationshipService;
 import com.example.demo.service.LotteryActivityPrizeService;
 import com.example.demo.service.LotteryActivityService;
 import com.example.demo.util.CommonUtil;
-import com.example.demo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -21,7 +21,6 @@ public class TimeUtil {
 
         // 转换为字符串
         String formattedDateTime = localDateTime.format(formatter);
-        System.out.println("格式化后的时间：" + formattedDateTime);
         return formattedDateTime;
     }
 }

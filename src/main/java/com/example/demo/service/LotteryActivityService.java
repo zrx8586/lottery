@@ -40,21 +40,6 @@ public class LotteryActivityService {
     }
 
 
-    // 获取活动及其奖品信息
-    public ActivityDetailDTO getActivityWithPrizes(Long activityId) {
-        LotteryActivity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-
-        List<LotteryActivityPrize> prizes = prizeService.getPrizesByActivityId(activityId);
-
-        // 将 LotteryActivityPrize 转换为 ActivityPrizeDTO
-        List<ActivityPrizeDTO> prizeDTOs =  CommonUtil.getActivityPrizeDTOS(prizes);
-
-        return CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
-    }
-
-
-
     public void deleteActivity(Long activityId) {
         activityRepository.deleteById(activityId);
     }

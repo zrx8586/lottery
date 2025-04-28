@@ -26,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -37,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7); // 去掉 "Bearer " 前缀
             try {
                 // 检查 Token 是否在黑名单中
-                if (tokenBlacklistService.isBlacklisted(JwtUtil.getJti(token))) {
+                if (tokenBlacklistService.isBlacklisted(jwtUtil.getJti(token))) {
                     logger.warn("Token is blacklisted: {}", token);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
@@ -45,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 // 验证并解析 Token
-                String username = JwtUtil.validateToken(token);
+                String username = jwtUtil.validateToken(token);
                 // 设置请求属性
                 request.setAttribute("username", username);
 

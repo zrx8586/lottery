@@ -24,6 +24,9 @@ public class AuthController {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
         String username = request.get("username");
@@ -54,14 +57,14 @@ public class AuthController {
             return ResponseEntity.badRequest().body("密码错误");
         }
 
-        String token = JwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getUsername());
         return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
         String cleanedToken = token.replace("Bearer ", "");
-        String jti = JwtUtil.getJti(cleanedToken); // 提取 jti
+        String jti = jwtUtil.getJti(cleanedToken); // 提取 jti
         long expiration = JwtUtil.getExpiration(cleanedToken); // 获取剩余过期时间
         tokenBlacklistService.addToBlacklist(jti, expiration); // 加入黑名单
         return ResponseEntity.ok("登出成功");
@@ -71,7 +74,7 @@ public class AuthController {
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
         try {
             // 去掉 "Bearer " 前缀并验证 Token
-            String username = JwtUtil.validateToken(token.replace("Bearer ", ""));
+            String username = jwtUtil.validateToken(token.replace("Bearer ", ""));
             return ResponseEntity.ok(Map.of("username", username));
         } catch (Exception e) {
             return ResponseEntity.status(401).body("无效的Token");

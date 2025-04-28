@@ -1,6 +1,5 @@
 package com.example.demo.filter;
 
-import com.example.demo.service.LeaderboardService;
 import com.example.demo.service.TokenBlacklistService;
 import com.example.demo.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -63,8 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         } else {
-            // Token 缺失或格式错误，返回 401
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             // 记录日志
             logger.warn("Authorization header is missing or invalid");
         }

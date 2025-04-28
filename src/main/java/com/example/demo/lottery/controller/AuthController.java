@@ -65,7 +65,7 @@ public class AuthController {
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
         String cleanedToken = token.replace("Bearer ", "");
         String jti = jwtUtil.getJti(cleanedToken); // 提取 jti
-        long expiration = JwtUtil.getExpiration(cleanedToken); // 获取剩余过期时间
+        long expiration = jwtUtil.getExpiration(cleanedToken); // 获取剩余过期时间
         tokenBlacklistService.addToBlacklist(jti, expiration); // 加入黑名单
         return ResponseEntity.ok("登出成功");
     }
@@ -78,6 +78,17 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("username", username));
         } catch (Exception e) {
             return ResponseEntity.status(401).body("无效的Token");
+        }
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+        try {
+            // Remove "Bearer " prefix and validate the token
+            String username = jwtUtil.validateToken(token.replace("Bearer ", ""));
+            return ResponseEntity.ok(Map.of("username", username));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid token");
         }
     }
 }

@@ -4,13 +4,15 @@ import ActivityManagement from "../views/ActivityManagement.vue";
 import PrizeManagement from "@/views/PrizeManagement.vue";
 import ActivityPrizeRelationship from "../views/ActivityPrizeRelationship.vue";
 import CacheManagement from "../views/CacheManagement.vue";
+import axios from "axios";
 
 const routes = [
-    { path: "/login", component: Login }, // 登录页面路由
-    { path: "/activity", component: ActivityManagement }, // 活动管理页面路由
-    { path: "/prizes", component: PrizeManagement }, // 奖品管理页面路由
-    { path: "/activityPrizeRelationship", component: ActivityPrizeRelationship }, // 活动奖品关系页面路由
-    { path: "/cache", component: CacheManagement }, // 缓存管理页面路由
+    { path: "/login", component: Login },
+    { path: "/activity", component: ActivityManagement, meta: { requiresAuth: true } },
+    { path: "/prizes", component: PrizeManagement, meta: { requiresAuth: true } },
+    { path: "/activityPrizeRelationship", component: ActivityPrizeRelationship, meta: { requiresAuth: true } },
+    { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
+    { path: "/", redirect: "/activity" }, // 默认重定向到 /activity
 ];
 
 const router = createRouter({
@@ -19,12 +21,33 @@ const router = createRouter({
 });
 
 // 全局导航守卫
-router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem("token"); // 检查是否有登录令牌
-    if (!isAuthenticated && to.path !== "/login" && to.path !== "/register") {
-        next("/login"); // 未登录，跳转到登录页面
+router.beforeEach(async (to, from, next) => {
+    const token = localStorage.getItem("token");
+
+    if (to.path === "/") {
+        // 根路径重定向逻辑
+        if (token) {
+            next("/activity"); // 已登录跳转到 /activity
+        } else {
+            next("/login"); // 未登录跳转到 /login
+        }
+    } else if (to.meta.requiresAuth) {
+        // 需要认证的页面
+        if (!token) {
+            next("/login");
+        } else {
+            try {
+                await axios.get("/api/auth/validate", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                next();
+            } catch (error) {
+                localStorage.removeItem("token");
+                next("/login");
+            }
+        }
     } else {
-        next(); // 已登录或访问登录/注册页面，继续导航
+        next(); // 不需要认证的页面直接放行
     }
 });
 

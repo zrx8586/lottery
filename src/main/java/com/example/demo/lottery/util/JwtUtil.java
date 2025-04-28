@@ -1,65 +1,65 @@
 package com.example.demo.lottery.util;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "alex_demo_lottery_secret_key_alex_demo_lottery_secret_key"; // 必须至少 256 位
-    private static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private String secretKey;
 
     @Value("${jwt.expiration-time}")
-    private long expirationTime; // 从配置文件中读取失效时间
+    private long expirationTime;
 
-    // 生成 JWT
+    @PostConstruct
+    public void init() {
+        // 在服务端启动时生成新的密钥
+        secretKey = Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
+    }
+
+    // 生成 JWT Token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setId(UUID.randomUUID().toString()) // 添加唯一的 jti
+                .setId(UUID.randomUUID().toString()) // 设置唯一标识符 JTI
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 使用配置的失效时间
-                .signWith(KEY, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    // 验证 Token 并返回用户名
+    public String validateToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    // 提取 JTI
     public String getJti(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(KEY)
+                .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getId();
     }
 
-    // 验证 JWT 并返回用户名
-    public String validateToken(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(KEY)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Token 已过期，请重新登录", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Token 无效", e);
-        }
-    }
-
-    public static long getExpiration(String token) {
+    // 获取 Token 的剩余过期时间（秒）
+    public long getExpiration(String token) {
         try {
             Date expiration = Jwts.parserBuilder()
-                    .setSigningKey(KEY)
+                    .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(token)))
                     .build()
                     .parseClaimsJws(token)
                     .getBody()

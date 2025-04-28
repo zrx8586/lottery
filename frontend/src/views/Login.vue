@@ -61,7 +61,7 @@ export default {
         this.isLoggedIn = true;
 
         // 跳转到主页面
-        this.$router.push("/activity");
+        this.$router.push("/activity"); // 确保目标路径正确
       } catch (error) {
         // 显示错误提示
         alert("登录失败：" + (error.response?.data || "未知错误"));
@@ -94,11 +94,8 @@ export default {
       // 清除 Axios 默认的 Authorization 头
       delete axios.defaults.headers.common["Authorization"];
 
-      // 更新登录状态
-      this.isLoggedIn = false;
-
-      // 提示用户登出成功
-      alert("登出成功！");
+      // 跳转到登录页
+      this.$router.push("/login");
     },
   },
   mounted() {

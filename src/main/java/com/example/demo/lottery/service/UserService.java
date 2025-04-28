@@ -1,0 +1,34 @@
+package com.example.demo.lottery.service;
+
+import com.example.demo.lottery.dao.model.LotteryUser;
+import com.example.demo.lottery.dao.repository.LotteryUserRepository;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author long_w
+ */
+@Service
+public class UserService {
+
+    @Resource
+    private LotteryUserRepository lotteryUserRepository;
+
+    // 查询所有用户
+    public List<LotteryUser> getAllUsers() {
+        return lotteryUserRepository.findAll();
+    }
+
+    // 根据用户名查询用户
+    public Optional<LotteryUser> getUserByUsername(String username) {
+        return lotteryUserRepository.findByUsername(username);
+    }
+
+    // 创建新用户
+    public LotteryUser createUser(LotteryUser user) {
+        return lotteryUserRepository.save(user);
+    }
+}

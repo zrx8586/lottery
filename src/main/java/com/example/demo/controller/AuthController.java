@@ -61,7 +61,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
         String cleanedToken = token.replace("Bearer ", "");
-        tokenBlacklistService.addToBlacklist(cleanedToken);
+        String jti = JwtUtil.getJti(cleanedToken); // 提取 jti
+        long expiration = JwtUtil.getExpiration(cleanedToken); // 获取剩余过期时间
+        tokenBlacklistService.addToBlacklist(jti, expiration); // 加入黑名单
         return ResponseEntity.ok("登出成功");
     }
 

@@ -19,6 +19,7 @@
       <span v-else>已有账号？</span>
       <a href="#" @click.prevent="toggleMode">{{ isLoginMode ? '注册' : '登录' }}</a>
     </p>
+    <button v-if="isLoggedIn" @click="logout" class="btn logout-btn">登出</button>
   </div>
 </template>
 
@@ -31,6 +32,7 @@ export default {
       isLoginMode: true, // 控制登录和注册模式
       username: "",
       password: "",
+      isLoggedIn: false, // 登录状态
     };
   },
   methods: {
@@ -39,22 +41,30 @@ export default {
     },
     async login() {
       try {
+        // 清除旧的 Authorization 头，防止旧 Token 干扰
+        delete axios.defaults.headers.common["Authorization"];
+
         // 调用后端登录接口
         const response = await axios.post("/api/auth/login", {
           username: this.username,
           password: this.password,
         });
-        // 存储 JWT Token
-        localStorage.setItem("token", response.data.token);
+
+        // 存储新的 JWT Token
+        const token = response.data.token;
+        localStorage.setItem("token", token);
 
         // 设置 Axios 默认请求头
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        // 更新登录状态
+        this.isLoggedIn = true;
 
         // 跳转到主页面
         this.$router.push("/activity");
       } catch (error) {
         // 显示错误提示
-        alert("登录失败：" + error.response.data);
+        alert("登录失败：" + (error.response?.data || "未知错误"));
       }
     },
     async register() {
@@ -77,6 +87,27 @@ export default {
         alert("注册失败：" + (error.response?.data || "未知错误"));
       }
     },
+    logout() {
+      // 清除本地存储中的 Token
+      localStorage.removeItem("token");
+
+      // 清除 Axios 默认的 Authorization 头
+      delete axios.defaults.headers.common["Authorization"];
+
+      // 更新登录状态
+      this.isLoggedIn = false;
+
+      // 提示用户登出成功
+      alert("登出成功！");
+    },
+  },
+  mounted() {
+    // 检查本地存储中是否有 Token
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.isLoggedIn = true;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
   },
 };
 </script>
@@ -119,6 +150,15 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.logout-btn {
+  margin-top: 15px;
+  background-color: #dc3545;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
 }
 
 .toggle-mode {

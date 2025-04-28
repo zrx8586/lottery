@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7); // 去掉 "Bearer " 前缀
             try {
                 // 检查 Token 是否在黑名单中
-                if (tokenBlacklistService.isBlacklisted(token)) {
+                if (tokenBlacklistService.isBlacklisted(JwtUtil.getJti(token))) {
                     logger.warn("Token is blacklisted: {}", token);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("{\"error\": \"Token is blacklisted\"}");

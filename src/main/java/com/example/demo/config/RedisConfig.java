@@ -43,7 +43,6 @@ public class RedisConfig {
         poolConfig.setMaxIdle(maxIdle);
         poolConfig.setMinIdle(minIdle);
         poolConfig.setJmxEnabled(false); // 禁用 JMX 注册
-
         // 添加 Redis 认证信息
         return new JedisPool(poolConfig, redisHost, redisPort, 2000, redisPassword);
     }

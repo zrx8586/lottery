@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/public/**") // 仅对 /public/** 路径启用跨域
                 .allowedOrigins("http://localhost:8081") // 允许前端地址
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 允许的 HTTP 方法
                 .allowCredentials(true) // 允许携带 Cookie

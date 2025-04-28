@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+    private static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
     /**
      * 配置 OpenAPI 文档的基本信息和安全设置。
      *
@@ -32,7 +34,7 @@ public class SwaggerConfig {
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 // 配置安全方案
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth", // 定义安全方案的名称
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME, // 定义安全方案的名称
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP) // 认证类型为 HTTP
                                         .scheme("bearer") // 使用 Bearer Token

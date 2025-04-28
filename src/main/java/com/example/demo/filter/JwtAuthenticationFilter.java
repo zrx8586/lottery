@@ -38,7 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 // 检查 Token 是否在黑名单中
                 if (tokenBlacklistService.isBlacklisted(token)) {
+                    logger.warn("Token is blacklisted: {}", token);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"error\": \"Token is blacklisted\"}");
                     return;
                 }
 
@@ -48,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 request.setAttribute("username", username);
 
                 // 创建 UserDetails 对象
-                UserDetails userDetails = User.withUsername(username).password("").authorities("USER").build();
+                UserDetails userDetails = createUserDetails(username);
 
                 // 创建认证对象
                 UsernamePasswordAuthenticationToken authentication =
@@ -58,7 +60,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
                 // Token 无效，返回 401
+                logger.error("Token validation failed: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Invalid token\"}");
                 return;
             }
         } else {
@@ -68,5 +72,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 继续过滤链
         filterChain.doFilter(request, response);
+    }
+
+    private UserDetails createUserDetails(String username) {
+        return User.withUsername(username).password("").authorities("USER").build();
     }
 }

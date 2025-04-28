@@ -47,6 +47,9 @@ export default {
         // 存储 JWT Token
         localStorage.setItem("token", response.data.token);
 
+        // 设置 Axios 默认请求头
+        // axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
         // 跳转到主页面
         this.$router.push("/activity");
       } catch (error) {

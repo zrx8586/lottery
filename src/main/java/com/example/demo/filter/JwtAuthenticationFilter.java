@@ -1,12 +1,19 @@
 package com.example.demo.filter;
 
+import com.example.demo.service.LeaderboardService;
 import com.example.demo.service.TokenBlacklistService;
 import com.example.demo.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,6 +21,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
@@ -38,11 +47,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = JwtUtil.validateToken(token);
                 // 设置请求属性
                 request.setAttribute("username", username);
+
+                // 创建 UserDetails 对象
+                UserDetails userDetails = User.withUsername(username).password("").authorities("USER").build();
+
+                // 创建认证对象
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                // 设置认证信息
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
                 // Token 无效，返回 401
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+        } else {
+            // Token 缺失或格式错误，返回 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // 记录日志
+            logger.warn("Authorization header is missing or invalid");
         }
 
         // 继续过滤链

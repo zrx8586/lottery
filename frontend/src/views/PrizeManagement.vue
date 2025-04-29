@@ -49,13 +49,13 @@
               </td>
               <td>
                 <div class="action-buttons">
-                  <button class="view-btn" @click="viewPrize(prize)">
+                  <button class="action-btn view-btn" @click="viewPrize(prize)">
                     <i class="icon-view"></i>
                   </button>
-                  <button class="edit-btn" @click="editPrize(prize)">
+                  <button class="action-btn edit-btn" @click="editPrize(prize)">
                     <i class="icon-edit"></i>
                   </button>
-                  <button class="delete-btn" @click="confirmDelete(prize.prizeId)">
+                  <button class="action-btn delete-btn" @click="confirmDelete(prize.prizeId)">
                     <i class="icon-delete"></i>
                   </button>
                 </div>
@@ -261,6 +261,8 @@ export default {
 </script>
 
 <style scoped>
+@import '@/assets/styles/button-styles.css';
+
 .page-container {
   padding: 20px;
   background-color: #f5f7fa;
@@ -394,32 +396,6 @@ export default {
 .action-buttons {
   display: flex;
   gap: 8px;
-}
-
-.view-btn,
-.edit-btn,
-.delete-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.view-btn {
-  background-color: #f0f9eb;
-  color: #67c23a;
-}
-
-.edit-btn {
-  background-color: #ecf5ff;
-  color: #409eff;
-}
-
-.delete-btn {
-  background-color: #fef0f0;
-  color: #f56c6c;
 }
 
 .view-btn:hover,

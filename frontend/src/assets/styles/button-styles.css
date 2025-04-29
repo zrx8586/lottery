@@ -1,0 +1,164 @@
+/* 基础按钮样式 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  border: none;
+}
+
+/* 主要按钮样式 */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 次要按钮样式 */
+.btn-secondary {
+  background-color: #f5f7fa;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 成功按钮样式 */
+.btn-success {
+  background-color: #67c23a;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #85ce61;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(103, 194, 58, 0.3);
+}
+
+/* 信息按钮样式 */
+.btn-info {
+  background-color: #409eff;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #66b1ff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+}
+
+/* 危险按钮样式 */
+.btn-danger {
+  background-color: #f56c6c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #f78989;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(245, 108, 108, 0.3);
+}
+
+/* 操作按钮组 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* 操作按钮基础样式 */
+.action-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+/* 查看按钮样式 */
+.action-btn.view-btn {
+  background-color: #f0f9eb;
+  color: #67c23a;
+}
+
+/* 编辑按钮样式 */
+.action-btn.edit-btn {
+  background-color: #ecf5ff;
+  color: #409eff;
+}
+
+/* 删除按钮样式 */
+.action-btn.delete-btn {
+  background-color: #fef0f0;
+  color: #f56c6c;
+}
+
+/* 操作按钮悬停效果 */
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 分页按钮样式 */
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background-color: #f5f7fa;
+  color: #606266;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #ecf5ff;
+  color: #409eff;
+  border-color: #c6e2ff;
+}
+
+.pagination-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 表单操作按钮组 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* 模态框关闭按钮 */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #909399;
+  padding: 0;
+  line-height: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .action-buttons {
+    justify-content: flex-end;
+  }
+} 

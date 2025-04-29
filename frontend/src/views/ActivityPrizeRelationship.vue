@@ -39,13 +39,13 @@
               <td>{{ formatDate(activity.endDate) }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="view-btn" @click="viewActivity(activity.activityId)">
+                  <button class="action-btn view-btn" @click="viewActivity(activity.activityId)">
                     <i class="icon-view"></i>
                   </button>
-                  <button class="edit-btn" @click="editActivity(activity)">
+                  <button class="action-btn edit-btn" @click="editActivity(activity)">
                     <i class="icon-edit"></i>
                   </button>
-                  <button class="delete-btn" @click="deleteActivity(activity.activityId)">
+                  <button class="action-btn delete-btn" @click="deleteActivity(activity.activityId)">
                     <i class="icon-delete"></i>
                   </button>
                 </div>
@@ -353,6 +353,8 @@ export default {
 
 
 <style scoped>
+@import '@/assets/styles/button-styles.css';
+
 .page-container {
   padding: 20px;
   background-color: #f5f7fa;
@@ -470,9 +472,7 @@ export default {
   gap: 8px;
 }
 
-.view-btn,
-.edit-btn,
-.delete-btn {
+.action-btn {
   padding: 6px 10px;
   border: none;
   border-radius: 4px;
@@ -482,18 +482,15 @@ export default {
 }
 
 .view-btn {
-  background-color: #f0f9eb;
-  color: #67c23a;
+  composes: btn-view from '@/assets/styles/button-styles.css';
 }
 
 .edit-btn {
-  background-color: #ecf5ff;
-  color: #409eff;
+  composes: btn-edit from '@/assets/styles/button-styles.css';
 }
 
 .delete-btn {
-  background-color: #fef0f0;
-  color: #f56c6c;
+  composes: btn-delete from '@/assets/styles/button-styles.css';
 }
 
 .view-btn:hover,

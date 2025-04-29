@@ -9,6 +9,7 @@ import com.example.demo.lottery.service.ActivityPrizeRelationshipService;
 import com.example.demo.lottery.service.LotteryActivityPrizeService;
 import com.example.demo.lottery.service.LotteryActivityService;
 import com.example.demo.lottery.util.CommonUtil;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api/activity-prize-relationship")
 public class ActivityPrizeRelationshipController {
 
-    @Autowired
+    @Resource
     private LotteryActivityService activityService;
 
     @Autowired
@@ -37,14 +38,17 @@ public class ActivityPrizeRelationshipController {
 
     @GetMapping("/{activityId}/details")
     public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
-        LotteryActivity activity = activityService.getActivityById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+        LotteryActivity activity = activityService.getActivityById(activityId);
+        if (activity == null) {
+            throw new IllegalArgumentException("活动不存在，ID: " + activityId);
+        }
 
         List<LotteryActivityPrize> prizes = activityPrizeService.getPrizesByActivityId(activityId);
+        if (prizes == null || prizes.isEmpty()) {
+            throw new IllegalArgumentException("活动没有配置奖品，ID: " + activityId);
+        }
 
         List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);
-        ;
-
         ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
 
         return ResponseEntity.ok(activityDetailDTO);
@@ -114,4 +118,38 @@ public class ActivityPrizeRelationshipController {
         }
     }
 
+    // 获取活动的所有奖品
+    @GetMapping("/{activityId}/prizes")
+    public ResponseEntity<List<LotteryActivityPrize>> getActivityPrizes(@PathVariable Long activityId) {
+        List<LotteryActivityPrize> prizes = activityService.getActivityPrizes(activityId);
+        return ResponseEntity.ok(prizes);
+    }
+
+    // 添加奖品到活动
+    @PostMapping("/{activityId}/prizes")
+    public ResponseEntity<LotteryActivityPrize> addPrizeToActivity(
+            @PathVariable Long activityId,
+            @RequestBody LotteryActivityPrize activityPrize) {
+        LotteryActivityPrize savedPrize = activityService.addPrizeToActivity(activityId, activityPrize);
+        return ResponseEntity.ok(savedPrize);
+    }
+
+    // 更新活动奖品信息
+    @PutMapping("/{activityId}/prizes/{prizeId}")
+    public ResponseEntity<LotteryActivityPrize> updateActivityPrize(
+            @PathVariable Long activityId,
+            @PathVariable Long prizeId,
+            @RequestBody LotteryActivityPrize activityPrize) {
+        LotteryActivityPrize updatedPrize = activityService.updateActivityPrize(activityId, prizeId, activityPrize);
+        return ResponseEntity.ok(updatedPrize);
+    }
+
+    // 从活动中移除奖品
+    @DeleteMapping("/{activityId}/prizes/{prizeId}")
+    public ResponseEntity<String> removePrizeFromActivity(
+            @PathVariable Long activityId,
+            @PathVariable Long prizeId) {
+        activityService.removePrizeFromActivity(activityId, prizeId);
+        return ResponseEntity.ok("奖品已成功从活动中移除");
+    }
 }

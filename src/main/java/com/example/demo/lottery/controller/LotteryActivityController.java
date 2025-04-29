@@ -1,6 +1,7 @@
 package com.example.demo.lottery.controller;
 
 import com.example.demo.lottery.dao.model.LotteryActivity;
+import com.example.demo.lottery.dao.model.ActivityStatus;
 import com.example.demo.lottery.service.LotteryActivityService;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,6 @@ public class LotteryActivityController {
     @GetMapping("/all")
     public ResponseEntity<List<LotteryActivity>> getAllActivities() {
         List<LotteryActivity> activities = activityService.getAllActivities();
-        // 根据当前时间更新活动状态
-        activities.forEach(activity -> {
-            activityService.updateActivityStatus(activity);
-        });
         return ResponseEntity.ok(activities);
     }
 
@@ -41,7 +38,7 @@ public class LotteryActivityController {
     @PostMapping("/create")
     public ResponseEntity<LotteryActivity> createActivity(@RequestBody LotteryActivity activity) {
         // 设置初始状态
-        activity.setStatus("PENDING");
+        activity.setStatus(ActivityStatus.INACTIVE);
         LotteryActivity createdActivity = activityService.createActivity(activity);
         return ResponseEntity.ok(createdActivity);
     }
@@ -49,23 +46,21 @@ public class LotteryActivityController {
     /**
      * 更新活动信息
      * @param activityId 活动ID
-     * @param updatedActivity 更新的活动信息
+     * @param activity 更新的活动信息
      * @return 更新后的活动信息
      */
     // 更新活动
     @PutMapping("/{activityId}")
-    public ResponseEntity<LotteryActivity> updateActivity(
-            @PathVariable Long activityId,
-            @RequestBody LotteryActivity updatedActivity) {
+    public ResponseEntity<LotteryActivity> updateActivity(@PathVariable Long activityId, @RequestBody LotteryActivity activity) {
         LotteryActivity existingActivity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
         
-        // 保留原有状态
-        updatedActivity.setActivityId(existingActivity.getActivityId());
-        updatedActivity.setStatus(existingActivity.getStatus());
+        existingActivity.setName(activity.getName());
+        existingActivity.setDescription(activity.getDescription());
+        existingActivity.setStartDate(activity.getStartDate());
+        existingActivity.setEndDate(activity.getEndDate());
         
-        LotteryActivity savedActivity = activityService.createActivity(updatedActivity);
-        return ResponseEntity.ok(savedActivity);
+        return ResponseEntity.ok(activityService.createActivity(existingActivity));
     }
 
     /**
@@ -75,15 +70,12 @@ public class LotteryActivityController {
      * @return 更新后的活动信息
      */
     @PutMapping("/{activityId}/status")
-    public ResponseEntity<LotteryActivity> updateActivityStatus(
-            @PathVariable Long activityId,
-            @RequestParam String status) {
-        LotteryActivity activity = activityService.getActivityById(activityId)
+    public ResponseEntity<LotteryActivity> updateActivityStatus(@PathVariable Long activityId, @RequestParam ActivityStatus status) {
+        LotteryActivity existingActivity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
         
-        activity.setStatus(status);
-        LotteryActivity updatedActivity = activityService.createActivity(activity);
-        return ResponseEntity.ok(updatedActivity);
+        existingActivity.setStatus(status);
+        return ResponseEntity.ok(activityService.createActivity(existingActivity));
     }
 
     /**
@@ -92,10 +84,8 @@ public class LotteryActivityController {
      * @return 删除结果
      */
     @DeleteMapping("/{activityId}")
-    public ResponseEntity<String> deleteActivity(@PathVariable Long activityId) {
-        activityService.getActivityById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+    public ResponseEntity<Void> deleteActivity(@PathVariable Long activityId) {
         activityService.deleteActivity(activityId);
-        return ResponseEntity.ok("活动已成功删除");
+        return ResponseEntity.noContent().build();
     }
 }

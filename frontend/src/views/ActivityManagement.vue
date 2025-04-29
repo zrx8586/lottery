@@ -26,9 +26,27 @@
             <tr>
               <th>活动名称</th>
               <th>活动描述</th>
-              <th>开始时间</th>
-              <th>结束时间</th>
-              <th>状态</th>
+              <th class="sortable" @click="toggleSort('startDate')">
+                开始时间
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'startDate' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'startDate' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('endDate')">
+                结束时间
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'endDate' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'endDate' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('status')">
+                状态
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'status' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'status' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
               <th>操作</th>
             </tr>
           </thead>
@@ -39,8 +57,8 @@
               <td>{{ formatDate(activity.startDate) }}</td>
               <td>{{ formatDate(activity.endDate) }}</td>
               <td>
-                <span :class="['status-badge', (activity.status || 'PENDING').toLowerCase()]">
-                  {{ activity.status || '未开始' }}
+                <span :class="['status-badge', (activity.status || 'INACTIVE').toLowerCase()]">
+                  {{ activity.status === 'ACTIVE' ? '上线' : '下线' }}
                 </span>
               </td>
               <td>
@@ -63,19 +81,17 @@
     </div>
 
     <!-- 分页控件 -->
-    <div class="pagination">
+    <div class="pagination" v-if="totalPages > 1">
       <button 
-        :disabled="currentPage === 1" 
-        @click="currentPage--" 
-        class="pagination-btn"
+        @click="changePage(currentPage - 1)" 
+        :disabled="currentPage === 1"
       >
         上一页
       </button>
-      <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
+      <span>第 {{ currentPage }} 页，共 {{ totalPages }} 页</span>
       <button 
-        :disabled="currentPage === totalPages" 
-        @click="currentPage++" 
-        class="pagination-btn"
+        @click="changePage(currentPage + 1)" 
+        :disabled="currentPage === totalPages"
       >
         下一页
       </button>
@@ -115,9 +131,8 @@
             <div class="form-group">
               <label>状态</label>
               <select v-model="form.status" required>
-                <option value="ACTIVE">进行中</option>
-                <option value="PENDING">未开始</option>
-                <option value="ENDED">已结束</option>
+                <option value="ACTIVE">上线</option>
+                <option value="INACTIVE">下线</option>
               </select>
             </div>
             <div class="form-actions">
@@ -141,7 +156,7 @@ export default {
       activities: [],
       searchQuery: "",
       currentPage: 1,
-      itemsPerPage: 5,
+      pageSize: 10,
       showAddDialog: false,
       editingActivity: null,
       viewingActivity: null,
@@ -150,8 +165,10 @@ export default {
         activityDesc: "",
         startDate: "",
         endDate: "",
-        status: "PENDING"
-      }
+        status: "INACTIVE"
+      },
+      sortField: null,
+      sortDirection: 'asc'
     };
   },
   computed: {
@@ -162,12 +179,29 @@ export default {
       );
     },
     paginatedActivities() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredActivities.slice(start, end);
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.sortedActivities.slice(start, end);
     },
     totalPages() {
-      return Math.ceil(this.filteredActivities.length / this.itemsPerPage);
+      return Math.ceil(this.sortedActivities.length / this.pageSize);
+    },
+    sortedActivities() {
+      if (!this.activities) return [];
+      
+      return [...this.activities].sort((a, b) => {
+        if (this.sortField === 'startDate' || this.sortField === 'endDate') {
+          const dateA = new Date(a[this.sortField]);
+          const dateB = new Date(b[this.sortField]);
+          return this.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        } else if (this.sortField === 'status') {
+          const statusOrder = { 'ACTIVE': 0, 'INACTIVE': 1 };
+          const orderA = statusOrder[a.status];
+          const orderB = statusOrder[b.status];
+          return this.sortDirection === 'asc' ? orderA - orderB : orderB - orderA;
+        }
+        return 0;
+      });
     }
   },
   methods: {
@@ -181,7 +215,7 @@ export default {
       }
     },
     formatDate(date) {
-      return moment(date).format("YYYY-MM-DD");
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     handleSearch() {
       // 搜索时重置到第一页
@@ -232,7 +266,7 @@ export default {
         activityDesc: "",
         startDate: "",
         endDate: "",
-        status: "PENDING"
+        status: "INACTIVE"
       };
     },
     async saveActivity() {
@@ -247,6 +281,33 @@ export default {
       } catch (error) {
         console.error("保存活动失败:", error);
         alert("保存活动失败");
+      }
+    },
+    toggleSort(field) {
+      if (this.sortField === field) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+        this.sortDirection = 'asc';
+      }
+      this.currentPage = 1; // 排序后重置到第一页
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+    async toggleActivityStatus(activity) {
+      try {
+        const newStatus = activity.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        await axios.put(`/api/activity/${activity.id}/status`, {
+          status: newStatus
+        });
+        activity.status = newStatus;
+        alert("状态更新成功");
+      } catch (error) {
+        console.error("更新活动状态失败:", error);
+        alert("更新活动状态失败");
       }
     }
   },
@@ -386,12 +447,7 @@ export default {
   color: #67c23a;
 }
 
-.status-badge.pending {
-  background-color: #fff3e6;
-  color: #e6a23c;
-}
-
-.status-badge.ended {
+.status-badge.inactive {
   background-color: #fef0f0;
   color: #f56c6c;
 }
@@ -735,5 +791,67 @@ export default {
 .pagination span {
   color: #606266;
   font-size: 14px;
+}
+
+.sort-arrow {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 24px;
+  margin-left: 8px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.arrow {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid #409EFF;
+  border-right: 0;
+  border-bottom: 0;
+  transition: all 0.3s ease;
+  opacity: 0.3;
+}
+
+.arrow.up {
+  top: 4px;
+  transform: rotate(45deg);
+}
+
+.arrow.down {
+  bottom: 4px;
+  transform: rotate(-135deg);
+}
+
+.arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 4px rgba(64, 158, 255, 0.3);
+}
+
+.sortable:hover .arrow {
+  opacity: 0.6;
+  border-color: #66b1ff;
+}
+
+.sortable:hover .arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 6px rgba(64, 158, 255, 0.4);
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 30px;
+  transition: all 0.3s ease;
+}
+
+.sortable:hover {
+  background-color: rgba(64, 158, 255, 0.05);
 }
 </style>

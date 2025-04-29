@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS lottery_activity (
                                                 activity_desc TEXT, -- 活动描述
                                                 start_date DATETIME NOT NULL,
                                                 end_date DATETIME NOT NULL,
-                                                status ENUM('ACTIVE', 'PENDING', 'ENDED') NOT NULL DEFAULT 'PENDING', -- 活动状态
+                                                status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'INACTIVE', -- 活动状态：上线/下线
                                                 datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                 datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

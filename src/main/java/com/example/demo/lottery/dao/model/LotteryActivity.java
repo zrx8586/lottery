@@ -14,11 +14,22 @@ public class LotteryActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long activityId;
+
+    @Column(nullable = false)
     private String activityName;
+
+    @Column
     private String activityDesc;
+
+    @Column(nullable = false)
     private LocalDateTime startDate;
+
+    @Column(nullable = false)
     private LocalDateTime endDate;
-    private String status; // »î¶¯×´Ì¬£ºACTIVE, PENDING, ENDED
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ActivityStatus status;
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

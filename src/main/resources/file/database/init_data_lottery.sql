@@ -5,14 +5,32 @@ INSERT IGNORE INTO roles (role_name, role_desc) VALUES
 
 -- 插入活动数据
 INSERT IGNORE INTO lottery_activity (activity_name, activity_desc, start_date, end_date, status) VALUES
-    ('春节大抽奖', '喜迎新春，好运连连！参与抽奖赢取丰厚奖品！', '2024-02-10 00:00:00', '2024-02-17 23:59:59', 'ENDED'),
-    ('元宵节灯谜会', '猜灯谜，赢大奖！元宵佳节，好运连连！', '2024-02-24 00:00:00', '2024-02-24 23:59:59', 'ENDED'),
-    ('端午节龙舟赛', '端午佳节，龙舟竞渡，参与抽奖赢取精美礼品！', '2024-06-10 00:00:00', '2024-06-10 23:59:59', 'PENDING'),
-    ('中秋节团圆礼', '中秋月圆，阖家欢乐，参与抽奖赢取团圆好礼！', '2024-09-17 00:00:00', '2024-09-17 23:59:59', 'PENDING'),
-    ('国庆节欢乐购', '欢度国庆，参与抽奖赢取超值好礼！', '2024-10-01 00:00:00', '2024-10-07 23:59:59', 'PENDING'),
+    ('春节大抽奖', '喜迎新春，好运连连！参与抽奖赢取丰厚奖品！', '2024-02-10 00:00:00', '2024-02-17 23:59:59', 'INACTIVE'),
+    ('元宵节灯谜会', '猜灯谜，赢大奖！元宵佳节，好运连连！', '2024-02-24 00:00:00', '2024-02-24 23:59:59', 'INACTIVE'),
+    ('端午节龙舟赛', '端午佳节，龙舟竞渡，参与抽奖赢取精美礼品！', '2024-06-10 00:00:00', '2024-06-10 23:59:59', 'INACTIVE'),
+    ('中秋节团圆礼', '中秋月圆，阖家欢乐，参与抽奖赢取团圆好礼！', '2024-09-17 00:00:00', '2024-09-17 23:59:59', 'INACTIVE'),
+    ('国庆节欢乐购', '欢度国庆，参与抽奖赢取超值好礼！', '2024-10-01 00:00:00', '2024-10-07 23:59:59', 'INACTIVE'),
     ('五一劳动节特惠', '劳动最光荣，参与抽奖赢取劳动节专属好礼！', '2024-05-01 00:00:00', '2024-05-07 23:59:59', 'ACTIVE'),
     ('夏日清凉季', '炎炎夏日，清凉好礼等你来拿！', '2024-07-15 00:00:00', '2024-08-15 23:59:59', 'ACTIVE'),
-    ('开学季特惠', '新学期新气象，参与抽奖赢取开学好礼！', '2024-09-01 00:00:00', '2024-09-30 23:59:59', 'ACTIVE');
+    ('开学季特惠', '新学期新气象，参与抽奖赢取开学好礼！', '2024-09-01 00:00:00', '2024-09-30 23:59:59', 'ACTIVE'),
+    ('双十一狂欢节', '双十一狂欢，超值好礼等你来拿！', '2024-11-11 00:00:00', '2024-11-11 23:59:59', 'INACTIVE'),
+    ('双十二年终盛典', '年终盛典，惊喜不断！', '2024-12-12 00:00:00', '2024-12-12 23:59:59', 'INACTIVE'),
+    ('元旦跨年活动', '喜迎元旦，跨年狂欢！', '2024-12-31 00:00:00', '2025-01-01 23:59:59', 'INACTIVE'),
+    ('情人节特惠', '浪漫情人节，甜蜜好礼！', '2024-02-14 00:00:00', '2024-02-14 23:59:59', 'INACTIVE'),
+    ('女神节特惠', '女神节专属福利！', '2024-03-08 00:00:00', '2024-03-08 23:59:59', 'INACTIVE'),
+    ('儿童节欢乐购', '六一儿童节，欢乐无限！', '2024-06-01 00:00:00', '2024-06-01 23:59:59', 'INACTIVE'),
+    ('七夕情人节', '浪漫七夕，甜蜜好礼！', '2024-08-14 00:00:00', '2024-08-14 23:59:59', 'INACTIVE'),
+    ('教师节特惠', '感恩教师节，专属好礼！', '2024-09-10 00:00:00', '2024-09-10 23:59:59', 'INACTIVE'),
+    ('重阳节特惠', '重阳敬老，感恩回馈！', '2024-10-14 00:00:00', '2024-10-14 23:59:59', 'INACTIVE'),
+    ('万圣节狂欢', '万圣节狂欢，惊喜不断！', '2024-10-31 00:00:00', '2024-10-31 23:59:59', 'INACTIVE'),
+    ('感恩节特惠', '感恩回馈，超值好礼！', '2024-11-28 00:00:00', '2024-11-28 23:59:59', 'INACTIVE'),
+    ('圣诞节狂欢', '圣诞狂欢，惊喜连连！', '2024-12-25 00:00:00', '2024-12-25 23:59:59', 'INACTIVE'),
+    ('新年特惠', '喜迎新年，好运连连！', '2025-01-01 00:00:00', '2025-01-07 23:59:59', 'INACTIVE'),
+    ('春节特惠', '新春特惠，好运连连！', '2025-01-29 00:00:00', '2025-02-05 23:59:59', 'INACTIVE'),
+    ('元宵节特惠', '元宵佳节，好运连连！', '2025-02-12 00:00:00', '2025-02-12 23:59:59', 'INACTIVE'),
+    ('情人节特惠', '浪漫情人节，甜蜜好礼！', '2025-02-14 00:00:00', '2025-02-14 23:59:59', 'INACTIVE'),
+    ('女神节特惠', '女神节专属福利！', '2025-03-08 00:00:00', '2025-03-08 23:59:59', 'INACTIVE'),
+    ('清明节特惠', '清明时节，感恩回馈！', '2025-04-05 00:00:00', '2025-04-05 23:59:59', 'INACTIVE');
 
 -- 插入奖品数据
 INSERT IGNORE INTO lottery_prize (prize_name, prize_desc, prize_image_url, prize_category, prize_value, stock_quantity, is_active) VALUES
@@ -21,7 +39,27 @@ INSERT IGNORE INTO lottery_prize (prize_name, prize_desc, prize_image_url, prize
     ('故宫文创礼盒', '故宫博物院官方授权文创产品', 'https://example.com/images/forbidden-city.jpg', '文创', 299.00, 50, TRUE),
     ('大闸蟹礼券', '阳澄湖大闸蟹，8只装', 'https://example.com/images/crab.jpg', '食品', 888.00, 30, TRUE),
     ('茶具套装', '景德镇青花瓷茶具，6件套', 'https://example.com/images/tea-set.jpg', '家居', 599.00, 15, TRUE),
-    ('谢谢参与', '感谢您的参与', 'https://example.com/images/thanks.jpg', '其他', 0.00, 999999, TRUE);
+    ('谢谢参与', '感谢您的参与', 'https://example.com/images/thanks.jpg', '其他', 0.00, 999999, TRUE),
+    ('iPhone 15 Pro', '苹果最新款旗舰手机', 'https://example.com/images/iphone15.jpg', '电子产品', 7999.00, 5, TRUE),
+    ('小米14 Ultra', '小米最新款旗舰手机', 'https://example.com/images/xiaomi14.jpg', '电子产品', 5999.00, 8, TRUE),
+    ('三星S24 Ultra', '三星最新款旗舰手机', 'https://example.com/images/samsung24.jpg', '电子产品', 8999.00, 6, TRUE),
+    ('OPPO Find X7', 'OPPO最新款旗舰手机', 'https://example.com/images/oppo-x7.jpg', '电子产品', 4999.00, 10, TRUE),
+    ('vivo X100 Pro', 'vivo最新款旗舰手机', 'https://example.com/images/vivo-x100.jpg', '电子产品', 5999.00, 8, TRUE),
+    ('荣耀Magic6 Pro', '荣耀最新款旗舰手机', 'https://example.com/images/honor-magic6.jpg', '电子产品', 4999.00, 10, TRUE),
+    ('联想拯救者Y9000P', '联想游戏本', 'https://example.com/images/lenovo-y9000p.jpg', '电子产品', 9999.00, 5, TRUE),
+    ('戴尔XPS 15', '戴尔高端笔记本', 'https://example.com/images/dell-xps15.jpg', '电子产品', 12999.00, 4, TRUE),
+    ('苹果MacBook Pro', '苹果高端笔记本', 'https://example.com/images/macbook-pro.jpg', '电子产品', 14999.00, 3, TRUE),
+    ('华为MateBook X Pro', '华为高端笔记本', 'https://example.com/images/huawei-matebook.jpg', '电子产品', 9999.00, 5, TRUE),
+    ('小米笔记本Pro', '小米高端笔记本', 'https://example.com/images/xiaomi-notebook.jpg', '电子产品', 6999.00, 8, TRUE),
+    ('荣耀MagicBook Pro', '荣耀高端笔记本', 'https://example.com/images/honor-magicbook.jpg', '电子产品', 5999.00, 10, TRUE),
+    ('联想小新Pro', '联想轻薄本', 'https://example.com/images/lenovo-xiaoxin.jpg', '电子产品', 4999.00, 12, TRUE),
+    ('戴尔灵越15', '戴尔轻薄本', 'https://example.com/images/dell-inspiron.jpg', '电子产品', 5999.00, 8, TRUE),
+    ('苹果iPad Pro', '苹果平板电脑', 'https://example.com/images/ipad-pro.jpg', '电子产品', 6999.00, 6, TRUE),
+    ('华为MatePad Pro', '华为平板电脑', 'https://example.com/images/huawei-matepad.jpg', '电子产品', 4999.00, 8, TRUE),
+    ('小米平板6 Pro', '小米平板电脑', 'https://example.com/images/xiaomi-pad6.jpg', '电子产品', 2999.00, 10, TRUE),
+    ('荣耀平板V8 Pro', '荣耀平板电脑', 'https://example.com/images/honor-pad-v8.jpg', '电子产品', 2999.00, 10, TRUE),
+    ('联想小新Pad Pro', '联想平板电脑', 'https://example.com/images/lenovo-pad.jpg', '电子产品', 2999.00, 10, TRUE),
+    ('戴尔XPS 13', '戴尔轻薄本', 'https://example.com/images/dell-xps13.jpg', '电子产品', 9999.00, 5, TRUE);
 
 -- 插入活动奖品数据
 INSERT IGNORE INTO lottery_activity_prize (activity_id, prize_id, probability, quantity)
@@ -69,6 +107,7 @@ SELECT
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '大闸蟹礼券' THEN 0.05
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '茶具套装' THEN 0.05
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '谢谢参与' THEN 0.82
+        ELSE 0.00
     END as probability,
     CASE 
         WHEN a.activity_name = '春节大抽奖' AND p.prize_name = '华为Mate60 Pro' THEN 2
@@ -111,6 +150,7 @@ SELECT
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '大闸蟹礼券' THEN 10
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '茶具套装' THEN 10
         WHEN a.activity_name = '开学季特惠' AND p.prize_name = '谢谢参与' THEN 999999
+        ELSE 0
     END as quantity
 FROM lottery_activity a
 CROSS JOIN lottery_prize p

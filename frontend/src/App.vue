@@ -217,32 +217,27 @@ html, body {
   transition: all 0.3s ease;
   font-size: 14px;
   position: relative;
+  border-left: 4px solid transparent;
 }
 
 .sidebar .menu a:hover {
   background-color: #f5f7fa;
   color: #667eea;
+  border-left-color: #667eea;
 }
 
 .sidebar .menu a.active {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   color: #667eea;
   font-weight: 500;
-}
-
-.sidebar .menu a.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-left-color: #667eea;
 }
 
 .sidebar .menu a i {
   margin-right: 10px;
   font-size: 16px;
+  width: 20px;
+  text-align: center;
 }
 
 /* 右侧内容区域 */
@@ -302,6 +297,36 @@ html, body {
 
   .header .user-info span {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .sidebar .logo {
+    font-size: 16px;
+    padding: 10px 0;
+  }
+
+  .sidebar .menu a {
+    padding: 10px;
+    justify-content: center;
+  }
+
+  .sidebar .menu a span {
+    display: none;
+  }
+
+  .sidebar .menu a i {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .header .user-info button {
+    padding: 4px 8px;
+    font-size: 12px;
   }
 }
 </style>

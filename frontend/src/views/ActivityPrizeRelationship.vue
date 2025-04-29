@@ -359,6 +359,7 @@ export default {
   padding: 20px;
   background-color: #f5f7fa;
   min-height: calc(100vh - 50px);
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -781,18 +782,27 @@ export default {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .page-container {
-    padding: 15px;
+    padding: 10px;
   }
 
   .page-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
+    padding: 10px;
+  }
+
+  .page-header h2 {
+    font-size: 18px;
   }
 
   .add-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .content-box {
+    padding: 10px;
   }
 
   .search-group {
@@ -837,12 +847,96 @@ export default {
   }
 
   .modal-content {
-    margin: 15px;
+    width: 95%;
+    margin: 10px;
   }
 
-  .prize-inputs {
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+  }
+
+  .form-actions {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .pagination-btn {
+    width: 100%;
+  }
+
+  .prize-list {
+    padding: 10px;
+  }
+
+  .prize-item {
+    padding: 10px;
+  }
+
+  .prize-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 5px;
+  }
+
+  .page-header {
+    padding: 8px;
+  }
+
+  .content-box {
+    padding: 8px;
+  }
+
+  .data-table td {
+    padding: 8px 12px;
+  }
+
+  .modal-content {
+    width: 100%;
+    margin: 5px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px;
+  }
+
+  .prize-list {
+    padding: 8px;
+  }
+
+  .prize-item {
+    padding: 8px;
   }
 }
 </style>

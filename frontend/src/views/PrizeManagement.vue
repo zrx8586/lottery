@@ -42,7 +42,13 @@
                   <i class="arrow down" :class="{ active: sortField === 'prizeValue' && sortDirection === 'desc' }"></i>
                 </span>
               </th>
-              <th>状态</th>
+              <th class="sortable" @click="toggleSort('isActive')">
+                状态
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'isActive' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'isActive' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
               <th>操作</th>
             </tr>
           </thead>
@@ -56,7 +62,7 @@
               <td>{{ prize.prizeValue }}</td>
               <td>
                 <span :class="['status-badge', prize.isActive ? 'active' : 'inactive']">
-                  {{ prize.isActive ? '已激活' : '未激活' }}
+                  {{ prize.isActive ? '有效' : '无效' }}
                 </span>
               </td>
               <td>
@@ -151,8 +157,8 @@
             <div class="form-group">
               <label>状态</label>
               <select v-model="formData.isActive" :disabled="viewingPrize">
-                <option :value="true">已激活</option>
-                <option :value="false">未激活</option>
+                <option :value="true">有效</option>
+                <option :value="false">无效</option>
               </select>
             </div>
             <div v-if="!viewingPrize" class="form-actions">
@@ -209,6 +215,12 @@ export default {
         sortedPrizes.sort((a, b) => {
           const aValue = a[this.sortField];
           const bValue = b[this.sortField];
+          
+          if (this.sortField === 'isActive') {
+            return this.sortDirection === 'asc' 
+              ? (aValue === bValue ? 0 : aValue ? -1 : 1)
+              : (aValue === bValue ? 0 : aValue ? 1 : -1);
+          }
           
           if (typeof aValue === 'number' && typeof bValue === 'number') {
             return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;

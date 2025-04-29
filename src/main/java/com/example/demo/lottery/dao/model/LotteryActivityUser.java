@@ -17,8 +17,8 @@ public class LotteryActivityUser {
     private LotteryActivity activity;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private LotteryUser user;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private LocalDateTime participationDate;
     private int lotteryAttempts; // 可用抽奖次数

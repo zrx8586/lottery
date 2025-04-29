@@ -2,17 +2,20 @@ package com.example.demo.lottery.dao.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Data
 @Entity
 @Table(name = "users")
-@Data
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -20,22 +23,27 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String role;
+    @Column
+    private String email;
 
-    @Column(name = "datachange_createtime", updatable = false)
-    private LocalDateTime datachangeCreateTime;
+    @Column
+    private String phone;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LotteryActivityUser> lotteryActivityUsers;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LotteryRecord> lotteryRecords;
+
+    @CreationTimestamp
+    @Column(name = "datachange_createtime")
+    private LocalDateTime createTime;
+
+    @UpdateTimestamp
     @Column(name = "datachange_lasttime")
-    private LocalDateTime datachangeLastTime;
-
-    @PrePersist
-    protected void onCreate() {
-        datachangeCreateTime = LocalDateTime.now();
-        datachangeLastTime = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        datachangeLastTime = LocalDateTime.now();
-    }
+    private LocalDateTime updateTime;
 }

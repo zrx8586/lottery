@@ -1,8 +1,8 @@
 package com.example.demo.lottery.service;
 
-import com.example.demo.lottery.dao.model.LotteryUser;
-import com.example.demo.lottery.dao.repository.LotteryUserRepository;
-import jakarta.annotation.Resource;
+import com.example.demo.lottery.dao.model.User;
+import com.example.demo.lottery.dao.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,21 +14,21 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Resource
-    private LotteryUserRepository lotteryUserRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     // 查询所有用户
-    public List<LotteryUser> getAllUsers() {
-        return lotteryUserRepository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     // 根据用户名查询用户
-    public Optional<LotteryUser> getUserByUsername(String username) {
-        return lotteryUserRepository.findByUsername(username);
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     // 创建新用户
-    public LotteryUser createUser(LotteryUser user) {
-        return lotteryUserRepository.save(user);
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 }

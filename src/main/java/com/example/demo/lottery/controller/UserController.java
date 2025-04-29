@@ -1,43 +1,42 @@
 package com.example.demo.lottery.controller;
 
-import com.example.demo.lottery.dao.model.LotteryUser;
+import com.example.demo.lottery.dao.model.User;
 import com.example.demo.lottery.service.UserService;
-import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author long_w
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
-    @Resource
+    @Autowired
     private UserService userService;
 
     // 查询所有用户
-    @GetMapping("/all")
-    public ResponseEntity<List<LotteryUser>> getAllUsers() {
-        List<LotteryUser> users = userService.getAllUsers();
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     // 根据用户名查询用户
     @GetMapping("/{username}")
-    public ResponseEntity<LotteryUser> getUserByUsername(@PathVariable String username) {
-        Optional<LotteryUser> user = userService.getUserByUsername(username);
-        return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // 创建新用户
-    @PostMapping("/create")
-    public ResponseEntity<LotteryUser> createUser(@RequestBody LotteryUser user) {
-        LotteryUser createdUser = userService.createUser(user);
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
     }
 }

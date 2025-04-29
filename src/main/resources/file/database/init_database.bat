@@ -136,7 +136,6 @@ echo SET CHARACTER SET utf8mb4; >> %TEMP_SQL%
 echo SELECT 'lottery_activity' as table_name, COUNT(*) as count FROM lottery_activity; >> %TEMP_SQL%
 echo SELECT 'lottery_prize' as table_name, COUNT(*) as count FROM lottery_prize; >> %TEMP_SQL%
 echo SELECT 'lottery_activity_prize' as table_name, COUNT(*) as count FROM lottery_activity_prize; >> %TEMP_SQL%
-echo SELECT 'lottery_user' as table_name, COUNT(*) as count FROM lottery_user; >> %TEMP_SQL%
 echo SELECT 'lottery_record' as table_name, COUNT(*) as count FROM lottery_record; >> %TEMP_SQL%
 echo SELECT 'lottery_activity_user' as table_name, COUNT(*) as count FROM lottery_activity_user; >> %TEMP_SQL%
 echo SELECT 'users' as table_name, COUNT(*) as count FROM users; >> %TEMP_SQL%
@@ -157,10 +156,9 @@ del %TEMP_SQL%
 
 echo 数据库初始化完成！
 echo 预期数据量：
-echo - lottery_activity: 5 条记录
+echo - lottery_activity: 8 条记录
 echo - lottery_prize: 6 条记录
-echo - lottery_activity_prize: 22 条记录
-echo - lottery_user: 25 条记录
+echo - lottery_activity_prize: 40 条记录
 echo - lottery_record: 25 条记录
 echo - lottery_activity_user: 25 条记录
 echo - users: 请查看 init_data_users.sql 中的记录数

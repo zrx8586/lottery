@@ -16,13 +16,13 @@ public interface LotteryRecordRepository extends JpaRepository<LotteryRecord, Lo
     List<LotteryRecord> findAll();
 
     // 根据用户ID查询中奖记录
-    @Query("SELECT r FROM LotteryRecord r WHERE r.lotteryUser.userId = :userId")
-    List<LotteryRecord> findByUserId(Long userId);
+    @Query("SELECT r FROM LotteryRecord r WHERE r.user.userId = :userId")
+    List<LotteryRecord> findByUserId(@Param("userId") Long userId);
 
     @Query("SELECT r FROM LotteryRecord r WHERE r.lotteryActivity.activityId = :activityId")
     List<LotteryRecord> findByActivityId(@Param("activityId") Long activityId);
 
     // 根据用户ID和活动ID查询中奖记录
-    @Query("SELECT r FROM LotteryRecord r WHERE r.lotteryUser.userId = :userId AND r.lotteryActivity.activityId = :activityId")
-    List<LotteryRecord> findByUserIdAndActivityId(Long userId, Long activityId);
+    @Query("SELECT r FROM LotteryRecord r WHERE r.user.userId = :userId AND r.lotteryActivity.activityId = :activityId")
+    List<LotteryRecord> findByUserIdAndActivityId(@Param("userId") Long userId, @Param("activityId") Long activityId);
 }

@@ -30,9 +30,6 @@ public class LotteryService {
     private static final Logger logger = LoggerFactory.getLogger(LotteryService.class);
 
     @Resource
-    private LotteryUserRepository lotteryUserRepository;
-
-    @Resource
     private LotteryActivityUserRepository activityUserRepository;
 
     @Resource
@@ -49,6 +46,9 @@ public class LotteryService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private Random random = new Random();
 
@@ -72,7 +72,7 @@ public class LotteryService {
         // 验证活动是否有效
         LotteryActivity activity = validateActivity(activityId);
         // 验证用户是否存在
-        LotteryUser user = validateUser(username);
+        User user = validateUser(username);
         // 验证用户是否有参与活动的资格
         LotteryActivityUser lotteryActivityUser = validateUserDrawCount(activityId, user);
 
@@ -93,7 +93,7 @@ public class LotteryService {
         }
     }
 
-    private LotteryActivityUser validateUserDrawCount(Long activityId, LotteryUser user) {
+    private LotteryActivityUser validateUserDrawCount(Long activityId, User user) {
         LotteryActivityUser lotteryActivityUser = activityUserRepository.findByUserIdAndActivityId(user.getUserId(), activityId);
         if (lotteryActivityUser == null) {
             throw new BusinessException(1003, "用户没有参与活动的资格");
@@ -104,9 +104,9 @@ public class LotteryService {
         return lotteryActivityUser;
     }
 
-    private LotteryUser validateUser(String username) {
-        return lotteryUserRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+    private User validateUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
     }
 
     private LotteryActivity validateActivity(Long activityId) {
@@ -133,7 +133,7 @@ public class LotteryService {
      */
     private LotteryActivityPrize selectAndProcessPrize(String redisKey, Long activityId,
                                                        List<LotteryActivityPrize> activityPrizes,
-                                                       LotteryUser user, LotteryActivity activity,
+                                                       User user, LotteryActivity activity,
                                                        LotteryActivityUser lotteryActivityUser) {
         logger.info("开始选择奖品: 活动ID={}, 用户ID={}", activityId, user.getUserId());
 
@@ -252,7 +252,7 @@ public class LotteryService {
      * @return boolean
      */
     private boolean tryLockAndProcessPrize(String redisKey, Long activityId, LotteryActivityPrize prize,
-                                           LotteryUser user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
+                                           User user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
         logger.info("尝试获取锁并处理奖品: 活动ID={}, 奖品ID={}", activityId, prize.getActivityPrizeId());
         String lockKey = "lock:activity:" + activityId + ":prize:" + prize.getPrize().getPrizeId();
         String lockValue = String.valueOf(System.currentTimeMillis()); // 唯一标识
@@ -332,7 +332,7 @@ public class LotteryService {
     // 将 LotteryRecord 转换为 LotteryRecordDTO
     private LotteryRecordResponse convertToDTO(LotteryRecord record) {
         LotteryRecordResponse dto = new LotteryRecordResponse();
-        dto.setUsername(record.getLotteryUser().getUsername());
+        dto.setUsername(record.getUser().getUsername());
         dto.setActivityName(record.getLotteryActivity().getActivityName());
         dto.setPrizeName(record.getLotteryPrize().getPrizeName());
         dto.setWonAt(record.getWonAt());

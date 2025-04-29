@@ -14,7 +14,7 @@ public class LotteryRecord {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // 外键列名为 user_id
-    private LotteryUser lotteryUser;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "activity_id")

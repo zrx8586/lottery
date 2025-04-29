@@ -1,8 +1,21 @@
-CREATE TABLE `users` (
-                         `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         `username` VARCHAR(50) NOT NULL UNIQUE,
-                         `password` VARCHAR(255) NOT NULL,
-                         `role` VARCHAR(50) DEFAULT 'USER',
-                         datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+-- 角色表
+CREATE TABLE IF NOT EXISTS roles (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL UNIQUE,
+    role_desc VARCHAR(200),
+    datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 用户表
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NULL,
+    phone VARCHAR(20) NULL,
+    password VARCHAR(100) NOT NULL,
+    role_id INT NOT NULL,
+    datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

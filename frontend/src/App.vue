@@ -92,6 +92,8 @@ export default {
         console.error("登出失败", error);
       } finally {
         localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        delete axios.defaults.headers.common["Authorization"];
         this.isLoggedIn = false;
         this.$router.push("/login");
       }

@@ -34,7 +34,7 @@ public class PrizeProcessingService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public void processPrize(String redisKey, LotteryActivityPrize prize, LotteryUser user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
+    public void processPrize(String redisKey, LotteryActivityPrize prize, User user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
         // 从 Redis 中获取缓存的奖品列表 JSON 字符串
         String cachedPrizesJson = redisTemplate.opsForValue().get(redisKey);
         if (StringUtils.isEmpty(cachedPrizesJson)) {
@@ -65,7 +65,7 @@ public class PrizeProcessingService {
 
         // 保存中奖记录
         LotteryRecord record = new LotteryRecord();
-        record.setLotteryUser(user);
+        record.setUser(user);
         record.setLotteryActivity(activity);
         record.setLotteryPrize(prize.getPrize());
         recordRepository.save(record);

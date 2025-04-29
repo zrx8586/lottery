@@ -37,16 +37,6 @@ CREATE TABLE IF NOT EXISTS lottery_activity_prize (
                                                       FOREIGN KEY (prize_id) REFERENCES lottery_prize(prize_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 抽奖用户表
-CREATE TABLE IF NOT EXISTS lottery_user (
-                                            user_id INT AUTO_INCREMENT PRIMARY KEY,
-                                            username VARCHAR(50) NOT NULL,
-                                            email VARCHAR(100) NOT NULL UNIQUE,
-                                            lottery_attempts INT NOT NULL DEFAULT 0, -- 可抽奖次数
-                                            datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                            datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- 抽奖记录表
 CREATE TABLE IF NOT EXISTS lottery_record (
                                               record_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,7 +46,7 @@ CREATE TABLE IF NOT EXISTS lottery_record (
                                               won_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                               datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                               datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                              FOREIGN KEY (user_id) REFERENCES lottery_user(user_id),
+                                              FOREIGN KEY (user_id) REFERENCES users(user_id),
                                               FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
                                               FOREIGN KEY (prize_id) REFERENCES lottery_prize(prize_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -67,9 +57,10 @@ CREATE TABLE IF NOT EXISTS lottery_activity_user (
                                                      activity_id INT NOT NULL,
                                                      user_id INT NOT NULL,
                                                      participation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                                     lottery_attempts INT NOT NULL, -- 可用抽奖次数
+                                                     lottery_attempts INT NOT NULL DEFAULT 0, -- 可用抽奖次数
                                                      datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                      datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                      FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
-                                                     FOREIGN KEY (user_id) REFERENCES lottery_user(user_id)
+                                                     FOREIGN KEY (user_id) REFERENCES users(user_id),
+                                                     UNIQUE KEY unique_user_activity (user_id, activity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

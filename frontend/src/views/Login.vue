@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" :key="componentKey">
     <div class="login-box">
       <div class="login-header">
         <h1>{{ isLoginMode ? '欢迎回来' : '创建账号' }}</h1>
@@ -28,11 +28,12 @@
               :type="showPassword ? 'text' : 'password'" 
               placeholder="密码" 
               required 
-              autocomplete="current-password"
+              autocomplete="new-password"
+              ref="passwordInput"
             />
             <i 
               :class="['icon-eye', showPassword ? 'active' : '']" 
-              @click="showPassword = !showPassword"
+              @click="togglePasswordVisibility"
             ></i>
           </div>
         </div>
@@ -63,14 +64,37 @@ export default {
       isLoginMode: true,
       username: "",
       password: "",
-      showPassword: false
+      showPassword: false,
+      componentKey: 0
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.resetForm();
+    });
   },
   methods: {
     toggleMode() {
       this.isLoginMode = !this.isLoginMode;
+      this.resetForm();
+    },
+    resetForm() {
       this.username = "";
       this.password = "";
+      this.showPassword = false;
+      this.componentKey += 1;
+      setTimeout(() => {
+        if (this.$refs.passwordInput) {
+          this.$refs.passwordInput.value = "";
+          this.$refs.passwordInput.focus();
+        }
+      }, 100);
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
+    handlePasswordInput(event) {
+      this.password = event.target.value;
     },
     async login() {
       try {
@@ -80,11 +104,16 @@ export default {
           password: this.password,
         });
 
-        const token = response.data.token;
-        localStorage.setItem("token", token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        this.$eventBus.$emit("login-success", this.username);
-        this.$router.push("/activity");
+        if (response.data.success) {
+          const token = response.data.data.token;
+          localStorage.setItem("token", token);
+          localStorage.setItem("username", response.data.data.username);
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          this.$eventBus.$emit("login-success", response.data.data.username);
+          this.$router.push("/activity");
+        } else {
+          alert(response.data.message || "登录失败");
+        }
       } catch (error) {
         console.error("登录错误详情:", error);
         if (error.response) {
@@ -103,11 +132,11 @@ export default {
           password: this.password,
         });
 
-        if (response.status === 200) {
-          alert(response.data || "注册成功，请登录！");
+        if (response.data.success) {
+          alert(response.data.message || "注册成功，请登录！");
           this.isLoginMode = true;
         } else {
-          alert("注册失败：未知错误");
+          alert(response.data.message || "注册失败");
         }
       } catch (error) {
         console.error("注册错误详情:", error);
@@ -120,6 +149,8 @@ export default {
         }
       }
     }
+  },
+  mounted() {
   }
 };
 </script>
@@ -172,13 +203,16 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+  cursor: text;
 }
 
-.input-group i {
+.input-group i.icon-user,
+.input-group i.icon-lock {
   position: absolute;
   left: 15px;
   color: #999;
   font-size: 16px;
+  pointer-events: none;
 }
 
 .input-group input {
@@ -188,6 +222,7 @@ export default {
   border-radius: 5px;
   font-size: 14px;
   transition: all 0.3s ease;
+  cursor: text;
 }
 
 .input-group input:focus {
@@ -201,6 +236,7 @@ export default {
   right: 15px;
   cursor: pointer;
   color: #999;
+  z-index: 1;
 }
 
 .icon-eye.active {

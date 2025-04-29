@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="header" v-if="isLoggedIn">
+    <header class="header" v-if="isLoggedIn && !isLoginPage">
       <div class="user-info">
         <img class="avatar" src="https://via.placeholder.com/30" alt="用户头像" />
         <span>当前用户：{{ username }}</span>
@@ -8,7 +8,7 @@
       </div>
     </header>
     <div class="main-container">
-      <aside class="sidebar" v-if="isLoggedIn">
+      <aside class="sidebar" v-if="isLoggedIn && !isLoginPage">
         <div class="logo">管理后台</div>
         <ul class="menu">
           <li><router-link to="/activity" active-class="active">活动管理</router-link></li>
@@ -31,9 +31,15 @@ import axios from "axios";
 export default {
   data() {
     return {
-      username: "", // 当前登录用户
-      isLoggedIn: false, // 登录状态
+      username: "",
+      isLoggedIn: false,
+      isLoginPage: false
     };
+  },
+  watch: {
+    $route(to) {
+      this.isLoginPage = to.path === '/login';
+    }
   },
   async created() {
     const token = localStorage.getItem("token");
@@ -48,8 +54,22 @@ export default {
         this.isLoggedIn = false;
       }
     }
+
+    // 初始化登录页面状态
+    this.isLoginPage = this.$route.path === '/login';
+
+    // 监听登录成功事件
+    this.$eventBus.$on("login-success", this.handleLoginSuccess);
+  },
+  beforeUnmount() {
+    // 移除事件监听
+    this.$eventBus.$off("login-success", this.handleLoginSuccess);
   },
   methods: {
+    handleLoginSuccess(username) {
+      this.isLoggedIn = true;
+      this.username = username;
+    },
     confirmLogout() {
       if (confirm("确定要登出吗？")) {
         this.logout();
@@ -59,7 +79,6 @@ export default {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          // 调用后端登出接口
           await axios.post(
               "/api/auth/logout",
               {},
@@ -71,14 +90,10 @@ export default {
       } catch (error) {
         console.error("登出失败", error);
       } finally {
-        // 清除本地存储的 Token 并跳转到登录页面
         localStorage.removeItem("token");
-        this.isLoggedIn = false; // 更新登录状态
+        this.isLoggedIn = false;
         this.$router.push("/login");
       }
-    },
-    handleLoginSuccess() {
-      this.isLoggedIn = true; // 登录成功后更新状态
     },
   },
 };

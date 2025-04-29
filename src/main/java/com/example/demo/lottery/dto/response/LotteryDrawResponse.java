@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LotteryDrawResponse extends BaseResponse {
+public class LotteryDrawResponse extends BaseResponse<LotteryDrawResponse> {
     private String prizeName;
     private String activityName;
 }

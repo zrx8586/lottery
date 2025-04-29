@@ -79,32 +79,32 @@ WHERE (
 );
 
 -- 插入用户数据
-INSERT IGNORE INTO lottery_user (username, email) VALUES
-    ('alice', 'alice@example.com'),
-    ('bob', 'bob@example.com'),
-    ('charlie', 'charlie@example.com'),
-    ('david', 'david@example.com'),
-    ('eve', 'eve@example.com'),
-    ('frank', 'frank@example.com'),
-    ('grace', 'grace@example.com'),
-    ('hank', 'hank@example.com'),
-    ('irene', 'irene@example.com'),
-    ('jack', 'jack@example.com'),
-    ('kate', 'kate@example.com'),
-    ('leo', 'leo@example.com'),
-    ('mike', 'mike@example.com'),
-    ('nina', 'nina@example.com'),
-    ('oliver', 'oliver@example.com'),
-    ('paul', 'paul@example.com'),
-    ('quinn', 'quinn@example.com'),
-    ('rachel', 'rachel@example.com'),
-    ('steve', 'steve@example.com'),
-    ('tina', 'tina@example.com'),
-    ('ursula', 'ursula@example.com'),
-    ('victor', 'victor@example.com'),
-    ('wendy', 'wendy@example.com'),
-    ('xander', 'xander@example.com'),
-    ('yara', 'yara@example.com');
+INSERT IGNORE INTO lottery_user (username, email, lottery_attempts) VALUES
+    ('alice', 'alice@example.com', 5),
+    ('bob', 'bob@example.com', 3),
+    ('charlie', 'charlie@example.com', 2),
+    ('david', 'david@example.com', 4),
+    ('eve', 'eve@example.com', 1),
+    ('frank', 'frank@example.com', 3),
+    ('grace', 'grace@example.com', 2),
+    ('hank', 'hank@example.com', 5),
+    ('irene', 'irene@example.com', 1),
+    ('jack', 'jack@example.com', 4),
+    ('kate', 'kate@example.com', 3),
+    ('leo', 'leo@example.com', 2),
+    ('mike', 'mike@example.com', 5),
+    ('nina', 'nina@example.com', 1),
+    ('oliver', 'oliver@example.com', 4),
+    ('paul', 'paul@example.com', 3),
+    ('quinn', 'quinn@example.com', 2),
+    ('rachel', 'rachel@example.com', 5),
+    ('steve', 'steve@example.com', 1),
+    ('tina', 'tina@example.com', 4),
+    ('ursula', 'ursula@example.com', 3),
+    ('victor', 'victor@example.com', 2),
+    ('wendy', 'wendy@example.com', 5),
+    ('xander', 'xander@example.com', 1),
+    ('yara', 'yara@example.com', 4);
 
 -- 插入抽奖记录数据
 INSERT IGNORE INTO lottery_record (user_id, activity_id, prize_id, won_at)

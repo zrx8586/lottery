@@ -37,11 +37,12 @@ CREATE TABLE IF NOT EXISTS lottery_activity_prize (
                                                       FOREIGN KEY (prize_id) REFERENCES lottery_prize(prize_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 用户表
+-- 抽奖用户表
 CREATE TABLE IF NOT EXISTS lottery_user (
                                             user_id INT AUTO_INCREMENT PRIMARY KEY,
                                             username VARCHAR(50) NOT NULL,
                                             email VARCHAR(100) NOT NULL UNIQUE,
+                                            lottery_attempts INT NOT NULL DEFAULT 0, -- 可抽奖次数
                                             datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                             datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

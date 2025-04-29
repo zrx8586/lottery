@@ -37,44 +37,65 @@
     margin-bottom: 20px;
 }
 
-/* 排序箭头样式 */
+/* 排序箭头通用样式 */
 .sort-arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-.sort-arrow.asc {
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid #909399;
-}
-
-.sort-arrow.desc {
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid #909399;
-}
-
-.sort-arrow.active.asc {
-  border-bottom-color: #409EFF;
-}
-
-.sort-arrow.active.desc {
-  border-top-color: #409EFF;
-}
-
-/* 可排序表头样式 */
-.sortable-header {
-  display: flex;
+  display: inline-flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 24px;
+  margin-left: 8px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.arrow {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid #409EFF;
+  border-right: 0;
+  border-bottom: 0;
+  transition: all 0.3s ease;
+  opacity: 0.3;
+}
+
+.arrow.up {
+  top: 4px;
+  transform: rotate(45deg);
+}
+
+.arrow.down {
+  bottom: 4px;
+  transform: rotate(-135deg);
+}
+
+.arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 4px rgba(64, 158, 255, 0.3);
+}
+
+.sortable:hover .arrow {
+  opacity: 0.6;
+  border-color: #66b1ff;
+}
+
+.sortable:hover .arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 6px rgba(64, 158, 255, 0.4);
+}
+
+.sortable {
   cursor: pointer;
   user-select: none;
+  position: relative;
+  padding-right: 30px;
+  transition: all 0.3s ease;
 }
 
-.sortable-header:hover {
-  color: #409EFF;
+.sortable:hover {
+  background-color: rgba(64, 158, 255, 0.05);
 }

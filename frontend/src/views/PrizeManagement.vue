@@ -24,46 +24,22 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th class="sortable" @click="toggleSort('name')">
-                奖品名称
-                <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'name' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'name' && sortDirection === 'desc' }"></i>
-                </span>
-              </th>
-              <th class="sortable" @click="toggleSort('description')">
-                描述
-                <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'description' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'description' && sortDirection === 'desc' }"></i>
-                </span>
-              </th>
-              <th class="sortable" @click="toggleSort('imageUrl')">
-                图片链接
-                <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'imageUrl' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'imageUrl' && sortDirection === 'desc' }"></i>
-                </span>
-              </th>
-              <th class="sortable" @click="toggleSort('category')">
-                类别
-                <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'category' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'category' && sortDirection === 'desc' }"></i>
-                </span>
-              </th>
-              <th class="sortable" @click="toggleSort('inventory')">
+              <th>奖品名称</th>
+              <th>描述</th>
+              <th>图片链接</th>
+              <th>类别</th>
+              <th class="sortable" @click="toggleSort('stockQuantity')">
                 库存
                 <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'inventory' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'inventory' && sortDirection === 'desc' }"></i>
+                  <i class="arrow up" :class="{ active: sortField === 'stockQuantity' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'stockQuantity' && sortDirection === 'desc' }"></i>
                 </span>
               </th>
-              <th class="sortable" @click="toggleSort('value')">
+              <th class="sortable" @click="toggleSort('prizeValue')">
                 价值
                 <span class="sort-arrow">
-                  <i class="arrow up" :class="{ active: sortField === 'value' && sortDirection === 'asc' }"></i>
-                  <i class="arrow down" :class="{ active: sortField === 'value' && sortDirection === 'desc' }"></i>
+                  <i class="arrow up" :class="{ active: sortField === 'prizeValue' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'prizeValue' && sortDirection === 'desc' }"></i>
                 </span>
               </th>
               <th>状态</th>
@@ -226,7 +202,22 @@ export default {
     paginatedPrizes() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.filteredPrizes.slice(start, end);
+      
+      let sortedPrizes = [...this.filteredPrizes];
+      
+      if (this.sortField) {
+        sortedPrizes.sort((a, b) => {
+          const aValue = a[this.sortField];
+          const bValue = b[this.sortField];
+          
+          if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+          }
+          return 0;
+        });
+      }
+      
+      return sortedPrizes.slice(start, end);
     },
     totalPages() {
       return Math.ceil(this.filteredPrizes.length / this.itemsPerPage);
@@ -768,47 +759,5 @@ export default {
   .form-group textarea {
     padding: 8px;
   }
-}
-
-.sortable {
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-  display: flex;
-  align-items: center;
-}
-
-.sort-arrow {
-  display: inline-flex;
-  flex-direction: column;
-  margin-left: 8px;
-  height: 20px;
-  justify-content: center;
-}
-
-.arrow {
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  opacity: 0.3;
-  transition: opacity 0.2s ease;
-}
-
-.arrow.up {
-  border-bottom: 4px solid #606266;
-  margin-bottom: 2px;
-}
-
-.arrow.down {
-  border-top: 4px solid #606266;
-}
-
-.arrow.active {
-  opacity: 1;
-}
-
-.sortable:hover .arrow {
-  opacity: 0.7;
 }
 </style>

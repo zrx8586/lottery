@@ -125,8 +125,8 @@ html, body {
 
 /* 顶部导航栏 */
 .header {
-  height: 50px;
-  background-color: #2c3e50;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   display: flex;
   justify-content: flex-end;
@@ -138,43 +138,53 @@ html, body {
 .header .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .header .user-info .avatar {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 2px solid white;
+  object-fit: cover;
+}
+
+.header .user-info span {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .header .user-info button {
-  padding: 5px 10px;
-  background-color: #e74c3c;
+  padding: 6px 12px;
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
-  border: none;
-  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
 .header .user-info button:hover {
-  background-color: #c0392b;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 /* 主容器 */
 .main-container {
   display: flex;
   flex: 1;
-  height: calc(100vh - 50px); /* 减去 header 的高度 */
+  height: calc(100vh - 60px); /* 减去 header 的高度 */
+  background-color: #f5f7fa;
 }
 
 /* 左侧侧边栏 */
 .sidebar {
   width: 240px;
-  background-color: #2c3e50;
-  color: white;
+  background: white;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar .logo {
@@ -182,7 +192,9 @@ html, body {
   font-weight: bold;
   text-align: center;
   padding: 20px 0;
-  background-color: #1a252f;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 10px;
 }
 
 .sidebar .menu {
@@ -197,27 +209,99 @@ html, body {
 }
 
 .sidebar .menu a {
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 15px 20px;
-  color: white;
+  color: #606266;
   text-decoration: none;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  position: relative;
 }
 
 .sidebar .menu a:hover {
-  background-color: #34495e;
+  background-color: #f5f7fa;
+  color: #667eea;
 }
 
 .sidebar .menu a.active {
-  background-color: #1abc9c;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
+  font-weight: 500;
+}
+
+.sidebar .menu a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.sidebar .menu a i {
+  margin-right: 10px;
+  font-size: 16px;
 }
 
 /* 右侧内容区域 */
 .content {
   flex: 1;
   padding: 20px;
-  background-color: #ecf0f1;
+  background-color: #f5f7fa;
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+/* 图标样式 */
+.icon-dashboard:before {
+  content: "📊";
+}
+
+.icon-activity:before {
+  content: "🎯";
+}
+
+.icon-prize:before {
+  content: "🎁";
+}
+
+.icon-cache:before {
+  content: "💾";
+}
+
+.icon-role:before {
+  content: "👥";
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .sidebar .logo {
+    font-size: 18px;
+    padding: 15px 0;
+  }
+
+  .sidebar .menu a {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+
+  .header .user-info {
+    gap: 10px;
+  }
+
+  .header .user-info .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header .user-info span {
+    display: none;
+  }
 }
 </style>

@@ -59,7 +59,7 @@ public class JwtUtil {
     public long getExpiration(String token) {
         try {
             Date expiration = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(Base64.getDecoder().decode(token)))
+                    .setSigningKey(secretKey.getBytes())
                     .build()
                     .parseClaimsJws(token)
                     .getBody()

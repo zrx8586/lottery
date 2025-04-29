@@ -1,24 +1,56 @@
 <template>
-  <div class="auth-container">
-    <h1 v-if="isLoginMode">登录</h1>
-    <h1 v-else>注册</h1>
-    <form @submit.prevent="isLoginMode ? login() : register()">
-      <div class="form-group">
-        <label for="username">用户名</label>
-        <input v-model="username" id="username" required />
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <h1>{{ isLoginMode ? '欢迎回来' : '创建账号' }}</h1>
+        <p>{{ isLoginMode ? '请登录您的账号' : '注册新账号' }}</p>
       </div>
-      <div class="form-group">
-        <label for="password">密码</label>
-        <input type="password" v-model="password" id="password" required />
+      
+      <form @submit.prevent="isLoginMode ? login() : register()" class="login-form">
+        <div class="form-group">
+          <div class="input-group">
+            <i class="icon-user"></i>
+            <input 
+              v-model="username" 
+              type="text" 
+              placeholder="用户名" 
+              required 
+              autocomplete="username"
+            />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="input-group">
+            <i class="icon-lock"></i>
+            <input 
+              v-model="password" 
+              :type="showPassword ? 'text' : 'password'" 
+              placeholder="密码" 
+              required 
+              autocomplete="current-password"
+            />
+            <i 
+              :class="['icon-eye', showPassword ? 'active' : '']" 
+              @click="showPassword = !showPassword"
+            ></i>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          {{ isLoginMode ? '登录' : '注册' }}
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p class="toggle-mode">
+          {{ isLoginMode ? '还没有账号？' : '已有账号？' }}
+          <a href="#" @click.prevent="toggleMode">
+            {{ isLoginMode ? '立即注册' : '立即登录' }}
+          </a>
+        </p>
       </div>
-      <button type="submit" class="btn" v-if="isLoginMode">登录</button>
-      <button type="submit" class="btn" v-else>注册</button>
-    </form>
-    <p class="toggle-mode">
-      <span v-if="isLoginMode">没有账号？</span>
-      <span v-else>已有账号？</span>
-      <a href="#" @click.prevent="toggleMode">{{ isLoginMode ? '注册' : '登录' }}</a>
-    </p>
+    </div>
   </div>
 </template>
 
@@ -28,70 +60,56 @@ import axios from "axios";
 export default {
   data() {
     return {
-      isLoginMode: true, // 控制登录和注册模式
+      isLoginMode: true,
       username: "",
       password: "",
+      showPassword: false
     };
   },
   methods: {
     toggleMode() {
-      this.isLoginMode = !this.isLoginMode; // 切换模式
+      this.isLoginMode = !this.isLoginMode;
+      this.username = "";
+      this.password = "";
     },
     async login() {
       try {
-        // 清除旧的 Authorization 头，防止旧 Token 干扰
         delete axios.defaults.headers.common["Authorization"];
-
-        // 调用后端登录接口
         const response = await axios.post("/api/auth/login", {
           username: this.username,
           password: this.password,
         });
 
-        // 存储新的 JWT Token
         const token = response.data.token;
         localStorage.setItem("token", token);
-
-        // 设置 Axios 默认请求头
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-        // 触发登录成功事件
         this.$eventBus.$emit("login-success", this.username);
-
-        // 跳转到主页面
-        this.$router.push("/activity"); // 确保目标路径正确
+        this.$router.push("/activity");
       } catch (error) {
-        // 显示详细的错误信息
         console.error("登录错误详情:", error);
         if (error.response) {
-          // 服务器返回了错误响应
           alert(`登录失败：${error.response.data.message || error.response.data || "服务器错误"}`);
         } else if (error.request) {
-          // 请求已发出但没有收到响应
           alert("登录失败：无法连接到服务器，请检查网络连接");
         } else {
-          // 请求配置出错
           alert(`登录失败：${error.message || "未知错误"}`);
         }
       }
     },
     async register() {
       try {
-        // 调用后端注册接口
         const response = await axios.post("/api/auth/register", {
           username: this.username,
           password: this.password,
         });
 
-        // 判断后端返回的状态或数据
         if (response.status === 200) {
           alert(response.data || "注册成功，请登录！");
-          this.isLoginMode = true; // 切换回登录模式
+          this.isLoginMode = true;
         } else {
           alert("注册失败：未知错误");
         }
       } catch (error) {
-        // 显示后端返回的错误信息
         console.error("注册错误详情:", error);
         if (error.response) {
           alert(`注册失败：${error.response.data.message || error.response.data || "服务器错误"}`);
@@ -107,57 +125,152 @@ export default {
 </script>
 
 <style scoped>
-.auth-container {
-  max-width: 400px;
-  margin: 100px auto;
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+}
+
+.login-box {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.3s ease;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.login-form {
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-input {
+.input-group i {
+  position: absolute;
+  left: 15px;
+  color: #999;
+  font-size: 16px;
+}
+
+.input-group input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  padding: 12px 15px 12px 45px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
-button {
+.input-group input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  outline: none;
+}
+
+.icon-eye {
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+  color: #999;
+}
+
+.icon-eye.active {
+  color: #667eea;
+}
+
+.submit-btn {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 3px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #0056b3;
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
 }
 
 .toggle-mode {
-  margin-top: 15px;
-  text-align: center;
+  color: #666;
+  font-size: 14px;
 }
 
 .toggle-mode a {
-  color: #007bff;
-  cursor: pointer;
+  color: #667eea;
   text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .toggle-mode a:hover {
-  text-decoration: underline;
+  color: #764ba2;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+  
+  .login-header h1 {
+    font-size: 20px;
+  }
+  
+  .input-group input {
+    padding: 10px 15px 10px 40px;
+  }
+}
+
+/* 图标样式 */
+.icon-user:before {
+  content: "👤";
+}
+
+.icon-lock:before {
+  content: "🔒";
+}
+
+.icon-eye:before {
+  content: "👁️";
 }
 </style>

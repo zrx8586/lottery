@@ -257,7 +257,8 @@ export default {
 </script>
 
 <style scoped>
-@import '@/assets/styles/button-styles.css';
+@import "../assets/styles/button-styles.css";
+@import "../assets/styles/common.css";
 
 .page-container {
   padding: 20px;

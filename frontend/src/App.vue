@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="header">
+    <header class="header" v-if="isLoggedIn">
       <div class="user-info">
         <img class="avatar" src="https://via.placeholder.com/30" alt="用户头像" />
         <span>当前用户：{{ username }}</span>
@@ -8,7 +8,7 @@
       </div>
     </header>
     <div class="main-container">
-      <aside class="sidebar">
+      <aside class="sidebar" v-if="isLoggedIn">
         <div class="logo">管理后台</div>
         <ul class="menu">
           <li><router-link to="/activity" active-class="active">活动管理</router-link></li>
@@ -32,19 +32,21 @@ export default {
   data() {
     return {
       username: "", // 当前登录用户
+      isLoggedIn: false, // 登录状态
     };
   },
   async created() {
-    try {
-      const token = localStorage.getItem("token");
-      if (token) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.isLoggedIn = true;
+      try {
         const response = await axios.get("/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.username = response.data.username;
+      } catch {
+        this.isLoggedIn = false;
       }
-    } catch (error) {
-      console.error("获取用户信息失败", error);
     }
   },
   methods: {
@@ -71,8 +73,12 @@ export default {
       } finally {
         // 清除本地存储的 Token 并跳转到登录页面
         localStorage.removeItem("token");
+        this.isLoggedIn = false; // 更新登录状态
         this.$router.push("/login");
       }
+    },
+    handleLoginSuccess() {
+      this.isLoggedIn = true; // 登录成功后更新状态
     },
   },
 };

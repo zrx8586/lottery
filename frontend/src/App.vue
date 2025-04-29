@@ -16,6 +16,7 @@
           <li><router-link to="/prizes" active-class="active">奖品管理</router-link></li>
           <li><router-link to="/cache" active-class="active">缓存管理</router-link></li>
           <li><router-link to="/role" active-class="active">角色管理</router-link></li>
+          <li><router-link to="/lottery" active-class="active">抽奖</router-link></li>
         </ul>
       </aside>
       <main class="content">

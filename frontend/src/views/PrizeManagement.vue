@@ -24,12 +24,48 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>奖品名称</th>
-              <th>描述</th>
-              <th>图片链接</th>
-              <th>类别</th>
-              <th>价值</th>
-              <th>库存</th>
+              <th class="sortable" @click="toggleSort('name')">
+                奖品名称
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'name' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'name' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('description')">
+                描述
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'description' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'description' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('imageUrl')">
+                图片链接
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'imageUrl' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'imageUrl' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('category')">
+                类别
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'category' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'category' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('inventory')">
+                库存
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'inventory' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'inventory' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="toggleSort('value')">
+                价值
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'value' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'value' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
               <th>状态</th>
               <th>操作</th>
             </tr>
@@ -40,8 +76,8 @@
               <td>{{ prize.prizeDesc }}</td>
               <td>{{ prize.prizeImageUrl }}</td>
               <td>{{ prize.prizeCategory }}</td>
-              <td>{{ prize.prizeValue }}</td>
               <td>{{ prize.stockQuantity }}</td>
+              <td>{{ prize.prizeValue }}</td>
               <td>
                 <span :class="['status-badge', prize.isActive ? 'active' : 'inactive']">
                   {{ prize.isActive ? '已激活' : '未激活' }}
@@ -176,6 +212,8 @@ export default {
         stockQuantity: 0,
         isActive: true,
       },
+      sortField: "",
+      sortDirection: "asc",
     };
   },
   computed: {
@@ -252,6 +290,14 @@ export default {
     },
     closeView() {
       this.viewingPrize = false;
+    },
+    toggleSort(field) {
+      if (this.sortField === field) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+        this.sortDirection = 'asc';
+      }
     },
   },
   mounted() {
@@ -722,5 +768,47 @@ export default {
   .form-group textarea {
     padding: 8px;
   }
+}
+
+.sortable {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.sort-arrow {
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 8px;
+  height: 20px;
+  justify-content: center;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.arrow.up {
+  border-bottom: 4px solid #606266;
+  margin-bottom: 2px;
+}
+
+.arrow.down {
+  border-top: 4px solid #606266;
+}
+
+.arrow.active {
+  opacity: 1;
+}
+
+.sortable:hover .arrow {
+  opacity: 0.7;
 }
 </style>

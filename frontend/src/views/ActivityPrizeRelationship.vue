@@ -26,17 +26,29 @@
             <tr>
               <th>活动名称</th>
               <th>描述</th>
-              <th>开始日期</th>
-              <th>结束日期</th>
+              <th class="sortable" @click="handleSortChange('startDate')">
+                开始时间
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'startDate' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'startDate' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
+              <th class="sortable" @click="handleSortChange('endDate')">
+                结束时间
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'endDate' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'endDate' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="activity in paginatedActivities" :key="activity.activityId">
+            <tr v-for="activity in sortedActivities" :key="activity.activityId">
               <td>{{ activity.activityName }}</td>
               <td>{{ activity.activityDesc }}</td>
-              <td>{{ formatDate(activity.startDate) }}</td>
-              <td>{{ formatDate(activity.endDate) }}</td>
+              <td>{{ formatDateTime(activity.startDate) }}</td>
+              <td>{{ formatDateTime(activity.endDate) }}</td>
               <td>
                 <div class="action-buttons">
                   <button class="action-btn view-btn" @click="viewActivity(activity.activityId)">
@@ -198,6 +210,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import '@/assets/styles/common.css';
 
 export default {
   data() {
@@ -215,7 +228,9 @@ export default {
       },
       searchQuery: "",
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      sortField: '',
+      sortDirection: 'asc',
     };
   },
   computed: {
@@ -232,7 +247,21 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.filteredActivities.length / this.itemsPerPage);
-    }
+    },
+    sortedActivities() {
+      if (!this.sortField) return this.paginatedActivities;
+      
+      return [...this.paginatedActivities].sort((a, b) => {
+        const aValue = new Date(a[this.sortField]);
+        const bValue = new Date(b[this.sortField]);
+        
+        if (this.sortDirection === 'asc') {
+          return aValue - bValue;
+        } else {
+          return bValue - aValue;
+        }
+      });
+    },
   },
   methods: {
     async fetchAvailableActivities() {
@@ -341,7 +370,18 @@ export default {
     },
     formatDate(date) {
       return moment(date).format("YYYY-MM-DD");
-    }
+    },
+    formatDateTime(date) {
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
+    },
+    handleSortChange(field) {
+      if (this.sortField === field) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+        this.sortDirection = 'asc';
+      }
+    },
   },
   mounted() {
     this.fetchActivities();
@@ -939,5 +979,67 @@ export default {
   .prize-item {
     padding: 8px;
   }
+}
+
+.sort-arrow {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 24px;
+  margin-left: 8px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.arrow {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1.5px solid #409EFF;
+  border-right: 0;
+  border-bottom: 0;
+  transition: all 0.3s ease;
+  opacity: 0.3;
+}
+
+.arrow.up {
+  top: 4px;
+  transform: rotate(45deg);
+}
+
+.arrow.down {
+  bottom: 4px;
+  transform: rotate(-135deg);
+}
+
+.arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 4px rgba(64, 158, 255, 0.3);
+}
+
+.sortable:hover .arrow {
+  opacity: 0.6;
+  border-color: #66b1ff;
+}
+
+.sortable:hover .arrow.active {
+  opacity: 1;
+  border-color: #409EFF;
+  box-shadow: 0 0 6px rgba(64, 158, 255, 0.4);
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 30px;
+  transition: all 0.3s ease;
+}
+
+.sortable:hover {
+  background-color: rgba(64, 158, 255, 0.05);
 }
 </style>

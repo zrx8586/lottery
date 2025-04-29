@@ -25,6 +25,10 @@ public class LotteryActivityController {
     @GetMapping("/all")
     public ResponseEntity<List<LotteryActivity>> getAllActivities() {
         List<LotteryActivity> activities = activityService.getAllActivities();
+        // 根据当前时间更新活动状态
+        activities.forEach(activity -> {
+            activityService.updateActivityStatus(activity);
+        });
         return ResponseEntity.ok(activities);
     }
 
@@ -36,6 +40,8 @@ public class LotteryActivityController {
     // 创建新活动
     @PostMapping("/create")
     public ResponseEntity<LotteryActivity> createActivity(@RequestBody LotteryActivity activity) {
+        // 设置初始状态
+        activity.setStatus("PENDING");
         LotteryActivity createdActivity = activityService.createActivity(activity);
         return ResponseEntity.ok(createdActivity);
     }
@@ -53,11 +59,32 @@ public class LotteryActivityController {
             @RequestBody LotteryActivity updatedActivity) {
         LotteryActivity existingActivity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+        
+        // 保留原有状态
         updatedActivity.setActivityId(existingActivity.getActivityId());
+        updatedActivity.setStatus(existingActivity.getStatus());
+        
         LotteryActivity savedActivity = activityService.createActivity(updatedActivity);
         return ResponseEntity.ok(savedActivity);
     }
 
+    /**
+     * 更新活动状态
+     * @param activityId 活动ID
+     * @param status 新状态
+     * @return 更新后的活动信息
+     */
+    @PutMapping("/{activityId}/status")
+    public ResponseEntity<LotteryActivity> updateActivityStatus(
+            @PathVariable Long activityId,
+            @RequestParam String status) {
+        LotteryActivity activity = activityService.getActivityById(activityId)
+                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+        
+        activity.setStatus(status);
+        LotteryActivity updatedActivity = activityService.createActivity(activity);
+        return ResponseEntity.ok(updatedActivity);
+    }
 
     /**
      * 删除活动

@@ -5,9 +5,10 @@ CREATE TABLE IF NOT EXISTS lottery_activity (
                                                 activity_desc TEXT, -- 活动描述
                                                 start_date DATETIME NOT NULL,
                                                 end_date DATETIME NOT NULL,
+                                                status ENUM('ACTIVE', 'PENDING', 'ENDED') NOT NULL DEFAULT 'PENDING', -- 活动状态
                                                 datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                 datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 重新设计的 lottery_prize 表
 CREATE TABLE IF NOT EXISTS lottery_prize (
@@ -21,7 +22,7 @@ CREATE TABLE IF NOT EXISTS lottery_prize (
                                              is_active BOOLEAN NOT NULL DEFAULT TRUE, -- 奖品是否可用
                                              datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                              datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 活动奖品表
 CREATE TABLE IF NOT EXISTS lottery_activity_prize (
@@ -34,7 +35,7 @@ CREATE TABLE IF NOT EXISTS lottery_activity_prize (
                                                       datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                       FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
                                                       FOREIGN KEY (prize_id) REFERENCES lottery_prize(prize_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 用户表
 CREATE TABLE IF NOT EXISTS lottery_user (
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS lottery_user (
                                             email VARCHAR(100) NOT NULL UNIQUE,
                                             datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                             datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 抽奖记录表
 CREATE TABLE IF NOT EXISTS lottery_record (
@@ -57,7 +58,7 @@ CREATE TABLE IF NOT EXISTS lottery_record (
                                               FOREIGN KEY (user_id) REFERENCES lottery_user(user_id),
                                               FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
                                               FOREIGN KEY (prize_id) REFERENCES lottery_prize(prize_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 活动用户表
 CREATE TABLE IF NOT EXISTS lottery_activity_user (
@@ -70,4 +71,4 @@ CREATE TABLE IF NOT EXISTS lottery_activity_user (
                                                      datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                      FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
                                                      FOREIGN KEY (user_id) REFERENCES lottery_user(user_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

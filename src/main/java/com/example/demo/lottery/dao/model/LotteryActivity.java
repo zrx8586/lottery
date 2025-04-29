@@ -18,6 +18,7 @@ public class LotteryActivity {
     private String activityDesc;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String status; // »î¶¯×´Ì¬£ºACTIVE, PENDING, ENDED
 
     @Column(name = "datachange_createtime", updatable = false)
     private LocalDateTime datachangeCreateTime;

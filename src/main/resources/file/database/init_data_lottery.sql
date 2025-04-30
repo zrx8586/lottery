@@ -55,32 +55,32 @@ SELECT
         ELSE FALSE 
     END as is_active
 FROM (
-    SELECT '华为Mate60 Pro' as prize_name, '最新款华为旗舰手机，搭载麒麟9000S芯片' as prize_desc, 'https://example.com/images/huawei-mate60.jpg' as prize_image_url, '电子产品' as prize_category, 6999.00 as prize_value, 10 as stock_quantity UNION ALL
-    SELECT '茅台飞天53度', '贵州茅台酒，500ml装', 'https://example.com/images/maotai.jpg', '酒水', 1499.00, 20 UNION ALL
-    SELECT '故宫文创礼盒', '故宫博物院官方授权文创产品', 'https://example.com/images/forbidden-city.jpg', '文创', 299.00, 50 UNION ALL
-    SELECT '大闸蟹礼券', '阳澄湖大闸蟹，8只装', 'https://example.com/images/crab.jpg', '食品', 888.00, 30 UNION ALL
-    SELECT '茶具套装', '景德镇青花瓷茶具，6件套', 'https://example.com/images/tea-set.jpg', '家居', 599.00, 15 UNION ALL
-    SELECT '谢谢参与', '感谢您的参与', 'https://example.com/images/thanks.jpg', '其他', 0.00, 999999 UNION ALL
-    SELECT 'iPhone 15 Pro', '苹果最新款旗舰手机', 'https://example.com/images/iphone15.jpg', '电子产品', 7999.00, 5 UNION ALL
-    SELECT '小米14 Ultra', '小米最新款旗舰手机', 'https://example.com/images/xiaomi14.jpg', '电子产品', 5999.00, 8 UNION ALL
-    SELECT '三星S24 Ultra', '三星最新款旗舰手机', 'https://example.com/images/samsung24.jpg', '电子产品', 8999.00, 6 UNION ALL
-    SELECT 'OPPO Find X7', 'OPPO最新款旗舰手机', 'https://example.com/images/oppo-x7.jpg', '电子产品', 4999.00, 10 UNION ALL
-    SELECT 'vivo X100 Pro', 'vivo最新款旗舰手机', 'https://example.com/images/vivo-x100.jpg', '电子产品', 5999.00, 8 UNION ALL
-    SELECT '荣耀Magic6 Pro', '荣耀最新款旗舰手机', 'https://example.com/images/honor-magic6.jpg', '电子产品', 4999.00, 10 UNION ALL
-    SELECT '联想拯救者Y9000P', '联想游戏本', 'https://example.com/images/lenovo-y9000p.jpg', '电子产品', 9999.00, 5 UNION ALL
-    SELECT '戴尔XPS 15', '戴尔高端笔记本', 'https://example.com/images/dell-xps15.jpg', '电子产品', 12999.00, 4 UNION ALL
-    SELECT '苹果MacBook Pro', '苹果高端笔记本', 'https://example.com/images/macbook-pro.jpg', '电子产品', 14999.00, 3 UNION ALL
-    SELECT '华为MateBook X Pro', '华为高端笔记本', 'https://example.com/images/huawei-matebook.jpg', '电子产品', 9999.00, 5 UNION ALL
-    SELECT '小米笔记本Pro', '小米高端笔记本', 'https://example.com/images/xiaomi-notebook.jpg', '电子产品', 6999.00, 8 UNION ALL
-    SELECT '荣耀MagicBook Pro', '荣耀高端笔记本', 'https://example.com/images/honor-magicbook.jpg', '电子产品', 5999.00, 10 UNION ALL
-    SELECT '联想小新Pro', '联想轻薄本', 'https://example.com/images/lenovo-xiaoxin.jpg', '电子产品', 4999.00, 12 UNION ALL
-    SELECT '戴尔灵越15', '戴尔轻薄本', 'https://example.com/images/dell-inspiron.jpg', '电子产品', 5999.00, 8 UNION ALL
-    SELECT '苹果iPad Pro', '苹果平板电脑', 'https://example.com/images/ipad-pro.jpg', '电子产品', 6999.00, 6 UNION ALL
-    SELECT '华为MatePad Pro', '华为平板电脑', 'https://example.com/images/huawei-matepad.jpg', '电子产品', 4999.00, 8 UNION ALL
-    SELECT '小米平板6 Pro', '小米平板电脑', 'https://example.com/images/xiaomi-pad6.jpg', '电子产品', 2999.00, 10 UNION ALL
-    SELECT '荣耀平板V8 Pro', '荣耀平板电脑', 'https://example.com/images/honor-pad-v8.jpg', '电子产品', 2999.00, 10 UNION ALL
-    SELECT '联想小新Pad Pro', '联想平板电脑', 'https://example.com/images/lenovo-pad.jpg', '电子产品', 2999.00, 10 UNION ALL
-    SELECT '戴尔XPS 13', '戴尔轻薄本', 'https://example.com/images/dell-xps13.jpg', '电子产品', 9999.00, 5
+    SELECT '华为Mate60 Pro' as prize_name, '最新款华为旗舰手机，搭载麒麟9000S芯片' as prize_desc, '/assets/images/prizes/phones/huawei-mate60-pro.png' as prize_image_url, '手机' as prize_category, 6999.00 as prize_value, 10 as stock_quantity UNION ALL
+    SELECT '茅台飞天53度', '贵州茅台酒，500ml装', '/assets/images/prizes/wine/moutai-feitian.png', '酒水', 1499.00, 20 UNION ALL
+    SELECT '故宫文创礼盒', '故宫博物院官方授权文创产品', '/assets/images/prizes/cultural/forbidden-city-gift.png', '文创', 299.00, 50 UNION ALL
+    SELECT '大闸蟹礼券', '阳澄湖大闸蟹，8只装', '/assets/images/prizes/food/crab_gift.jpg', '食品', 888.00, 30 UNION ALL
+    SELECT '茶具套装', '景德镇青花瓷茶具，6件套', '/assets/images/prizes/household/tea_set.jpg', '家居', 599.00, 15 UNION ALL
+    SELECT '谢谢参与', '感谢您的参与', '/assets/images/prizes/others/thanks.jpg', '其他', 0.00, 999999 UNION ALL
+    SELECT 'iPhone 15 Pro', '苹果最新款旗舰手机', '/assets/images/prizes/phones/iphone-15-pro.png', '手机', 7999.00, 5 UNION ALL
+    SELECT '小米14 Ultra', '小米最新款旗舰手机', '/assets/images/prizes/phones/xiaomi-14-ultra.png', '手机', 5999.00, 8 UNION ALL
+    SELECT '三星S24 Ultra', '三星最新款旗舰手机', '/assets/images/prizes/phones/samsung-s24-ultra.png', '手机', 8999.00, 6 UNION ALL
+    SELECT 'OPPO Find X7', 'OPPO最新款旗舰手机', '/assets/images/prizes/phones/oppo-find-x7.png', '手机', 4999.00, 10 UNION ALL
+    SELECT 'vivo X100 Pro', 'vivo最新款旗舰手机', '/assets/images/prizes/phones/vivo-x100-pro.png', '手机', 5999.00, 8 UNION ALL
+    SELECT '荣耀Magic6 Pro', '荣耀最新款旗舰手机', '/assets/images/prizes/phones/honor-magic6.png', '手机', 4999.00, 10 UNION ALL
+    SELECT '联想拯救者Y9000P', '联想游戏本', '/assets/images/prizes/electronics/lenovo_y9000p.jpg', '电子产品', 9999.00, 5 UNION ALL
+    SELECT '戴尔XPS 15', '戴尔高端笔记本', '/assets/images/prizes/electronics/dell_xps15.jpg', '电子产品', 12999.00, 4 UNION ALL
+    SELECT '苹果MacBook Pro', '苹果高端笔记本', '/assets/images/prizes/electronics/macbook_pro.jpg', '电子产品', 14999.00, 3 UNION ALL
+    SELECT '华为MateBook X Pro', '华为高端笔记本', '/assets/images/prizes/electronics/huawei_matebook.jpg', '电子产品', 9999.00, 5 UNION ALL
+    SELECT '小米笔记本Pro', '小米高端笔记本', '/assets/images/prizes/electronics/xiaomi_notebook.jpg', '电子产品', 6999.00, 8 UNION ALL
+    SELECT '荣耀MagicBook Pro', '荣耀高端笔记本', '/assets/images/prizes/electronics/honor_magicbook.jpg', '电子产品', 5999.00, 10 UNION ALL
+    SELECT '联想小新Pro', '联想轻薄本', '/assets/images/prizes/electronics/lenovo_xiaoxin.jpg', '电子产品', 4999.00, 12 UNION ALL
+    SELECT '戴尔灵越15', '戴尔轻薄本', '/assets/images/prizes/electronics/dell_inspiron.jpg', '电子产品', 5999.00, 8 UNION ALL
+    SELECT '苹果iPad Pro', '苹果平板电脑', '/assets/images/prizes/electronics/ipad_pro.jpg', '电子产品', 6999.00, 6 UNION ALL
+    SELECT '华为MatePad Pro', '华为平板电脑', '/assets/images/prizes/electronics/huawei_matepad.jpg', '电子产品', 4999.00, 8 UNION ALL
+    SELECT '小米平板6 Pro', '小米平板电脑', '/assets/images/prizes/electronics/xiaomi_pad6.jpg', '电子产品', 2999.00, 10 UNION ALL
+    SELECT '荣耀平板V8 Pro', '荣耀平板电脑', '/assets/images/prizes/electronics/honor_pad_v8.jpg', '电子产品', 2999.00, 10 UNION ALL
+    SELECT '联想小新Pad Pro', '联想平板电脑', '/assets/images/prizes/electronics/lenovo_pad.jpg', '电子产品', 2999.00, 10 UNION ALL
+    SELECT '戴尔XPS 13', '戴尔轻薄本', '/assets/images/prizes/electronics/dell_xps13.jpg', '电子产品', 9999.00, 5
 ) prize_info;
 
 -- 插入活动奖品数据

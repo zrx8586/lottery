@@ -148,10 +148,10 @@ public class LotteryService {
             while (retries < maxRetries) {
                 // 根据概率选择奖品
                 LotteryActivityPrize selectedPrize = selectPrizeBasedOnProbability(activityPrizes);
-                
+
                 // 如果选中的奖品为null，直接重试
-                if (selectedPrize == null) {
-                    logger.warn("用户={}, 未选中任何奖品，继续尝试: 活动ID={}", user.getUsername(), activityId);
+                if (selectedPrize == null || selectedPrize.getQuantity() <= 0) {
+                    logger.warn("用户={}, 选中的奖品无效，继续尝试: 活动ID={}, 奖品ID={}", user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
                     retries++;
                     continue;
                 }
@@ -164,7 +164,7 @@ public class LotteryService {
                     return selectedPrize;
                 } else {
                     // 如果处理失败，可能是因为库存不足，重新选择奖品
-                    logger.warn("用户={}, 奖品处理失败，继续尝试其他奖品: 活动ID={}, 奖品ID={}", 
+                    logger.warn("用户={}, 奖品处理失败，继续尝试其他奖品: 活动ID={}, 奖品ID={}",
                         user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
                 }
 
@@ -177,7 +177,7 @@ public class LotteryService {
                     throw new RuntimeException("线程被中断", e);
                 }
             }
-            
+
             // 如果超过最大重试次数，返回 null
             logger.warn("用户={}, 超过最大重试次数，抽奖失败: 活动ID={}", user.getUsername(), activityId);
             return null;

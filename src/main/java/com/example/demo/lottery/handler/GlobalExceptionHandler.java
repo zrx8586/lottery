@@ -41,8 +41,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<BaseResponse<Void>> handleBusinessException(BusinessException e) {
-        logger.error("BusinessException: {}", e.getErrorMessage(), e);
-        return buildResponseEntity(BaseResponse.failure(e.getErrorMessage(), e.getErrorCode()), HttpStatus.BAD_REQUEST);
+        logger.error("BusinessException: code={}, message={}", e.getCode(), e.getMessage(), e);
+        return buildResponseEntity(BaseResponse.failure(e.getMessage(), e.getCode()), HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<BaseResponse<Void>> buildResponseEntity(BaseResponse<Void> response, HttpStatus status) {

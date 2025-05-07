@@ -1,20 +1,31 @@
 package com.example.demo.lottery.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
+ * 业务异常
  * @author long_w
  */
 @Getter
-@Setter
 public class BusinessException extends RuntimeException {
-    private int errorCode;
-    private String errorMessage;
+    private final int code;
+    private final String message;
 
-    public BusinessException(int errorCode, String errorMessage) {
-        super(errorMessage);
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    public BusinessException(BusinessExceptionEnum exceptionEnum) {
+        super(exceptionEnum.getMessage());
+        this.code = exceptionEnum.getCode();
+        this.message = exceptionEnum.getMessage();
+    }
+
+    public BusinessException(BusinessExceptionEnum exceptionEnum, String message) {
+        super(message);
+        this.code = exceptionEnum.getCode();
+        this.message = message;
+    }
+
+    public BusinessException(BusinessExceptionEnum exceptionEnum, Throwable cause) {
+        super(exceptionEnum.getMessage(), cause);
+        this.code = exceptionEnum.getCode();
+        this.message = exceptionEnum.getMessage();
     }
 }

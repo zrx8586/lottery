@@ -5,6 +5,7 @@ import com.example.demo.lottery.dao.repository.*;
 import com.example.demo.lottery.dto.response.LotteryDrawResponse;
 import com.example.demo.lottery.dto.response.LotteryRecordResponse;
 import com.example.demo.lottery.exception.BusinessException;
+import com.example.demo.lottery.exception.BusinessExceptionEnum;
 import com.example.demo.lottery.util.JsonUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -22,12 +23,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ * 抽奖服务
  * @author long_w
  */
 @Service
 public class LotteryService {
-
     private static final Logger logger = LoggerFactory.getLogger(LotteryService.class);
+    private static final int MAX_RETRIES = 5;
+    private static final int MIN_RETRY_DELAY = 100;
+    private static final int MAX_RETRY_DELAY = 200;
+    private static final int CACHE_TIMEOUT_MINUTES = 10;
+    private static final int LOCK_TIMEOUT_SECONDS = 10;
 
     @Resource
     private LotteryActivityUserRepository activityUserRepository;
@@ -50,22 +56,29 @@ public class LotteryService {
     @Autowired
     private UserRepository userRepository;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
-    // 获取所有中奖记录
+    /**
+     * 获取所有中奖记录
+     */
     public List<LotteryRecordResponse> getAllLotteryRecords() {
         return recordRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    // 根据用户ID获取中奖记录
+    /**
+     * 根据用户ID和活动ID获取中奖记录
+     */
     public List<LotteryRecordResponse> getLotteryRecords(Long userId, Long activityId) {
         return recordRepository.findByUserIdAndActivityId(userId, activityId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 抽奖
+     */
     public LotteryDrawResponse drawPrize(String username, Long activityId) {
         logger.info("开始抽奖: 用户名={}, 活动ID={}", username, activityId);
 
@@ -77,11 +90,11 @@ public class LotteryService {
         LotteryActivityUser lotteryActivityUser = validateUserDrawCount(activityId, user);
 
         // 获取奖品列表
-        String redisKey = "activity:" + activityId + ":prizes";
+        String redisKey = getPrizeCacheKey(activityId);
         List<LotteryActivityPrize> activityPrizes = getCachedPrizesOrInitialize(redisKey, activityId);
         if (CollectionUtils.isEmpty(activityPrizes)) {
             logger.warn("没有可用的奖品: 活动ID={}", activityId);
-            throw new BusinessException(1003, "没有可用的奖品");
+            throw new BusinessException(BusinessExceptionEnum.PRIZE_NOT_FOUND);
         }
 
         // 选择并处理奖品
@@ -89,7 +102,8 @@ public class LotteryService {
 
         // 返回抽奖结果
         if (selectedPrize != null) {
-            logger.info("抽奖成功: 用户名={}, 奖品ID={}, 奖品名称={}", username, selectedPrize.getActivityPrizeId(), selectedPrize.getPrize().getPrizeName());
+            logger.info("抽奖成功: 用户名={}, 奖品ID={}, 奖品名称={}", 
+                username, selectedPrize.getActivityPrizeId(), selectedPrize.getPrize().getPrizeName());
             return createSuccessResponse(selectedPrize);
         } else {
             logger.warn("抽奖失败: 用户名={}, 活动ID={}", username, activityId);
@@ -97,61 +111,64 @@ public class LotteryService {
         }
     }
 
+    /**
+     * 验证用户抽奖次数
+     */
     private LotteryActivityUser validateUserDrawCount(Long activityId, User user) {
         LotteryActivityUser lotteryActivityUser = activityUserRepository.findByUserIdAndActivityId(user.getUserId(), activityId);
         if (lotteryActivityUser == null) {
-            throw new BusinessException(1003, "用户没有参与活动的资格");
+            throw new BusinessException(BusinessExceptionEnum.USER_NO_ACTIVITY_QUALIFICATION);
         }
         if (lotteryActivityUser.getLotteryAttempts() <= 0) {
-            throw new BusinessException(1004, "用户抽奖次数已用完");
+            throw new BusinessException(BusinessExceptionEnum.USER_NO_ATTEMPTS);
         }
         return lotteryActivityUser;
     }
 
+    /**
+     * 验证用户是否存在
+     */
     private User validateUser(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
+                .orElseThrow(() -> new BusinessException(BusinessExceptionEnum.USER_NOT_FOUND));
     }
 
+    /**
+     * 验证活动是否有效
+     */
     private LotteryActivity validateActivity(Long activityId) {
         LotteryActivity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在"));
+                .orElseThrow(() -> new BusinessException(BusinessExceptionEnum.ACTIVITY_NOT_FOUND));
+        
         LocalDateTime now = LocalDateTime.now();
         if (now.isBefore(activity.getStartDate())) {
-            throw new BusinessException(1001, "活动尚未开始");
+            throw new BusinessException(BusinessExceptionEnum.ACTIVITY_NOT_STARTED);
         }
         if (now.isAfter(activity.getEndDate())) {
-            throw new BusinessException(1002, "活动已结束");
+            throw new BusinessException(BusinessExceptionEnum.ACTIVITY_ENDED);
         }
         return activity;
     }
 
     /**
      * 选择奖品并处理
-     * @param redisKey Redis缓存的key
-     * @param activityId 活动ID
-     * @param activityPrizes 奖品列表
-     * @param user 中奖用户
-     * @param activity 活动
-     * @return LotteryActivityPrize
      */
     private LotteryActivityPrize selectAndProcessPrize(String redisKey, Long activityId,
-                                                       List<LotteryActivityPrize> activityPrizes,
-                                                       User user, LotteryActivity activity,
-                                                       LotteryActivityUser lotteryActivityUser) {
+                                                     List<LotteryActivityPrize> activityPrizes,
+                                                     User user, LotteryActivity activity,
+                                                     LotteryActivityUser lotteryActivityUser) {
         logger.info("开始选择奖品: 活动ID={}, 用户ID={}", activityId, user.getUserId());
 
         try {
-            int maxRetries = 5; // 最大重试次数
             int retries = 0;
-
-            while (retries < maxRetries) {
+            while (retries < MAX_RETRIES) {
                 // 根据概率选择奖品
                 LotteryActivityPrize selectedPrize = selectPrizeBasedOnProbability(activityPrizes);
 
                 // 如果选中的奖品为null，直接重试
                 if (selectedPrize == null || selectedPrize.getQuantity() <= 0) {
-                    logger.warn("用户={}, 选中的奖品无效，继续尝试: 活动ID={}, 奖品ID={}", user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
+                    logger.warn("用户={}, 选中的奖品无效，继续尝试: 活动ID={}, 奖品ID={}", 
+                        user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
                     retries++;
                     continue;
                 }
@@ -159,89 +176,76 @@ public class LotteryService {
                 // 尝试获取锁并处理奖品
                 boolean isProcessed = tryLockAndProcessPrize(redisKey, activityId, selectedPrize, user, activity, lotteryActivityUser);
                 if (isProcessed) {
-                    // 如果成功处理奖品，返回选中的奖品
                     logger.info("奖品处理成功: 奖品ID={}, 用户ID={}", selectedPrize.getActivityPrizeId(), user.getUserId());
                     return selectedPrize;
-                } else {
-                    // 如果处理失败，可能是因为库存不足，重新选择奖品
-                    logger.warn("用户={}, 奖品处理失败，继续尝试其他奖品: 活动ID={}, 奖品ID={}",
-                        user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
                 }
+
+                logger.warn("用户={}, 奖品处理失败，继续尝试其他奖品: 活动ID={}, 奖品ID={}",
+                    user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
 
                 // 增加重试次数并随机延迟
                 retries++;
                 try {
-                    Thread.sleep(100 + random.nextInt(100)); // 随机延迟 100-200ms
+                    Thread.sleep(MIN_RETRY_DELAY + random.nextInt(MAX_RETRY_DELAY - MIN_RETRY_DELAY));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    throw new RuntimeException("线程被中断", e);
+                    throw new BusinessException(BusinessExceptionEnum.SYSTEM_ERROR, e);
                 }
             }
 
-            // 如果超过最大重试次数，返回 null
             logger.warn("用户={}, 超过最大重试次数，抽奖失败: 活动ID={}", user.getUsername(), activityId);
             return null;
+        } catch (BusinessException e) {
+            logger.error("选择奖品业务异常: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            logger.error("选择奖品失败: 活动ID={}, 用户ID={}, 错误信息={}", activityId, user.getUserId(), e.getMessage(), e);
-            throw new BusinessException(500, "选择奖品失败");
+            logger.error("选择奖品系统异常: {}", e.getMessage(), e);
+            throw new BusinessException(BusinessExceptionEnum.SYSTEM_ERROR, e);
         }
     }
 
     /**
      * 获取缓存的奖品列表或初始化缓存
-     * @param redisKey Redis缓存的key
-     * @param activityId 活动ID
-     * @return List<LotteryActivityPrize>
      */
     private List<LotteryActivityPrize> getCachedPrizesOrInitialize(String redisKey, Long activityId) {
         logger.info("获取或初始化奖品缓存: 活动ID={}", activityId);
-        // 从 Redis 中获取缓存的 JSON 字符串
         try {
             String cachedPrizesJson = redisTemplate.opsForValue().get(redisKey);
             if (StringUtils.isEmpty(cachedPrizesJson)) {
-                // 如果缓存为空，初始化缓存
                 logger.info("缓存为空，开始初始化: 活动ID={}", activityId);
                 initializePrizeCache(redisKey, activityId);
                 cachedPrizesJson = redisTemplate.opsForValue().get(redisKey);
             }
-            // 将 JSON 字符串反序列化为奖品列表
             return JsonUtil.fromJsonToList(cachedPrizesJson, LotteryActivityPrize.class);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("获取奖品缓存失败: 活动ID={}, 错误信息={}", activityId, e.getMessage(), e);
-            throw new BusinessException(500, "获取奖品缓存失败");
+            throw new BusinessException(BusinessExceptionEnum.SYSTEM_ERROR, e);
         }
     }
 
     /**
      * 初始化Redis缓存
-     * @param redisKey Redis缓存的key
-     * @param activityId 活动ID
      */
     private void initializePrizeCache(String redisKey, Long activityId) {
         logger.info("初始化奖品缓存: 活动ID={}", activityId);
-        String initLockKey = "lock:activity:" + activityId + ":init";
+        String initLockKey = getLockKey("activity", activityId, "init");
         boolean lockAcquired = false;
         try {
-            lockAcquired = redisTemplate.opsForValue().setIfAbsent(initLockKey, "1", 10, TimeUnit.SECONDS);
+            lockAcquired = redisTemplate.opsForValue().setIfAbsent(initLockKey, "1", LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (lockAcquired) {
-                // 从数据库中获取所有奖品
                 List<LotteryActivityPrize> prizes = activityPrizeRepository.findByActivityId(activityId);
-
                 if (CollectionUtils.isEmpty(prizes)) {
-                    throw new BusinessException(1003, "没有可用的奖品");
+                    throw new BusinessException(BusinessExceptionEnum.PRIZE_NOT_FOUND);
                 }
-
-                // 将奖品列表作为一个整体缓存到 Redis
-                redisTemplate.opsForValue().set(redisKey, JsonUtil.toJson(prizes), 10, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(redisKey, JsonUtil.toJson(prizes), CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             } else {
-                // 等待其他线程完成缓存初始化
                 while (redisTemplate.hasKey(initLockKey)) {
                     Thread.sleep(100);
                 }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("线程被中断", e);
+            throw new BusinessException(BusinessExceptionEnum.SYSTEM_ERROR, e);
         } finally {
             if (lockAcquired) {
                 redisTemplate.delete(initLockKey);
@@ -251,29 +255,20 @@ public class LotteryService {
 
     /**
      * 尝试获取锁并处理奖品
-     *
-     * @param redisKey            Redis缓存的key
-     * @param activityId          活动ID
-     * @param prize               奖品
-     * @param user                中奖用户
-     * @param activity            活动
-     * @param lotteryActivityUser 抽奖活动用户
-     * @return boolean
      */
     private boolean tryLockAndProcessPrize(String redisKey, Long activityId, LotteryActivityPrize prize,
-                                           User user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
+                                         User user, LotteryActivity activity, LotteryActivityUser lotteryActivityUser) {
         logger.info("尝试获取锁并处理奖品: 活动ID={}, 奖品ID={}", activityId, prize.getActivityPrizeId());
-        String lockKey = "lock:activity:" + activityId + ":prize:" + prize.getPrize().getPrizeId();
-        String lockValue = String.valueOf(System.currentTimeMillis()); // 唯一标识
+        String lockKey = getLockKey("activity", activityId, "prize:" + prize.getPrize().getPrizeId());
+        String lockValue = String.valueOf(System.currentTimeMillis());
         boolean lockAcquired = false;
         try {
-            lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, 10, TimeUnit.SECONDS);
+            lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (lockAcquired) {
                 prizeProcessingService.processPrize(redisKey, prize, user, activity, lotteryActivityUser);
                 return true;
             }
         } finally {
-            // 确保释放锁时验证唯一标识
             if (lockAcquired && lockValue.equals(redisTemplate.opsForValue().get(lockKey))) {
                 redisTemplate.delete(lockKey);
             }
@@ -281,6 +276,9 @@ public class LotteryService {
         return false;
     }
 
+    /**
+     * 创建成功响应
+     */
     private LotteryDrawResponse createSuccessResponse(LotteryActivityPrize prize) {
         LotteryDrawResponse response = new LotteryDrawResponse();
         response.setSuccess(true);
@@ -289,6 +287,9 @@ public class LotteryService {
         return response;
     }
 
+    /**
+     * 创建失败响应
+     */
     private LotteryDrawResponse createFailureResponse() {
         LotteryDrawResponse response = new LotteryDrawResponse();
         response.setSuccess(false);
@@ -296,27 +297,23 @@ public class LotteryService {
         return response;
     }
 
+    /**
+     * 根据概率选择奖品
+     */
     private LotteryActivityPrize selectPrizeBasedOnProbability(List<LotteryActivityPrize> activityPrizes) {
-        // 预计算累计概率
         double[] cumulativeProbabilities = new double[activityPrizes.size()];
         cumulativeProbabilities[0] = activityPrizes.get(0).getProbability();
         for (int i = 1; i < activityPrizes.size(); i++) {
             cumulativeProbabilities[i] = cumulativeProbabilities[i - 1] + activityPrizes.get(i).getProbability();
         }
 
-        // 生成随机数
         double randomValue = random.nextDouble() * cumulativeProbabilities[cumulativeProbabilities.length - 1];
-
-        // 使用二分查找定位奖品
         int index = binarySearch(cumulativeProbabilities, randomValue);
         return activityPrizes.get(index);
     }
 
     /**
      * 二分查找快速定位随机数对应的奖品
-     * @param cumulativeProbabilities
-     * @param value
-     * @return
      */
     private int binarySearch(double[] cumulativeProbabilities, double value) {
         int low = 0, high = cumulativeProbabilities.length - 1;
@@ -331,14 +328,18 @@ public class LotteryService {
         return low;
     }
 
+    /**
+     * 根据活动ID获取中奖记录
+     */
     public List<LotteryRecordResponse> getLotteryRecordsByActivityId(Long activityId) {
         return recordRepository.findByActivityId(activityId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-
-    // 将 LotteryRecord 转换为 LotteryRecordDTO
+    /**
+     * 将 LotteryRecord 转换为 LotteryRecordDTO
+     */
     private LotteryRecordResponse convertToDTO(LotteryRecord record) {
         LotteryRecordResponse dto = new LotteryRecordResponse();
         dto.setUsername(record.getUser().getUsername());
@@ -348,4 +349,17 @@ public class LotteryService {
         return dto;
     }
 
+    /**
+     * 获取奖品缓存key
+     */
+    private String getPrizeCacheKey(Long activityId) {
+        return "activity:" + activityId + ":prizes";
+    }
+
+    /**
+     * 获取锁的key
+     */
+    private String getLockKey(String type, Long id, String suffix) {
+        return String.format("lock:%s:%d:%s", type, id, suffix);
+    }
 }

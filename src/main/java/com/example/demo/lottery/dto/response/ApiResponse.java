@@ -2,6 +2,10 @@ package com.example.demo.lottery.dto.response;
 
 import lombok.Data;
 
+/**
+ * APIå“åº”å¯¹è±¡
+ * @author long_w
+ */
 @Data
 public class ApiResponse<T> {
     private boolean success;
@@ -11,7 +15,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(T data) {
         ApiResponse<T> response = new ApiResponse<>();
         response.setSuccess(true);
-        response.setMessage("²Ù×÷³É¹¦");
+        response.setMessage("æ“ä½œæˆåŠŸ");
         response.setData(data);
         return response;
     }
@@ -30,4 +34,4 @@ public class ApiResponse<T> {
         response.setMessage(message);
         return response;
     }
-} 
+}

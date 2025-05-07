@@ -129,6 +129,32 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:: 初始化单用户并发测试数据
+echo 正在初始化单用户并发测试数据...
+echo SET NAMES utf8mb4; > %TEMP_SQL%
+echo SET CHARACTER SET utf8mb4; >> %TEMP_SQL%
+type test_data_single_user_concurrent_draw.sql >> %TEMP_SQL%
+mysql -u %DB_USER% -p%DB_PASS% %DB_NAME% < %TEMP_SQL%
+if errorlevel 1 (
+    echo 错误：初始化单用户并发测试数据失败
+    del %TEMP_SQL%
+    pause
+    exit /b 1
+)
+
+:: 初始化多用户并发测试数据
+echo 正在初始化多用户并发测试数据...
+echo SET NAMES utf8mb4; > %TEMP_SQL%
+echo SET CHARACTER SET utf8mb4; >> %TEMP_SQL%
+type test_data_multiple_user_concurrent_draw.sql >> %TEMP_SQL%
+mysql -u %DB_USER% -p%DB_PASS% %DB_NAME% < %TEMP_SQL%
+if errorlevel 1 (
+    echo 错误：初始化多用户并发测试数据失败
+    del %TEMP_SQL%
+    pause
+    exit /b 1
+)
+
 :: 验证数据
 echo 正在验证数据...
 echo SET NAMES utf8mb4; > %TEMP_SQL%
@@ -156,11 +182,11 @@ del %TEMP_SQL%
 
 echo 数据库初始化完成！
 echo 预期数据量：
-echo - lottery_activity: 8 条记录
-echo - lottery_prize: 6 条记录
-echo - lottery_activity_prize: 40 条记录
+echo - lottery_activity: 10 条记录（包含测试活动）
+echo - lottery_prize: 11 条记录（包含测试奖品）
+echo - lottery_activity_prize: 50 条记录（包含测试活动奖品关联）
 echo - lottery_record: 25 条记录
-echo - lottery_activity_user: 25 条记录
+echo - lottery_activity_user: 35 条记录（包含测试用户参与记录）
 echo - users: 请查看 init_data_users.sql 中的记录数
 echo - season: 请查看 init_data_game.sql 中的记录数
 echo - game_user: 请查看 init_data_game.sql 中的记录数

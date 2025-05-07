@@ -54,12 +54,12 @@ public class LotteryActivityController {
     public ResponseEntity<LotteryActivity> updateActivity(@PathVariable Long activityId, @RequestBody LotteryActivity activity) {
         LotteryActivity existingActivity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-        
-        existingActivity.setName(activity.getName());
-        existingActivity.setDescription(activity.getDescription());
+
+        existingActivity.setActivityName(activity.getActivityName());
+        existingActivity.setActivityDesc(activity.getActivityDesc());
         existingActivity.setStartDate(activity.getStartDate());
         existingActivity.setEndDate(activity.getEndDate());
-        
+
         return ResponseEntity.ok(activityService.createActivity(existingActivity));
     }
 
@@ -73,7 +73,7 @@ public class LotteryActivityController {
     public ResponseEntity<LotteryActivity> updateActivityStatus(@PathVariable Long activityId, @RequestParam ActivityStatus status) {
         LotteryActivity existingActivity = activityService.getActivityById(activityId)
                 .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-        
+
         existingActivity.setStatus(status);
         return ResponseEntity.ok(activityService.createActivity(existingActivity));
     }

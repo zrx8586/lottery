@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/activity-prize-relationship")
@@ -38,8 +39,8 @@ public class ActivityPrizeRelationshipController {
 
     @GetMapping("/{activityId}/details")
     public ResponseEntity<ActivityDetailDTO> getActivityDetailInfo(@PathVariable Long activityId) {
-        LotteryActivity activity = activityService.getActivityById(activityId);
-        if (activity == null) {
+        Optional<LotteryActivity> activity = activityService.getActivityById(activityId);
+        if (activity.isEmpty()) {
             throw new IllegalArgumentException("活动不存在，ID: " + activityId);
         }
 
@@ -49,7 +50,7 @@ public class ActivityPrizeRelationshipController {
         }
 
         List<ActivityPrizeDTO> prizeDTOs = CommonUtil.getActivityPrizeDTOS(prizes);
-        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity, prizeDTOs);
+        ActivityDetailDTO activityDetailDTO = CommonUtil.buildActivityDetailDTO(activity.get(), prizeDTOs);
 
         return ResponseEntity.ok(activityDetailDTO);
     }

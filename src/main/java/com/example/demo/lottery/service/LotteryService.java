@@ -79,6 +79,10 @@ public class LotteryService {
         // 获取奖品列表
         String redisKey = "activity:" + activityId + ":prizes";
         List<LotteryActivityPrize> activityPrizes = getCachedPrizesOrInitialize(redisKey, activityId);
+        if (CollectionUtils.isEmpty(activityPrizes)) {
+            logger.warn("没有可用的奖品: 活动ID={}", activityId);
+            throw new BusinessException(1003, "没有可用的奖品");
+        }
 
         // 选择并处理奖品
         LotteryActivityPrize selectedPrize = selectAndProcessPrize(redisKey, activityId, activityPrizes, user, activity, lotteryActivityUser);
@@ -144,10 +148,12 @@ public class LotteryService {
             while (retries < maxRetries) {
                 // 根据概率选择奖品
                 LotteryActivityPrize selectedPrize = selectPrizeBasedOnProbability(activityPrizes);
-                if (selectedPrize == null || selectedPrize.getQuantity() <= 0) {
-                    // 如果没有可用奖品，直接返回 null
-                    logger.warn("没有可用奖品: 活动ID={}", activityId);
-                    return null;
+                
+                // 如果选中的奖品为null，直接重试
+                if (selectedPrize == null) {
+                    logger.warn("用户={}, 未选中任何奖品，继续尝试: 活动ID={}", user.getUsername(), activityId);
+                    retries++;
+                    continue;
                 }
 
                 // 尝试获取锁并处理奖品
@@ -156,9 +162,10 @@ public class LotteryService {
                     // 如果成功处理奖品，返回选中的奖品
                     logger.info("奖品处理成功: 奖品ID={}, 用户ID={}", selectedPrize.getActivityPrizeId(), user.getUserId());
                     return selectedPrize;
-                }else {
+                } else {
                     // 如果处理失败，可能是因为库存不足，重新选择奖品
-                    logger.warn("奖品处理失败: 奖品ID={}, 用户ID={}", selectedPrize.getActivityPrizeId(), user.getUserId());
+                    logger.warn("用户={}, 奖品处理失败，继续尝试其他奖品: 活动ID={}, 奖品ID={}", 
+                        user.getUsername(), activityId, selectedPrize.getActivityPrizeId());
                 }
 
                 // 增加重试次数并随机延迟
@@ -170,7 +177,9 @@ public class LotteryService {
                     throw new RuntimeException("线程被中断", e);
                 }
             }
+            
             // 如果超过最大重试次数，返回 null
+            logger.warn("用户={}, 超过最大重试次数，抽奖失败: 活动ID={}", user.getUsername(), activityId);
             return null;
         } catch (Exception e) {
             logger.error("选择奖品失败: 活动ID={}, 用户ID={}, 错误信息={}", activityId, user.getUserId(), e.getMessage(), e);

@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS lottery_activity_prize (
                                                       prize_id INT NOT NULL,
                                                       probability DOUBLE NOT NULL,
                                                       quantity INT NOT NULL, -- 每场活动的奖品库存
+                                                      version BIGINT NOT NULL DEFAULT 0, -- 乐观锁版本号
                                                       datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                       datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                       FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),
@@ -58,6 +59,7 @@ CREATE TABLE IF NOT EXISTS lottery_activity_user (
                                                      user_id INT NOT NULL,
                                                      participation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                      lottery_attempts INT NOT NULL DEFAULT 0, -- 可用抽奖次数
+                                                     version BIGINT NOT NULL DEFAULT 0, -- 乐观锁版本号
                                                      datachange_createtime DATETIME DEFAULT CURRENT_TIMESTAMP,
                                                      datachange_lasttime DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                                      FOREIGN KEY (activity_id) REFERENCES lottery_activity(activity_id),

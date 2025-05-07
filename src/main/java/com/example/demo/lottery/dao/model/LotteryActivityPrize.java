@@ -34,6 +34,9 @@ public class LotteryActivityPrize {
     @Column(name = "datachange_lasttime")
     private LocalDateTime datachangeLastTime;
 
+    @Version
+    private Long version;
+
     @PrePersist
     protected void onCreate() {
         datachangeCreateTime = LocalDateTime.now();

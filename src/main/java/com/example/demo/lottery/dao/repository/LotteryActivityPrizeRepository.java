@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author long_w
@@ -30,4 +31,15 @@ public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryAct
     @Transactional
     @Query("DELETE FROM LotteryActivityPrize p WHERE p.activity.activityId = :activityId")
     void deleteByActivityId(Long activityId);
+
+    /**
+     * 更新奖品库存
+     * @param activityPrizeId 活动奖品ID
+     * @param quantity 新的库存数量
+     * @return 更新的记录数
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE LotteryActivityPrize p SET p.quantity = :quantity WHERE p.activityPrizeId = :activityPrizeId")
+    int updateQuantity(Long activityPrizeId, int quantity);
 }

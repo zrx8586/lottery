@@ -382,6 +382,10 @@ export default {
         this.sortDirection = 'asc';
       }
     },
+    handleSearch() {
+      // 搜索时重置到第一页
+      this.currentPage = 1;
+    },
   },
   mounted() {
     this.fetchActivities();

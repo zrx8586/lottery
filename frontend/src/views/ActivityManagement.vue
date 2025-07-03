@@ -187,9 +187,9 @@ export default {
       return Math.ceil(this.sortedActivities.length / this.pageSize);
     },
     sortedActivities() {
-      if (!this.activities) return [];
+      if (!this.filteredActivities) return [];
       
-      return [...this.activities].sort((a, b) => {
+      return [...this.filteredActivities].sort((a, b) => {
         if (this.sortField === 'startDate' || this.sortField === 'endDate') {
           const dateA = new Date(a[this.sortField]);
           const dateB = new Date(b[this.sortField]);

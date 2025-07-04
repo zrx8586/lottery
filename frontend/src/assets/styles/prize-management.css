@@ -1,0 +1,59 @@
+/* 奖品管理特定样式 */
+
+/* 奖品状态徽章样式 */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background-color: #e6f7e6;
+  color: #67c23a;
+}
+
+.status-badge.inactive {
+  background-color: #fef0f0;
+  color: #f56c6c;
+}
+
+/* 奖品表格特定样式 */
+.data-table td {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 图片链接列样式 */
+.data-table td:nth-child(3) {
+  max-width: 150px;
+}
+
+/* 描述列样式 */
+.data-table td:nth-child(2) {
+  max-width: 200px;
+}
+
+/* 奖品表单特定样式 */
+.form-group input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 奖品价值输入框样式 */
+.form-group input[type="number"] {
+  text-align: right;
+}
+
+/* 奖品状态选择器样式 - 移除重复的样式，使用modal.css中的统一样式 */
+.form-group select {
+  /* 移除这里的重复样式，使用modal.css中的统一下拉框样式 */
+} 

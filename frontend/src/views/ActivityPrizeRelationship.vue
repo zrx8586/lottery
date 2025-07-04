@@ -44,7 +44,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="activity in sortedActivities" :key="activity.activityId">
+            <tr v-for="activity in paginatedActivities" :key="activity.activityId">
               <td>{{ activity.activityName }}</td>
               <td>{{ activity.activityDesc }}</td>
               <td>{{ formatDateTime(activity.startDate) }}</td>
@@ -68,18 +68,18 @@
       </div>
 
       <!-- 分页控件 -->
-      <div class="pagination">
+      <div class="pagination" v-if="totalPages > 1">
         <button 
-          :disabled="currentPage === 1" 
-          @click="currentPage--" 
+          @click="changePage(currentPage - 1)" 
+          :disabled="currentPage === 1"
           class="pagination-btn"
         >
           上一页
         </button>
-        <span>第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
+        <span>第 {{ currentPage }} 页，共 {{ totalPages }} 页</span>
         <button 
-          :disabled="currentPage === totalPages" 
-          @click="currentPage++" 
+          @click="changePage(currentPage + 1)" 
+          :disabled="currentPage === totalPages"
           class="pagination-btn"
         >
           下一页
@@ -471,6 +471,11 @@ export default {
     handleSearch() {
       // 搜索时重置到第一页
       this.currentPage = 1;
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     },
     validateProbability(prize) {
       // 确保概率在0-100之间

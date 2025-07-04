@@ -4,14 +4,15 @@ import com.example.demo.lottery.dao.model.LotteryActivityPrize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author long_w
  */
+@Repository
 public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryActivityPrize, Long> {
 
     /**
@@ -28,9 +29,8 @@ public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryAct
      * @param activityId 活动 ID
      */
     @Modifying
-    @Transactional
-    @Query("DELETE FROM LotteryActivityPrize p WHERE p.activity.activityId = :activityId")
-    void deleteByActivityId(Long activityId);
+    @Query("DELETE FROM LotteryActivityPrize lap WHERE lap.activity.activityId = :activityId")
+    void deleteByActivityId(@Param("activityId") Long activityId);
 
     /**
      * 更新奖品库存
@@ -39,7 +39,6 @@ public interface LotteryActivityPrizeRepository extends JpaRepository<LotteryAct
      * @return 更新的记录数
      */
     @Modifying
-    @Transactional
     @Query("UPDATE LotteryActivityPrize p SET p.quantity = :quantity WHERE p.activityPrizeId = :activityPrizeId")
     int updateQuantity(Long activityPrizeId, int quantity);
 }

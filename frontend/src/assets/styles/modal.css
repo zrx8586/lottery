@@ -1,0 +1,228 @@
+/* 模态框样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ebeef5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #909399;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #606266;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #606266;
+  transition: all 0.3s ease;
+}
+
+/* 下拉框样式 */
+.form-group select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.cancel-btn {
+  background-color: #f5f7fa;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.cancel-btn:hover,
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+/* 日期时间控件样式 */
+.datetime-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.date-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #606266;
+  transition: all 0.3s ease;
+}
+
+.time-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #606266;
+  transition: all 0.3s ease;
+}
+
+.date-input:focus,
+.time-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+/* 只读状态样式 */
+.readonly {
+  background-color: #f5f7fa !important;
+  color: #909399 !important;
+  cursor: not-allowed !important;
+  border-color: #e4e7ed !important;
+}
+
+.readonly:focus {
+  border-color: #e4e7ed !important;
+  box-shadow: none !important;
+}
+
+/* 只读状态下的时间控件样式 */
+.datetime-group .readonly {
+  background-color: #f5f7fa !important;
+  color: #909399 !important;
+  cursor: not-allowed !important;
+}
+
+.datetime-group .readonly::-webkit-calendar-picker-indicator {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.datetime-group .readonly::-webkit-time-picker-indicator {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 只读状态下的下拉框样式 */
+select.readonly {
+  background-color: #f5f7fa !important;
+  color: #909399 !important;
+  cursor: not-allowed !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23909399' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+  opacity: 0.6;
+}
+
+select.readonly option {
+  background-color: #f5f7fa;
+  color: #909399;
+}
+
+/* 下拉框选项样式 */
+.form-group select option {
+  background-color: white;
+  color: #606266;
+  padding: 8px 12px;
+}
+
+.form-group select option:hover {
+  background-color: #f5f7fa;
+}
+
+.form-group select option:checked {
+  background-color: #667eea;
+  color: white;
+} 

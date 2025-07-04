@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author long_w
@@ -48,18 +49,10 @@ public class LotteryActivityController {
      * @param activity 更新的活动信息
      * @return 更新后的活动信息
      */
-    // 更新活动
     @PutMapping("/{activityId}")
     public ResponseEntity<LotteryActivity> updateActivity(@PathVariable Long activityId, @RequestBody LotteryActivity activity) {
-        LotteryActivity existingActivity = activityService.getActivityById(activityId)
-                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
-
-        existingActivity.setActivityName(activity.getActivityName());
-        existingActivity.setActivityDesc(activity.getActivityDesc());
-        existingActivity.setStartDate(activity.getStartDate());
-        existingActivity.setEndDate(activity.getEndDate());
-
-        return ResponseEntity.ok(activityService.createActivity(existingActivity));
+        LotteryActivity updatedActivity = activityService.updateActivity(activityId, activity);
+        return ResponseEntity.ok(updatedActivity);
     }
 
     /**
@@ -83,8 +76,8 @@ public class LotteryActivityController {
      * @return 删除结果
      */
     @DeleteMapping("/{activityId}")
-    public ResponseEntity<Void> deleteActivity(@PathVariable Long activityId) {
+    public ResponseEntity<String> deleteActivity(@PathVariable Long activityId) {
         activityService.deleteActivity(activityId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
     }
 }

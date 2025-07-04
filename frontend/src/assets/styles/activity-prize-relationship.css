@@ -1,0 +1,195 @@
+/* 活动奖品关系管理特定样式 */
+
+/* 错误提示样式 */
+.error-message {
+  background-color: #fef0f0;
+  border: 1px solid #fbc4c4;
+  color: #f56c6c;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.error-message i {
+  font-size: 16px;
+}
+
+.close-error-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #f56c6c;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-error-btn:hover {
+  color: #f78989;
+}
+
+.icon-error:before {
+  content: "❌";
+}
+
+/* 活动信息显示样式 */
+.info-group {
+  margin-bottom: 15px;
+}
+
+.info-group label {
+  display: block;
+  color: #606266;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.info-group span {
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+/* 奖品列表样式 */
+.prize-list {
+  margin-top: 20px;
+}
+
+.prize-list h4 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.prize-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.prize-info {
+  flex: 1;
+}
+
+.prize-name {
+  display: block;
+  color: #2c3e50;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.prize-inputs {
+  display: flex;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group label {
+  margin: 0;
+  color: #606266;
+  font-size: 14px;
+}
+
+.input-group span {
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 奖品选择组样式 */
+.prize-select-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.add-prize-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-prize-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.remove-prize-btn {
+  background: none;
+  border: none;
+  color: #f56c6c;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+.remove-prize-btn:hover {
+  transform: scale(1.1);
+}
+
+/* 概率总和显示样式 */
+.probability-summary {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.probability-total {
+  font-size: 14px;
+  font-weight: 500;
+  color: #67c23a;
+}
+
+.probability-total.error {
+  color: #f56c6c;
+}
+
+.error-hint {
+  font-size: 12px;
+  color: #f56c6c;
+  margin-left: 5px;
+}
+
+/* 表单输入框样式 */
+.form-group input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-group input[type="number"] {
+  text-align: right;
+}
+
+/* 模态框宽度调整 */
+.modal-content {
+  max-width: 600px;
+} 

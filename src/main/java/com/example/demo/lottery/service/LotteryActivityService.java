@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,7 +85,12 @@ public class LotteryActivityService {
      * 删除活动
      * @param activityId 活动ID
      */
+    @Transactional
     public void deleteActivity(Long activityId) {
+        // 先删除活动关联的奖品关系
+        activityPrizeRepository.deleteByActivityId(activityId);
+        
+        // 再删除活动
         activityRepository.deleteById(activityId);
     }
 
@@ -123,5 +129,24 @@ public class LotteryActivityService {
         }
         
         activityPrizeRepository.delete(activityPrize);
+    }
+
+    /**
+     * 更新活动
+     * @param activityId 活动ID
+     * @param activity 更新的活动信息
+     * @return 更新后的活动
+     */
+    public LotteryActivity updateActivity(Long activityId, LotteryActivity activity) {
+        LotteryActivity existingActivity = getActivityById(activityId)
+                .orElseThrow(() -> new IllegalArgumentException("活动不存在，ID: " + activityId));
+        
+        existingActivity.setActivityName(activity.getActivityName());
+        existingActivity.setActivityDesc(activity.getActivityDesc());
+        existingActivity.setStartDate(activity.getStartDate());
+        existingActivity.setEndDate(activity.getEndDate());
+        existingActivity.setStatus(activity.getStatus());
+        
+        return activityRepository.save(existingActivity);
     }
 }

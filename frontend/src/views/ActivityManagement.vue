@@ -101,14 +101,20 @@
     <div v-if="showAddDialog" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>{{ editingActivity ? '编辑活动' : '新增活动' }}</h3>
+          <h3>{{ viewingActivity ? '查看活动' : (editingActivity ? '编辑活动' : '新增活动') }}</h3>
           <button class="close-btn" @click="closeDialog">&times;</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="saveActivity">
             <div class="form-group">
               <label>活动名称</label>
-              <input v-model="form.activityName" type="text" required />
+              <input 
+                v-model="form.activityName" 
+                type="text" 
+                required 
+                :readonly="viewingActivity"
+                :class="{ 'readonly': viewingActivity }"
+              />
             </div>
             <div class="form-group">
               <label>活动描述</label>
@@ -118,26 +124,77 @@
                 class="form-textarea"
                 rows="3"
                 placeholder="请输入活动描述..."
+                :readonly="viewingActivity"
+                :class="{ 'readonly': viewingActivity }"
               ></textarea>
             </div>
             <div class="form-group">
               <label>开始时间</label>
-              <input v-model="form.startDate" type="datetime-local" required />
+              <div class="datetime-group">
+                <input 
+                  v-model="form.startDate" 
+                  type="date" 
+                  required 
+                  class="date-input"
+                  :readonly="viewingActivity"
+                  :class="{ 'readonly': viewingActivity }"
+                />
+                <input 
+                  v-model="form.startTime" 
+                  type="time" 
+                  required 
+                  step="1"
+                  class="time-input"
+                  :readonly="viewingActivity"
+                  :class="{ 'readonly': viewingActivity }"
+                />
+              </div>
             </div>
             <div class="form-group">
               <label>结束时间</label>
-              <input v-model="form.endDate" type="datetime-local" required />
+              <div class="datetime-group">
+                <input 
+                  v-model="form.endDate" 
+                  type="date" 
+                  required 
+                  class="date-input"
+                  :readonly="viewingActivity"
+                  :class="{ 'readonly': viewingActivity }"
+                />
+                <input 
+                  v-model="form.endTime" 
+                  type="time" 
+                  required 
+                  step="1"
+                  class="time-input"
+                  :readonly="viewingActivity"
+                  :class="{ 'readonly': viewingActivity }"
+                />
+              </div>
             </div>
             <div class="form-group">
               <label>状态</label>
-              <select v-model="form.status" required>
+              <select 
+                v-model="form.status" 
+                required
+                :disabled="viewingActivity"
+                :class="{ 'readonly': viewingActivity }"
+              >
                 <option value="ACTIVE">上线</option>
                 <option value="INACTIVE">下线</option>
               </select>
             </div>
             <div class="form-actions">
-              <button type="button" class="cancel-btn" @click="closeDialog">取消</button>
-              <button type="submit" class="save-btn">保存</button>
+              <button type="button" class="cancel-btn" @click="closeDialog">
+                {{ viewingActivity ? '关闭' : '取消' }}
+              </button>
+              <button 
+                v-if="!viewingActivity" 
+                type="submit" 
+                class="save-btn"
+              >
+                保存
+              </button>
             </div>
           </form>
         </div>
@@ -163,12 +220,14 @@ export default {
       form: {
         activityName: "",
         activityDesc: "",
-        startDate: "",
-        endDate: "",
+        startDate: moment().format("YYYY-MM-DD"), // 只设置日期
+        startTime: "00:00:00", // 默认时间00:00:00
+        endDate: moment().add(1, 'day').format("YYYY-MM-DD"), // 只设置日期
+        endTime: "00:00:00", // 默认时间00:00:00
         status: "INACTIVE"
       },
-      sortField: 'startDate', // 默认按开始时间排序
-      sortDirection: 'desc' // 默认倒序
+      sortField: 'startDate',
+      sortDirection: 'desc'
     };
   },
   computed: {
@@ -223,22 +282,30 @@ export default {
     },
     editActivity(activity) {
       this.editingActivity = activity;
+      const startMoment = moment(activity.startDate);
+      const endMoment = moment(activity.endDate);
       this.form = {
         activityName: activity.activityName,
         activityDesc: activity.activityDesc,
-        startDate: moment(activity.startDate).format("YYYY-MM-DDTHH:mm"),
-        endDate: moment(activity.endDate).format("YYYY-MM-DDTHH:mm"),
+        startDate: startMoment.format("YYYY-MM-DD"),
+        startTime: startMoment.format("HH:mm:ss"),
+        endDate: endMoment.format("YYYY-MM-DD"),
+        endTime: endMoment.format("HH:mm:ss"),
         status: activity.status
       };
       this.showAddDialog = true;
     },
     viewActivity(activity) {
       this.viewingActivity = true;
+      const startMoment = moment(activity.startDate);
+      const endMoment = moment(activity.endDate);
       this.form = {
         activityName: activity.activityName,
         activityDesc: activity.activityDesc,
-        startDate: moment(activity.startDate).format("YYYY-MM-DDTHH:mm"),
-        endDate: moment(activity.endDate).format("YYYY-MM-DDTHH:mm"),
+        startDate: startMoment.format("YYYY-MM-DD"),
+        startTime: startMoment.format("HH:mm:ss"),
+        endDate: endMoment.format("YYYY-MM-DD"),
+        endTime: endMoment.format("HH:mm:ss"),
         status: activity.status
       };
       this.showAddDialog = true;
@@ -264,17 +331,34 @@ export default {
       this.form = {
         activityName: "",
         activityDesc: "",
-        startDate: "",
-        endDate: "",
+        startDate: moment().format("YYYY-MM-DD"),
+        startTime: "00:00:00",
+        endDate: moment().add(1, 'day').format("YYYY-MM-DD"),
+        endTime: "00:00:00",
         status: "INACTIVE"
       };
     },
     async saveActivity() {
+      // 如果是查看模式，不允许保存
+      if (this.viewingActivity) {
+        return;
+      }
+      
       try {
+        // 合并日期和时间
+        const startDateTime = `${this.form.startDate}T${this.form.startTime}`;
+        const endDateTime = `${this.form.endDate}T${this.form.endTime}`;
+        
+        const activityData = {
+          ...this.form,
+          startDate: startDateTime,
+          endDate: endDateTime
+        };
+        
         if (this.editingActivity) {
-          await axios.put(`/api/activity/${this.editingActivity.id}`, this.form);
+          await axios.put(`/api/activity/${this.editingActivity.activityId}`, activityData);
         } else {
-          await axios.post("/api/activity/create", this.form);
+          await axios.post("/api/activity/create", activityData);
         }
         this.closeDialog();
         this.fetchActivities();
@@ -300,7 +384,7 @@ export default {
     async toggleActivityStatus(activity) {
       try {
         const newStatus = activity.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        await axios.put(`/api/activity/${activity.id}/status`, {
+        await axios.put(`/api/activity/${activity.activityId}/status`, {
           status: newStatus
         });
         activity.status = newStatus;
@@ -320,538 +404,7 @@ export default {
 <style scoped>
 @import "../assets/styles/button-styles.css";
 @import "../assets/styles/common.css";
-
-.page-container {
-  padding: 20px;
-  background-color: #f5f7fa;
-  min-height: calc(100vh - 50px);
-  box-sizing: border-box;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 15px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.page-header h2 {
-  color: #2c3e50;
-  font-size: 20px;
-  margin: 0;
-  font-weight: 600;
-}
-
-.add-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.content-box {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-}
-
-.search-bar {
-  margin-bottom: 20px;
-}
-
-.search-group {
-  position: relative;
-  max-width: 300px;
-}
-
-.search-group i {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #909399;
-}
-
-.search-group input {
-  width: 100%;
-  padding: 8px 12px 8px 35px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  color: #606266;
-}
-
-.search-group input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-  outline: none;
-}
-
-.table-container {
-  overflow-x: auto;
-  border-radius: 4px;
-  border: 1px solid #ebeef5;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ebeef5;
-  color: #606266;
-}
-
-.data-table th {
-  background-color: #f5f7fa;
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.data-table tr:hover {
-  background-color: #f5f7fa;
-}
-
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  display: inline-block;
-}
-
-.status-badge.active {
-  background-color: #e6f7e6;
-  color: #67c23a;
-}
-
-.status-badge.inactive {
-  background-color: #fef0f0;
-  color: #f56c6c;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.view-btn {
-  composes: btn-view from '@/assets/styles/button-styles.css';
-}
-
-.edit-btn {
-  composes: btn-edit from '@/assets/styles/button-styles.css';
-}
-
-.delete-btn {
-  composes: btn-delete from '@/assets/styles/button-styles.css';
-}
-
-.view-btn:hover,
-.edit-btn:hover,
-.delete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.modal-header {
-  padding: 15px 20px;
-  border-bottom: 1px solid #ebeef5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #909399;
-  padding: 0;
-  line-height: 1;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #606266;
-  font-size: 14px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #606266;
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-  outline: none;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.cancel-btn,
-.save-btn {
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.cancel-btn {
-  background-color: #f5f7fa;
-  border: 1px solid #dcdfe6;
-  color: #606266;
-}
-
-.save-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-}
-
-.cancel-btn:hover,
-.save-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-textarea {
-  min-height: 80px;
-  resize: vertical;
-  line-height: 1.5;
-  font-family: inherit;
-}
-
-/* 图标样式 */
-.icon-add:before {
-  content: "➕";
-}
-
-.icon-search:before {
-  content: "🔍";
-}
-
-.icon-edit:before {
-  content: "✏️";
-}
-
-.icon-delete:before {
-  content: "🗑️";
-}
-
-.icon-view:before {
-  content: "👁️";
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .page-container {
-    padding: 10px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-    padding: 10px;
-  }
-
-  .page-header h2 {
-    font-size: 18px;
-  }
-
-  .add-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .content-box {
-    padding: 10px;
-  }
-
-  .search-group {
-    max-width: 100%;
-  }
-
-  .data-table {
-    display: block;
-  }
-
-  .data-table thead {
-    display: none;
-  }
-
-  .data-table tbody tr {
-    display: block;
-    margin-bottom: 15px;
-    border: 1px solid #ebeef5;
-    border-radius: 4px;
-  }
-
-  .data-table td {
-    display: block;
-    text-align: right;
-    padding: 10px 15px;
-    position: relative;
-  }
-
-  .data-table td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 15px;
-    font-weight: 500;
-    text-align: left;
-    color: #909399;
-  }
-
-  .action-buttons {
-    justify-content: flex-end;
-  }
-
-  .modal-content {
-    width: 95%;
-    margin: 10px;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 10px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cancel-btn,
-  .save-btn {
-    width: 100%;
-  }
-
-  .pagination {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .pagination-btn {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-container {
-    padding: 5px;
-  }
-
-  .page-header {
-    padding: 8px;
-  }
-
-  .content-box {
-    padding: 8px;
-  }
-
-  .data-table td {
-    padding: 8px 12px;
-  }
-
-  .modal-content {
-    width: 100%;
-    margin: 5px;
-  }
-
-  .form-group {
-    margin-bottom: 12px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 8px;
-  }
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
-
-.pagination-btn {
-  padding: 8px 16px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  background-color: #f5f7fa;
-  color: #606266;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  background-color: #ecf5ff;
-  color: #409eff;
-  border-color: #c6e2ff;
-}
-
-.pagination-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pagination span {
-  color: #606266;
-  font-size: 14px;
-}
-
-.sort-arrow {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 24px;
-  margin-left: 8px;
-  position: relative;
-  vertical-align: middle;
-}
-
-.arrow {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border: 1.5px solid #409EFF;
-  border-right: 0;
-  border-bottom: 0;
-  transition: all 0.3s ease;
-  opacity: 0.3;
-}
-
-.arrow.up {
-  top: 4px;
-  transform: rotate(45deg);
-}
-
-.arrow.down {
-  bottom: 4px;
-  transform: rotate(-135deg);
-}
-
-.arrow.active {
-  opacity: 1;
-  border-color: #409EFF;
-  box-shadow: 0 0 4px rgba(64, 158, 255, 0.3);
-}
-
-.sortable:hover .arrow {
-  opacity: 0.6;
-  border-color: #66b1ff;
-}
-
-.sortable:hover .arrow.active {
-  opacity: 1;
-  border-color: #409EFF;
-  box-shadow: 0 0 6px rgba(64, 158, 255, 0.4);
-}
-
-.sortable {
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-  padding-right: 30px;
-  transition: all 0.3s ease;
-}
-
-.sortable:hover {
-  background-color: rgba(64, 158, 255, 0.05);
-}
+@import "../assets/styles/activity-management.css";
+@import "../assets/styles/modal.css";
+@import "../assets/styles/responsive.css";
 </style>

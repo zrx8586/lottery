@@ -1,0 +1,135 @@
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .page-header h2 {
+    font-size: 18px;
+  }
+
+  .add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .content-box {
+    padding: 10px;
+  }
+
+  .search-group {
+    max-width: 100%;
+  }
+
+  .data-table {
+    display: block;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+  }
+
+  .data-table td {
+    display: block;
+    text-align: right;
+    padding: 10px 15px;
+    position: relative;
+  }
+
+  .data-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    font-weight: 500;
+    text-align: left;
+    color: #909399;
+  }
+
+  .action-buttons {
+    justify-content: flex-end;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .pagination-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 5px;
+  }
+
+  .page-header {
+    padding: 8px;
+  }
+
+  .content-box {
+    padding: 8px;
+  }
+
+  .data-table td {
+    padding: 8px 12px;
+  }
+
+  .modal-content {
+    width: 100%;
+    margin: 5px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px;
+  }
+} 

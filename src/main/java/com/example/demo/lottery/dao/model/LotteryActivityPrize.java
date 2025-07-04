@@ -16,8 +16,11 @@ public class LotteryActivityPrize {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long activityPrizeId;
 
+    @Column(name = "activity_id")
+    private Long activityId; // 添加这个字段
+
     @ManyToOne
-    @JoinColumn(name = "activity_id")
+    @JoinColumn(name = "activity_id", insertable = false, updatable = false)
     private LotteryActivity activity;
 
     @ManyToOne

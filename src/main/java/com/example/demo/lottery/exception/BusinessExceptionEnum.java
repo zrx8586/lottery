@@ -26,6 +26,11 @@ public enum BusinessExceptionEnum {
     USER_NO_ACTIVITY_QUALIFICATION(3002, "用户没有参与活动的资格"),
     USER_NO_ATTEMPTS(3003, "用户抽奖次数已用完"),
     
+    // 活动奖品关系相关错误 5001-5999
+    ACTIVITY_PRIZE_RELATIONSHIP_EXISTS(5001, "该活动已有奖品绑定关系"),
+    ACTIVITY_PRIZE_RELATIONSHIP_NOT_FOUND(5002, "活动奖品关系不存在"),
+    ACTIVITY_PRIZE_RELATIONSHIP_CREATE_FAILED(5003, "创建活动奖品关系失败"),
+    
     // 锁相关错误 4001-4999
     LOCK_ACQUIRE_FAILED(4001, "获取锁失败"),
     USER_LOCK_ACQUIRE_FAILED(4002, "获取用户抽奖次数锁失败");

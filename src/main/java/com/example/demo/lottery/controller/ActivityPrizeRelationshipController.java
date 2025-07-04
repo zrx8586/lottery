@@ -65,15 +65,9 @@ public class ActivityPrizeRelationshipController {
     // 创建活动与奖品绑定关系
     @PostMapping("/create")
     public ResponseEntity<String> createActivityPrizeRelationship(@RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
-        try {
-            // 调用服务层方法保存绑定关系
-            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
-            return ResponseEntity.ok("活动与奖品绑定关系创建成功");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("创建绑定关系失败: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("创建绑定关系失败: " + e.getMessage());
-        }
+        // 直接调用服务层方法，让异常抛出到 GlobalExceptionHandler
+        activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
+        return ResponseEntity.ok("活动与奖品绑定关系创建成功");
     }
 
     // 更新活动与奖品绑定关系
@@ -81,24 +75,18 @@ public class ActivityPrizeRelationshipController {
     public ResponseEntity<String> updateActivityPrizeRelationship(
             @PathVariable Long activityId,
             @RequestBody ActivityPrizeRelationshipDTO relationshipDTO) {
-        try {
-            // 确保活动 ID 一致
-            if (!activityId.equals(relationshipDTO.getActivityId())) {
-                return ResponseEntity.badRequest().body("活动 ID 不匹配");
-            }
-
-            // 清除旧的奖品关系
-            activityPrizeService.deletePrizesByActivityId(activityId);
-
-            // 创建新的奖品关系
-            activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
-
-            return ResponseEntity.ok("活动与奖品绑定关系更新成功");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("更新绑定关系失败: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("更新绑定关系失败: " + e.getMessage());
+        // 确保活动 ID 一致
+        if (!activityId.equals(relationshipDTO.getActivityId())) {
+            throw new IllegalArgumentException("活动 ID 不匹配");
         }
+
+        // 清除旧的奖品关系
+        activityPrizeService.deletePrizesByActivityId(activityId);
+
+        // 创建新的奖品关系
+        activityPrizeRelationshipService.createActivityPrizeRelationship(relationshipDTO);
+
+        return ResponseEntity.ok("活动与奖品绑定关系更新成功");
     }
 
     /**
@@ -108,15 +96,9 @@ public class ActivityPrizeRelationshipController {
      */
     @DeleteMapping("/{activityId}")
     public ResponseEntity<String> deleteActivityPrizeRelationshipsByActivityId(@PathVariable Long activityId) {
-        try {
-            // 根据活动 ID 删除所有奖品关系
-            activityPrizeService.deletePrizesByActivityId(activityId);
-            return ResponseEntity.ok("活动奖品关系删除成功");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("删除活动奖品关系失败: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("删除活动奖品关系失败: " + e.getMessage());
-        }
+        // 根据活动 ID 删除所有奖品关系
+        activityPrizeService.deletePrizesByActivityId(activityId);
+        return ResponseEntity.ok("活动奖品关系删除成功");
     }
 
     // 获取活动的所有奖品

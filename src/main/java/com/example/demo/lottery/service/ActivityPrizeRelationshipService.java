@@ -9,6 +9,10 @@ import com.example.demo.lottery.dao.repository.LotteryActivityPrizeRepository;
 import com.example.demo.lottery.dao.repository.LotteryActivityRepository;
 import com.example.demo.lottery.dao.repository.LotteryPrizeRepository;
 import com.example.demo.lottery.util.CommonUtil;
+import com.example.demo.lottery.exception.BusinessException;
+import com.example.demo.lottery.exception.BusinessExceptionEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,8 @@ import java.util.Optional;
 
 @Service
 public class ActivityPrizeRelationshipService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ActivityPrizeRelationshipService.class);
 
     @Autowired
     private LotteryActivityRepository activityRepository;
@@ -36,7 +42,9 @@ public class ActivityPrizeRelationshipService {
         // 查询活动信息
         Optional<LotteryActivity> activityOptional = activityRepository.findById(activityId);
         if (activityOptional.isEmpty()) {
-            throw new IllegalArgumentException("活动不存在，ID: " + activityId);
+            logger.error("活动不存在，ID: {}", activityId);
+            throw new BusinessException(BusinessExceptionEnum.ACTIVITY_NOT_FOUND, 
+                "活动不存在，ID: " + activityId);
         }
 
         LotteryActivity activity = activityOptional.get();
@@ -58,15 +66,25 @@ public class ActivityPrizeRelationshipService {
         // 查询活动对象
         Optional<LotteryActivity> activityOptional = activityRepository.findById(relationshipDTO.getActivityId());
         if (activityOptional.isEmpty()) {
-            throw new IllegalArgumentException("活动不存在，ID: " + relationshipDTO.getActivityId());
+            logger.error("活动不存在，ID: {}", relationshipDTO.getActivityId());
+            throw new BusinessException(BusinessExceptionEnum.ACTIVITY_NOT_FOUND, 
+                "活动不存在，ID: " + relationshipDTO.getActivityId());
         }
         LotteryActivity activity = activityOptional.get();
+
+        // 根据活动id查询活动奖品关系
+        List<LotteryActivityPrize> activityPrizes = activityPrizeRepository.findByActivityId(relationshipDTO.getActivityId());
+        if (activityPrizes.size() > 0) {
+            logger.error("活动已存在奖品，ID: {}", relationshipDTO.getActivityId());
+            throw new BusinessException(BusinessExceptionEnum.ACTIVITY_PRIZE_RELATIONSHIP_EXISTS);
+        }
 
         // 遍历奖品列表，创建绑定关系
         for (ActivityPrizeDTO prizeDTO : relationshipDTO.getPrizes()) {
             Optional<LotteryPrize> prizeOptional = prizeRepository.findById(prizeDTO.getPrizeId());
             if (prizeOptional.isEmpty()) {
-                throw new IllegalArgumentException("奖品不存在，ID: " + prizeDTO.getPrizeId());
+                throw new BusinessException(BusinessExceptionEnum.PRIZE_NOT_FOUND, 
+                    "奖品不存在，ID: " + prizeDTO.getPrizeId());
             }
             LotteryPrize prize = prizeOptional.get();
 

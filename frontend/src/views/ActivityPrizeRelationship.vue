@@ -119,7 +119,7 @@
                 <div class="prize-inputs">
                   <div class="input-group">
                     <label>概率:</label>
-                    <span>{{ prize.probability }}%</span>
+                    <span>{{ (prize.probability * 100).toFixed(2) }}%</span>
                   </div>
                   <div class="input-group">
                     <label>库存:</label>
@@ -141,6 +141,13 @@
           <button class="close-btn" @click="closeForm">&times;</button>
         </div>
         <div class="modal-body">
+          <!-- 错误提示 -->
+          <div v-if="showError" class="error-message">
+            <i class="icon-error"></i>
+            <span>{{ errorMessage }}</span>
+            <button class="close-error-btn" @click="hideError">&times;</button>
+          </div>
+          
           <form @submit.prevent="submitForm">
             <div class="form-group">
               <label>选择活动:</label>
@@ -169,14 +176,15 @@
                   <span class="prize-name">{{ prize.prizeName }}</span>
                   <div class="prize-inputs">
                     <div class="input-group">
-                      <label>概率:</label>
+                      <label>概率 (%):</label>
                       <input
                         type="number"
                         v-model="prize.probability"
-                        placeholder="概率"
+                        placeholder="概率 (0-100)"
                         min="0"
-                        max="1"
-                        step="0.00001"
+                        max="100"
+                        step="0.01"
+                        @input="validateProbability(prize)"
                         required
                       />
                     </div>
@@ -186,6 +194,8 @@
                         type="number"
                         v-model="prize.quantity"
                         placeholder="库存"
+                        min="1"
+                        @input="validateQuantity(prize)"
                         required
                       />
                     </div>
@@ -195,6 +205,16 @@
                   <i class="icon-delete"></i>
                 </button>
               </div>
+              
+              <!-- 概率总和显示 -->
+              <div v-if="formData.prizes.length > 0" class="probability-summary">
+                <span class="probability-total" :class="{ 'error': totalProbability !== 100 }">
+                  概率总和: {{ totalProbability.toFixed(2) }}%
+                  <span v-if="totalProbability !== 100" class="error-hint">
+                    (必须为100%)
+                  </span>
+                </span>
+              </div>
             </div>
             <div class="form-actions">
               <button type="button" class="cancel-btn" @click="closeForm">取消</button>
@@ -203,6 +223,11 @@
           </form>
         </div>
       </div>
+    </div>
+
+    <!-- 错误提示组件 -->
+    <div v-if="showError" class="error-message">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
@@ -231,6 +256,8 @@ export default {
       itemsPerPage: 10,
       sortField: '',
       sortDirection: 'asc',
+      errorMessage: '', // 添加错误信息
+      showError: false, // 控制错误提示显示
     };
   },
   computed: {
@@ -262,6 +289,10 @@ export default {
         }
       });
     },
+    
+    totalProbability() {
+      return this.formData.prizes.reduce((sum, prize) => sum + parseFloat(prize.probability || 0), 0);
+    },
   },
   methods: {
     async fetchAvailableActivities() {
@@ -281,6 +312,11 @@ export default {
       }
     },
     createNewBinding() {
+      // 重置表单状态
+      this.selectedActivityId = null;
+      this.selectedPrizeId = null;
+      this.formData.prizes = [];
+      this.editingActivity = null;
       this.showCreateForm = true; // 显示奖品选择表单
     },
     addPrize() {
@@ -289,8 +325,8 @@ export default {
         this.formData.prizes.push({
           prizeId: selectedPrize.prizeId,
           prizeName: selectedPrize.prizeName,
-          probability: 0,
-          quantity: 0
+          probability: 1, // 改为1，表示1%
+          quantity: 1 // 改为1，表示默认库存为1
         });
       }
     },
@@ -320,7 +356,13 @@ export default {
 
         this.editingActivity = activity;
         this.selectedActivityId = activity.activityId;
-        this.formData.prizes = activityDetails.prizes || [];
+        
+        // 将概率从小数转换为百分比
+        this.formData.prizes = (activityDetails.prizes || []).map(prize => ({
+          ...prize,
+          probability: prize.probability * 100 // 转换为百分比
+        }));
+        
         this.selectedPrizeId = ""; // 重置奖品选择为空
 
         await this.fetchAvailablePrizes();
@@ -341,11 +383,38 @@ export default {
     },
     async submitForm() {
       try {
+        // 隐藏之前的错误信息
+        this.hideError();
+        
+        // 校验是否有奖品
+        if (this.formData.prizes.length === 0) {
+          this.errorMessage = '请至少添加一个奖品';
+          this.showError = true;
+          return;
+        }
+        
+        // 校验概率总和是否为100%
+        const totalProbability = this.formData.prizes.reduce((sum, prize) => sum + parseFloat(prize.probability || 0), 0);
+        if (Math.abs(totalProbability - 100) > 0.01) { // 允许0.01%的误差
+          this.errorMessage = `概率总和必须为100%，当前总和为${totalProbability.toFixed(2)}%`;
+          this.showError = true;
+          return;
+        }
+        
+        // 校验库存是否都大于0
+        const invalidPrizes = this.formData.prizes.filter(prize => !prize.quantity || prize.quantity <= 0);
+        if (invalidPrizes.length > 0) {
+          const prizeNames = invalidPrizes.map(prize => prize.prizeName).join('、');
+          this.errorMessage = `以下奖品的库存必须大于0：${prizeNames}`;
+          this.showError = true;
+          return;
+        }
+        
         const payload = {
           activityId: this.selectedActivityId,
           prizes: this.formData.prizes.map(item => ({
             prizeId: item.prizeId,
-            probability: item.probability,
+            probability: item.probability / 100, // 将百分比转换为小数
             quantity: item.quantity
           }))
         };
@@ -360,6 +429,19 @@ export default {
         await this.fetchActivities(); // 刷新活动列表
       } catch (error) {
         console.error("保存活动奖品关系失败：", error);
+        
+        // 显示错误信息
+        if (error.response && error.response.data) {
+          // 使用 BaseResponse 格式的错误信息
+          const responseData = error.response.data;
+          this.errorMessage = responseData.message || '操作失败，请重试';
+        } else if (error.message) {
+          // 网络错误或其他错误
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = '操作失败，请重试';
+        }
+        this.showError = true;
       }
     },
     closeForm() {
@@ -367,6 +449,8 @@ export default {
       this.editingActivity = null;
       this.formData.prizes = [];
       this.selectedActivityId = null;
+      this.selectedPrizeId = null; // 添加这行，重置奖品选择
+      this.hideError(); // 清除错误信息
     },
     formatDate(date) {
       return moment(date).format("YYYY-MM-DD");
@@ -386,6 +470,24 @@ export default {
       // 搜索时重置到第一页
       this.currentPage = 1;
     },
+    validateProbability(prize) {
+      // 确保概率在0-100之间
+      if (prize.probability < 0) {
+        prize.probability = 0;
+      } else if (prize.probability > 100) {
+        prize.probability = 100;
+      }
+    },
+    validateQuantity(prize) {
+      // 确保库存大于等于1
+      if (prize.quantity < 1) {
+        prize.quantity = 1;
+      }
+    },
+    hideError() {
+      this.showError = false;
+      this.errorMessage = '';
+    },
   },
   mounted() {
     this.fetchActivities();
@@ -399,6 +501,46 @@ export default {
 <style scoped>
 @import "../assets/styles/button-styles.css";
 @import "../assets/styles/common.css";
+
+/* 错误提示样式 */
+.error-message {
+  background-color: #fef0f0;
+  border: 1px solid #fbc4c4;
+  color: #f56c6c;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.error-message i {
+  font-size: 16px;
+}
+
+.close-error-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #f56c6c;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-error-btn:hover {
+  color: #f78989;
+}
+
+.icon-error:before {
+  content: "❌";
+}
 
 .page-container {
   padding: 20px;
@@ -983,5 +1125,29 @@ export default {
   .prize-item {
     padding: 8px;
   }
+}
+
+.probability-summary {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.probability-total {
+  font-size: 14px;
+  font-weight: 500;
+  color: #67c23a;
+}
+
+.probability-total.error {
+  color: #f56c6c;
+}
+
+.error-hint {
+  font-size: 12px;
+  color: #f56c6c;
+  margin-left: 5px;
 }
 </style>

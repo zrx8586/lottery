@@ -193,3 +193,24 @@
 .modal-content {
   max-width: 600px;
 } 
+
+/* 让模态框内容可滚动，适配大数据量 */
+.modal-content-scrollable {
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-body-scrollable {
+  overflow-y: auto;
+  max-height: 60vh;
+  padding-right: 8px;
+}
+.prize-list-container {
+  max-height: 300px;   /* 可根据实际需要调整高度 */
+  overflow-y: auto;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 8px;
+  background: #fafbfc;
+} 

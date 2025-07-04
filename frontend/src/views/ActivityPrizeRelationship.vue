@@ -51,7 +51,7 @@
               <td>{{ formatDateTime(activity.endDate) }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="action-btn view-btn" @click="viewActivity(activity.activityId)">
+                  <button class="action-btn view-btn" @click="viewActivity(activity)">
                     <i class="icon-view"></i>
                   </button>
                   <button class="action-btn edit-btn" @click="editActivity(activity)">
@@ -71,7 +71,7 @@
       <div class="pagination" v-if="totalPages > 1">
         <button 
           @click="changePage(currentPage - 1)" 
-          :disabled="currentPage === 1"
+          :disabled="currentPage === 1" 
           class="pagination-btn"
         >
           上一页
@@ -79,7 +79,7 @@
         <span>第 {{ currentPage }} 页，共 {{ totalPages }} 页</span>
         <button 
           @click="changePage(currentPage + 1)" 
-          :disabled="currentPage === totalPages"
+          :disabled="currentPage === totalPages" 
           class="pagination-btn"
         >
           下一页
@@ -88,38 +88,47 @@
     </div>
 
     <!-- 活动详情模态框 -->
-    <div v-if="selectedActivity && !showCreateForm" class="modal-overlay">
-      <div class="modal-content">
+    <div v-if="viewingActivity" class="modal-overlay">
+      <div class="modal-content modal-content-scrollable">
         <div class="modal-header">
           <h3>活动奖品关系</h3>
-          <button class="close-btn" @click="selectedActivity = null">&times;</button>
+          <button class="close-btn" @click="closeView">&times;</button>
         </div>
-        <div class="modal-body">
-          <div class="info-group">
+        <div class="modal-body modal-body-scrollable">
+          <form>
+            <div class="form-group">
             <label>活动名称:</label>
-            <span>{{ selectedActivity.activityName }}</span>
+              <input type="text" v-model="viewForm.activityName" class="readonly">
           </div>
-          <div class="info-group">
+            <div class="form-group">
             <label>描述:</label>
-            <span>{{ selectedActivity.activityDesc }}</span>
+              <textarea v-model="viewForm.activityDesc" class="readonly"></textarea>
           </div>
-          <div class="info-group">
+            <div class="form-group">
             <label>开始日期:</label>
-            <span>{{ formatDate(selectedActivity.startDate) }}</span>
+              <input type="text" v-model="viewForm.startDate" class="readonly">
+            </div>
+            <div class="form-group">
+              <label>开始时间:</label>
+              <input type="text" v-model="viewForm.startTime" class="readonly">
           </div>
-          <div class="info-group">
+            <div class="form-group">
             <label>结束日期:</label>
-            <span>{{ formatDate(selectedActivity.endDate) }}</span>
+              <input type="text" v-model="viewForm.endDate" class="readonly">
+            </div>
+            <div class="form-group">
+              <label>结束时间:</label>
+              <input type="text" v-model="viewForm.endTime" class="readonly">
           </div>
-          <div class="prize-list">
+            <div class="prize-list-container">
             <h4>奖品列表</h4>
-            <div v-for="prize in selectedActivity.prizes" :key="prize.prizeId" class="prize-item">
+              <div v-for="(prize, index) in viewForm.prizes" :key="index" class="prize-item-view">
               <div class="prize-info">
                 <span class="prize-name">{{ prize.prizeName }}</span>
                 <div class="prize-inputs">
                   <div class="input-group">
-                    <label>概率:</label>
-                    <span>{{ (prize.probability * 100).toFixed(2) }}%</span>
+                      <label>概率 (%):</label>
+                      <span>{{ (prize.probability * 100).toFixed(2) }}%</span>
                   </div>
                   <div class="input-group">
                     <label>库存:</label>
@@ -129,18 +138,22 @@
               </div>
             </div>
           </div>
+            <div class="form-actions">
+              <button type="button" class="cancel-btn" @click="closeView">关闭</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
     <!-- 创建/编辑活动表单 -->
     <div v-if="showCreateForm" class="modal-overlay">
-      <div class="modal-content">
+      <div class="modal-content modal-content-scrollable">
         <div class="modal-header">
           <h3>{{ editingActivity ? '编辑活动奖品关系' : '创建活动奖品关系' }}</h3>
           <button class="close-btn" @click="closeForm">&times;</button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body modal-body-scrollable">
           <!-- 错误提示 -->
           <div v-if="showError" class="error-message">
             <i class="icon-error"></i>
@@ -171,20 +184,21 @@
             </div>
             <div class="form-group">
               <label>奖品列表:</label>
+              <div class="prize-list-container">
               <div v-for="(prize, index) in formData.prizes" :key="index" class="prize-item">
                 <div class="prize-info">
                   <span class="prize-name">{{ prize.prizeName }}</span>
                   <div class="prize-inputs">
                     <div class="input-group">
-                      <label>概率 (%):</label>
+                        <label>概率 (%):</label>
                       <input
                         type="number"
                         v-model="prize.probability"
-                        placeholder="概率 (0-100)"
+                          placeholder="概率 (0-100)"
                         min="0"
-                        max="100"
-                        step="0.01"
-                        @input="validateProbability(prize)"
+                          max="100"
+                          step="0.01"
+                          @input="validateProbability(prize)"
                         required
                       />
                     </div>
@@ -194,8 +208,8 @@
                         type="number"
                         v-model="prize.quantity"
                         placeholder="库存"
-                        min="1"
-                        @input="validateQuantity(prize)"
+                          min="1"
+                          @input="validateQuantity(prize)"
                         required
                       />
                     </div>
@@ -204,6 +218,7 @@
                 <button type="button" class="remove-prize-btn" @click="removePrize(index)">
                   <i class="icon-delete"></i>
                 </button>
+                </div>
               </div>
               
               <!-- 概率总和显示 -->
@@ -236,6 +251,8 @@
 import axios from "axios";
 import moment from "moment";
 import '@/assets/styles/common.css';
+import '@/assets/styles/modal.css';
+import '@/assets/styles/responsive.css';
 
 export default {
   data() {
@@ -258,6 +275,16 @@ export default {
       sortDirection: 'desc', // 默认倒序
       errorMessage: '', // 添加错误信息
       showError: false, // 控制错误提示显示
+      viewingActivity: false,
+      viewForm: {
+        activityName: "",
+        activityDesc: "",
+        startDate: "",
+        startTime: "",
+        endDate: "",
+        endTime: "",
+        prizes: []
+      },
     };
   },
   computed: {
@@ -343,16 +370,32 @@ export default {
         console.error("获取活动列表失败：", error);
       }
     },
-    async viewActivity(activityId) {
+    async viewActivity(activity) {
       try {
-        const response = await axios.get(`/api/activity-prize-relationship/${activityId}`);
-        this.selectedActivity = response.data;
+        const response = await axios.get(`/api/activity-prize-relationship/${activity.activityId}`);
+        const act = response.data;
+        // 拆分时间
+        const start = moment(act.startDate);
+        const end = moment(act.endDate);
+        this.viewForm = {
+          activityName: act.activityName,
+          activityDesc: act.activityDesc,
+          startDate: start.format("YYYY-MM-DD"),
+          startTime: start.format("HH:mm:ss"),
+          endDate: end.format("YYYY-MM-DD"),
+          endTime: end.format("HH:mm:ss"),
+          prizes: act.prizes || []
+        };
+        this.viewingActivity = true;
       } catch (error) {
         console.error("获取活动详情失败：", error);
       }
     },
     async editActivity(activity) {
       try {
+        // 先重置表单状态，确保没有残留数据
+        this.resetFormData();
+        
         const response = await axios.get(`/api/activity-prize-relationship/${activity.activityId}/details`);
         const activityDetails = response.data;
 
@@ -448,11 +491,20 @@ export default {
     },
     closeForm() {
       this.showCreateForm = false;
-      this.editingActivity = null;
-      this.formData.prizes = [];
-      this.selectedActivityId = null;
-      this.selectedPrizeId = null; // 添加这行，重置奖品选择
+      this.resetFormData(); // 使用统一的重置方法
       this.hideError(); // 清除错误信息
+    },
+    closeView() {
+      this.viewingActivity = false;
+      this.viewForm = {
+        activityName: "",
+        activityDesc: "",
+        startDate: "",
+        startTime: "",
+        endDate: "",
+        endTime: "",
+        prizes: []
+      };
     },
     formatDate(date) {
       return moment(date).format("YYYY-MM-DD");
@@ -495,6 +547,13 @@ export default {
       this.showError = false;
       this.errorMessage = '';
     },
+    // 新增统一的重置表单数据方法
+    resetFormData() {
+      this.editingActivity = null;
+      this.formData.prizes = [];
+      this.selectedActivityId = null;
+      this.selectedPrizeId = null;
+    },
   },
   mounted() {
     this.fetchActivities();
@@ -508,653 +567,7 @@ export default {
 <style scoped>
 @import "../assets/styles/button-styles.css";
 @import "../assets/styles/common.css";
-
-/* 错误提示样式 */
-.error-message {
-  background-color: #fef0f0;
-  border: 1px solid #fbc4c4;
-  color: #f56c6c;
-  padding: 12px 16px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.error-message i {
-  font-size: 16px;
-}
-
-.close-error-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #f56c6c;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 0;
-  line-height: 1;
-}
-
-.close-error-btn:hover {
-  color: #f78989;
-}
-
-.icon-error:before {
-  content: "❌";
-}
-
-.page-container {
-  padding: 20px;
-  background-color: #f5f7fa;
-  min-height: calc(100vh - 50px);
-  box-sizing: border-box;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 15px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.page-header h2 {
-  color: #2c3e50;
-  font-size: 20px;
-  margin: 0;
-  font-weight: 600;
-}
-
-.add-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.content-box {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-}
-
-.search-bar {
-  margin-bottom: 20px;
-}
-
-.search-group {
-  position: relative;
-  max-width: 300px;
-}
-
-.search-group i {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #909399;
-}
-
-.search-group input {
-  width: 100%;
-  padding: 8px 12px 8px 35px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  color: #606266;
-}
-
-.search-group input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-  outline: none;
-}
-
-.table-container {
-  overflow-x: auto;
-  border-radius: 4px;
-  border: 1px solid #ebeef5;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ebeef5;
-  color: #606266;
-}
-
-.data-table th {
-  background-color: #f5f7fa;
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.data-table tr:hover {
-  background-color: #f5f7fa;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.action-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.view-btn {
-  composes: btn-view from '@/assets/styles/button-styles.css';
-}
-
-.edit-btn {
-  composes: btn-edit from '@/assets/styles/button-styles.css';
-}
-
-.delete-btn {
-  composes: btn-delete from '@/assets/styles/button-styles.css';
-}
-
-.view-btn:hover,
-.edit-btn:hover,
-.delete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.modal-header {
-  padding: 15px 20px;
-  border-bottom: 1px solid #ebeef5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #909399;
-  padding: 0;
-  line-height: 1;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.info-group {
-  margin-bottom: 15px;
-}
-
-.info-group label {
-  display: block;
-  color: #606266;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.info-group span {
-  color: #2c3e50;
-  font-size: 14px;
-}
-
-.prize-list {
-  margin-top: 20px;
-}
-
-.prize-list h4 {
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.prize-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.prize-info {
-  flex: 1;
-}
-
-.prize-name {
-  display: block;
-  color: #2c3e50;
-  font-weight: 500;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.prize-inputs {
-  display: flex;
-  gap: 15px;
-}
-
-.input-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.input-group label {
-  margin: 0;
-  color: #606266;
-  font-size: 14px;
-}
-
-.input-group span {
-  color: #2c3e50;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #606266;
-  font-size: 14px;
-}
-
-.form-group select,
-.form-group input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #606266;
-  transition: all 0.3s ease;
-}
-
-.form-group select:focus,
-.form-group input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-  outline: none;
-}
-
-.prize-select-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.add-prize-btn {
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.add-prize-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.remove-prize-btn {
-  background: none;
-  border: none;
-  color: #f56c6c;
-  cursor: pointer;
-  padding: 4px;
-  transition: all 0.3s ease;
-}
-
-.remove-prize-btn:hover {
-  transform: scale(1.1);
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.cancel-btn,
-.save-btn {
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.cancel-btn {
-  background-color: #f5f7fa;
-  border: 1px solid #dcdfe6;
-  color: #606266;
-}
-
-.save-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-}
-
-.cancel-btn:hover,
-.save-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
-
-.pagination-btn {
-  padding: 8px 16px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  background-color: #f5f7fa;
-  color: #606266;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  background-color: #ecf5ff;
-  color: #409eff;
-  border-color: #c6e2ff;
-}
-
-.pagination-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pagination span {
-  color: #606266;
-  font-size: 14px;
-}
-
-/* 图标样式 */
-.icon-add:before {
-  content: "➕";
-}
-
-.icon-search:before {
-  content: "🔍";
-}
-
-.icon-view:before {
-  content: "👁️";
-}
-
-.icon-edit:before {
-  content: "✏️";
-}
-
-.icon-delete:before {
-  content: "🗑️";
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .page-container {
-    padding: 10px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-    padding: 10px;
-  }
-
-  .page-header h2 {
-    font-size: 18px;
-  }
-
-  .add-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .content-box {
-    padding: 10px;
-  }
-
-  .search-group {
-    max-width: 100%;
-  }
-
-  .data-table {
-    display: block;
-  }
-
-  .data-table thead {
-    display: none;
-  }
-
-  .data-table tbody tr {
-    display: block;
-    margin-bottom: 15px;
-    border: 1px solid #ebeef5;
-    border-radius: 4px;
-  }
-
-  .data-table td {
-    display: block;
-    text-align: right;
-    padding: 10px 15px;
-    position: relative;
-  }
-
-  .data-table td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 15px;
-    font-weight: 500;
-    text-align: left;
-    color: #909399;
-  }
-
-  .action-buttons {
-    justify-content: flex-end;
-  }
-
-  .modal-content {
-    width: 95%;
-    margin: 10px;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 10px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cancel-btn,
-  .save-btn {
-    width: 100%;
-  }
-
-  .pagination {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .pagination-btn {
-    width: 100%;
-  }
-
-  .prize-list {
-    padding: 10px;
-  }
-
-  .prize-item {
-    padding: 10px;
-  }
-
-  .prize-info {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .input-group {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-container {
-    padding: 5px;
-  }
-
-  .page-header {
-    padding: 8px;
-  }
-
-  .content-box {
-    padding: 8px;
-  }
-
-  .data-table td {
-    padding: 8px 12px;
-  }
-
-  .modal-content {
-    width: 100%;
-    margin: 5px;
-  }
-
-  .form-group {
-    margin-bottom: 12px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 8px;
-  }
-
-  .prize-list {
-    padding: 8px;
-  }
-
-  .prize-item {
-    padding: 8px;
-  }
-}
-
-.probability-summary {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.probability-total {
-  font-size: 14px;
-  font-weight: 500;
-  color: #67c23a;
-}
-
-.probability-total.error {
-  color: #f56c6c;
-}
-
-.error-hint {
-  font-size: 12px;
-  color: #f56c6c;
-  margin-left: 5px;
-}
+@import "../assets/styles/modal.css";
+@import "../assets/styles/responsive.css";
+@import "../assets/styles/activity-prize-relationship.css";
 </style>

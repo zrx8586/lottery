@@ -254,8 +254,8 @@ export default {
       searchQuery: "",
       currentPage: 1,
       itemsPerPage: 10,
-      sortField: '',
-      sortDirection: 'asc',
+      sortField: 'startDate', // 默认按开始时间排序
+      sortDirection: 'desc', // 默认倒序
       errorMessage: '', // 添加错误信息
       showError: false, // 控制错误提示显示
     };
@@ -267,18 +267,12 @@ export default {
         return activity.activityName && activity.activityName.toLowerCase().includes(query);
       });
     },
-    paginatedActivities() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredActivities.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.filteredActivities.length / this.itemsPerPage);
-    },
     sortedActivities() {
-      if (!this.sortField) return this.paginatedActivities;
+      let activitiesToSort = this.filteredActivities; // 对过滤后的全量数据进行排序
       
-      return [...this.paginatedActivities].sort((a, b) => {
+      if (!this.sortField) return activitiesToSort;
+      
+      return [...activitiesToSort].sort((a, b) => {
         const aValue = new Date(a[this.sortField]);
         const bValue = new Date(b[this.sortField]);
         
@@ -288,6 +282,14 @@ export default {
           return bValue - aValue;
         }
       });
+    },
+    paginatedActivities() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.sortedActivities.slice(start, end); // 对排序后的数据进行分页
+    },
+    totalPages() {
+      return Math.ceil(this.sortedActivities.length / this.itemsPerPage); // 使用排序后的数据计算总页数
     },
     
     totalProbability() {

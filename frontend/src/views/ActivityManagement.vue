@@ -167,8 +167,8 @@ export default {
         endDate: "",
         status: "INACTIVE"
       },
-      sortField: null,
-      sortDirection: 'asc'
+      sortField: 'startDate', // 默认按开始时间排序
+      sortDirection: 'desc' // 默认倒序
     };
   },
   computed: {

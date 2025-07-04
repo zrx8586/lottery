@@ -49,6 +49,13 @@
                   <i class="arrow down" :class="{ active: sortField === 'isActive' && sortDirection === 'desc' }"></i>
                 </span>
               </th>
+              <th class="sortable" @click="toggleSort('datachangeLastTime')">
+                更新时间
+                <span class="sort-arrow">
+                  <i class="arrow up" :class="{ active: sortField === 'datachangeLastTime' && sortDirection === 'asc' }"></i>
+                  <i class="arrow down" :class="{ active: sortField === 'datachangeLastTime' && sortDirection === 'desc' }"></i>
+                </span>
+              </th>
               <th>操作</th>
             </tr>
           </thead>
@@ -65,6 +72,7 @@
                   {{ prize.isActive ? '有效' : '无效' }}
                 </span>
               </td>
+              <td>{{ formatDateTime(prize.datachangeLastTime) }}</td>
               <td>
                 <div class="action-buttons">
                   <button class="action-btn view-btn" @click="viewPrize(prize)">
@@ -174,6 +182,7 @@
 
 <script>
 import axios from "axios";
+import moment from "moment";
 
 export default {
   data() {
@@ -194,8 +203,8 @@ export default {
         stockQuantity: 0,
         isActive: true,
       },
-      sortField: "",
-      sortDirection: "asc",
+      sortField: 'datachangeLastTime', // 修正字段名，使用小写的c
+      sortDirection: 'desc', // 默认倒序
     };
   },
   computed: {
@@ -206,9 +215,7 @@ export default {
       );
     },
     paginatedPrizes() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      
+      // 先对全量数据进行排序
       let sortedPrizes = [...this.filteredPrizes];
       
       if (this.sortField) {
@@ -222,6 +229,12 @@ export default {
               : (aValue === bValue ? 0 : aValue ? 1 : -1);
           }
           
+          if (this.sortField === 'datachangeLastTime') {
+            const dateA = new Date(aValue);
+            const dateB = new Date(bValue);
+            return this.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+          }
+          
           if (typeof aValue === 'number' && typeof bValue === 'number') {
             return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
           }
@@ -229,6 +242,9 @@ export default {
         });
       }
       
+      // 排序后再进行分页
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
       return sortedPrizes.slice(start, end);
     },
     totalPages() {
@@ -305,6 +321,10 @@ export default {
     handleSearch() {
       // 搜索时重置到第一页
       this.currentPage = 1;
+    },
+    
+    formatDateTime(date) {
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
   },
   mounted() {

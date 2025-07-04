@@ -250,7 +250,7 @@ export default {
     },
     async deleteActivity(activity) {
       try {
-        await axios.delete(`/api/activity/${activity.id}`);
+        await axios.delete(`/api/activity/${activity.activityId}`);
         this.fetchActivities();
       } catch (error) {
         console.error("删除活动失败:", error);

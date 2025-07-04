@@ -38,7 +38,6 @@ public class LotteryActivityController {
     @PostMapping("/create")
     public ResponseEntity<LotteryActivity> createActivity(@RequestBody LotteryActivity activity) {
         // 设置初始状态
-        activity.setStatus(ActivityStatus.INACTIVE);
         LotteryActivity createdActivity = activityService.createActivity(activity);
         return ResponseEntity.ok(createdActivity);
     }

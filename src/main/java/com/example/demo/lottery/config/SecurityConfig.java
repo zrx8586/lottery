@@ -43,6 +43,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
+                                // 过滤 /api/test/oom
+                                "/api/test/oom",
                                 "/public/**").permitAll() // 公共路径允许访问
                         .requestMatchers(permitAllPaths).permitAll() // 允许的路径 从配置文件中读取
                         .anyRequest().authenticated() // 其他路径需要认证

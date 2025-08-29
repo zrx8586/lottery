@@ -1,47 +1,100 @@
 // frontend/src/views/Game.vue
 <template>
-  <div id="app">
-    <div class="container">
-      <div class="header">
-        <h1>劳动合同找茬小游戏</h1>
-        <div class="timer" :class="{ warning: timeLeft < 10 }">
-          倒计时: {{ timeLeft }}s
+  <div class="game-container">
+    <div class="game-wrapper">
+      <div class="game-header">
+        <h1 class="game-title">劳动合同找茬小游戏</h1>
+        <div class="timer-section">
+          <div class="timer" :class="{ warning: timeLeft < 10 }">
+            <span class="time-label">倒计时:</span>
+            <span class="time-value">{{ timeLeft }}s</span>
+          </div>
         </div>
-        <p>找出合同中的5个错误描述，点击选择你认为错误的句子</p>
+        <p class="game-instruction">找出合同中的5个错误描述，点击选择你认为错误的句子</p>
       </div>
-      
-      <div class="content">
-        <div class="contract">
-          <p v-for="(sentence, index) in contractSentences" 
-             :key="index"
-             @click="toggleSelection(index)"
-             :class="{
-               selected: selectedSentences.includes(index),
-               error: showResults && errorSentences.includes(index)
-             }">
-            {{ sentence }}
-          </p>
+
+      <div class="game-content">
+        <div class="contract-container">
+          <div class="contract-content">
+            <p
+              v-for="(sentence, index) in contractSentences"
+              :key="index"
+              @click="toggleSelection(index)"
+              :class="{
+                selected: selectedSentences.includes(index),
+                error: showResults && errorSentences.includes(index),
+                correct: showResults && !errorSentences.includes(index) && selectedSentences.includes(index)
+              }"
+              class="contract-sentence"
+            >
+              <span class="sentence-number">{{ index + 1 }}.</span>
+              <span class="sentence-text">{{ sentence }}</span>
+              <span
+                v-if="showResults && errorSentences.includes(index)"
+                class="error-indicator"
+              >
+                ❌
+              </span>
+              <span
+                v-else-if="showResults && selectedSentences.includes(index) && !errorSentences.includes(index)"
+                class="wrong-indicator"
+              >
+                ❌
+              </span>
+            </p>
+          </div>
         </div>
-        
-        <div class="actions">
-          <button class="reset-btn" @click="resetGame">重新开始</button>
-          <span>已选择: {{ selectedSentences.length }}/5</span>
-          <button class="submit-btn" @click="submitAnswers" :disabled="selectedSentences.length !== 5">
-            确认提交
+
+        <div class="game-actions">
+          <button class="btn reset-btn" @click="resetGame">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">重新开始</span>
+          </button>
+
+          <div class="selection-info">
+            <span class="selection-count">已选择: {{ selectedSentences.length }}/5</span>
+          </div>
+
+          <button
+            class="btn submit-btn"
+            @click="submitAnswers"
+            :disabled="selectedSentences.length !== 5"
+          >
+            <span class="btn-icon">✅</span>
+            <span class="btn-text">确认提交</span>
           </button>
         </div>
-        
-        <div class="hint" v-if="!showResults">
-          提示: 合同中有5处与《中华人民共和国劳动法》不符的描述，请仔细查找
+
+        <div class="hint-section" v-if="!showResults">
+          <div class="hint-box">
+            <span class="hint-icon">💡</span>
+            <span class="hint-text">提示: 合同中有5处与《中华人民共和国劳动法》不符的描述，请仔细查找</span>
+          </div>
         </div>
-        
-        <div class="result" v-if="showResults">
-          <h2>游戏结果</h2>
-          <p>你找到了 {{ correctCount }} 个错误</p>
-          <p class="score">得分: {{ score }}/100</p>
-          <p v-if="correctCount === 5">太棒了！你找到了所有错误！</p>
-          <p v-else-if="correctCount >= 3">不错，但还有改进空间！</p>
-          <p v-else>需要加强对劳动法的了解哦！</p>
+
+        <div class="result-section" v-if="showResults">
+          <div class="result-card">
+            <h2 class="result-title">游戏结果</h2>
+            <div class="result-stats">
+              <div class="stat-item">
+                <span class="stat-label">找到错误:</span>
+                <span class="stat-value">{{ correctCount }} 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">得分:</span>
+                <span class="stat-value score">{{ score }}/100</span>
+              </div>
+            </div>
+            <div class="result-message">
+              <p v-if="correctCount === 5" class="message perfect">太棒了！你找到了所有错误！</p>
+              <p v-else-if="correctCount >= 3" class="message good">不错，但还有改进空间！</p>
+              <p v-else class="message poor">需要加强对劳动法的了解哦！</p>
+            </div>
+            <button class="btn play-again-btn" @click="resetGame">
+              <span class="btn-icon">🎮</span>
+              <span class="btn-text">再玩一次</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -63,10 +116,10 @@ export default {
     const timeLeft = ref(60)
     const gameActive = ref(false)
     let timer = null
-    
+
     const toggleSelection = (index) => {
       if (showResults.value) return
-      
+
       const position = selectedSentences.value.indexOf(index)
       if (position === -1) {
         if (selectedSentences.value.length < 5) {
@@ -76,7 +129,7 @@ export default {
         selectedSentences.value.splice(position, 1)
       }
     }
-    
+
     const fetchContract = async () => {
       try {
         const response = await fetch('/api/game/contract')
@@ -103,11 +156,11 @@ export default {
         ]
       }
     }
-    
+
     const submitAnswers = async () => {
       clearInterval(timer)
       gameActive.value = false
-      
+
       try {
         const response = await fetch('/api/game/submit', {
           method: 'POST',
@@ -119,7 +172,7 @@ export default {
             timeLeft: timeLeft.value
           })
         })
-        
+
         if (response.ok) {
           const result = await response.json()
           correctCount.value = result.correctCount
@@ -132,19 +185,19 @@ export default {
         console.error('提交答案失败，使用前端计算:', error)
         calculateResultLocally()
       }
-      
+
       showResults.value = true
     }
-    
+
     const calculateResultLocally = () => {
       correctCount.value = selectedSentences.value.filter(
         index => errorSentences.value.includes(index)
       ).length
-      
+
       const timeBonus = Math.floor(timeLeft.value / 2)
       score.value = Math.min(100, correctCount.value * 20 + timeBonus)
     }
-    
+
     const resetGame = () => {
       selectedSentences.value = []
       showResults.value = false
@@ -152,7 +205,7 @@ export default {
       score.value = 0
       timeLeft.value = 60
       gameActive.value = true
-      
+
       if (timer) clearInterval(timer)
       timer = setInterval(() => {
         if (timeLeft.value > 0) {
@@ -163,18 +216,18 @@ export default {
         }
       }, 1000)
     }
-    
+
     watch(timeLeft, (newValue) => {
       if (newValue === 0 && gameActive.value) {
         submitAnswers()
       }
     })
-    
+
     onMounted(() => {
       fetchContract()
       resetGame()
     })
-    
+
     return {
       contractSentences,
       selectedSentences,
@@ -192,5 +245,399 @@ export default {
 </script>
 
 <style scoped>
-/* 保持之前的样式不变 */
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+}
+
+.game-wrapper {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.game-header {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.game-title {
+  margin: 0 0 15px 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.timer-section {
+  margin-bottom: 15px;
+}
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.timer.warning {
+  background: rgba(255, 71, 87, 0.3);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.game-instruction {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.game-content {
+  padding: 25px;
+}
+
+.contract-container {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.contract-content {
+  line-height: 1.8;
+}
+
+.contract-sentence {
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  border-left: 4px solid transparent;
+}
+
+.contract-sentence:hover {
+  background-color: #e9f7ff;
+  transform: translateY(-2px);
+}
+
+.contract-sentence.selected {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.contract-sentence.error {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.contract-sentence.correct {
+  background-color: #d1ecf1;
+  border-left: 4px solid #17a2b8;
+}
+
+.sentence-number {
+  font-weight: 600;
+  color: #4b6cb7;
+  min-width: 24px;
+}
+
+.sentence-text {
+  flex: 1;
+}
+
+.error-indicator,
+.wrong-indicator {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.error-indicator {
+  color: #dc3545;
+}
+
+.wrong-indicator {
+  color: #ffc107;
+}
+
+.game-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+}
+
+.play-again-btn {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  color: white;
+  margin-top: 20px;
+  padding: 14px 28px;
+}
+
+.selection-info {
+  display: flex;
+  align-items: center;
+}
+
+.selection-count {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.hint-section {
+  margin-bottom: 25px;
+}
+
+.hint-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+}
+
+.hint-icon {
+  font-size: 1.5rem;
+}
+
+.hint-text {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.result-section {
+  display: flex;
+  justify-content: center;
+}
+
+.result-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.result-title {
+  margin: 0 0 20px 0;
+  color: #182848;
+  font-size: 1.8rem;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 25px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4b6cb7;
+}
+
+.stat-value.score {
+  color: #28a745;
+  font-size: 2rem;
+}
+
+.result-message {
+  margin-bottom: 25px;
+}
+
+.message {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.message.perfect {
+  color: #28a745;
+}
+
+.message.good {
+  color: #ffc107;
+}
+
+.message.poor {
+  color: #dc3545;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .game-container {
+    padding: 10px;
+  }
+
+  .game-wrapper {
+    border-radius: 12px;
+  }
+
+  .game-title {
+    font-size: 1.5rem;
+  }
+
+  .timer {
+    font-size: 1.2rem;
+    padding: 6px 15px;
+  }
+
+  .game-content {
+    padding: 15px;
+  }
+
+  .contract-container {
+    padding: 15px 10px;
+  }
+
+  .contract-sentence {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .sentence-number {
+    min-width: 20px;
+  }
+
+  .game-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .selection-info {
+    order: -1;
+  }
+
+  .result-card {
+    padding: 20px;
+  }
+
+  .result-stats {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .stat-value.score {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-header {
+    padding: 20px 15px;
+  }
+
+  .game-title {
+    font-size: 1.3rem;
+  }
+
+  .game-instruction {
+    font-size: 0.9rem;
+  }
+
+  .hint-box {
+    padding: 12px 15px;
+    gap: 8px;
+  }
+
+  .hint-text {
+    font-size: 0.85rem;
+  }
+
+  .result-title {
+    font-size: 1.5rem;
+  }
+
+  .message {
+    font-size: 1rem;
+  }
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header class="header" v-if="isLoggedIn && !isLoginPage">
+    <header class="header" v-if="isLoggedIn && !isLoginPage && !isGamePage">
       <div class="user-info">
         <img class="avatar" src="https://via.placeholder.com/30" alt="用户头像" />
         <span>当前用户：{{ username }}</span>
@@ -8,7 +8,7 @@
       </div>
     </header>
     <div class="main-container">
-      <aside class="sidebar" v-if="isLoggedIn && !isLoginPage">
+      <aside class="sidebar" v-if="isLoggedIn && !isLoginPage && !isGamePage">
         <div class="logo">管理后台</div>
         <ul class="menu">
           <li><router-link to="/activity" active-class="active">活动管理</router-link></li>
@@ -36,6 +36,12 @@ export default {
       isLoggedIn: false,
       isLoginPage: false
     };
+  },
+  computed: {
+    // 添加计算属性判断是否为游戏页面
+    isGamePage() {
+      return this.$route.path === '/game';
+    }
   },
   watch: {
     $route(to) {

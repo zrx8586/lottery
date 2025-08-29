@@ -20,26 +20,30 @@
               v-for="(sentence, index) in contractSentences"
               :key="index"
               @click="toggleSelection(index)"
-              :class="{
-                selected: selectedSentences.includes(index),
-                error: showResults && errorSentences.includes(index),
-                correct: showResults && !errorSentences.includes(index) && selectedSentences.includes(index)
-              }"
+              :class="getSentenceClass(index)"
               class="contract-sentence"
             >
               <span class="sentence-number">{{ index + 1 }}.</span>
               <span class="sentence-text">{{ sentence }}</span>
-              <span
-                v-if="showResults && errorSentences.includes(index)"
-                class="error-indicator"
-              >
-                ❌
-              </span>
-              <span
-                v-else-if="showResults && selectedSentences.includes(index) && !errorSentences.includes(index)"
-                class="wrong-indicator"
-              >
-                ❌
+              <span v-if="showResults">
+                <span
+                  v-if="errorSentences.includes(index) && selectedSentences.includes(index)"
+                  class="indicator correct-found"
+                >
+                  ✅ 已找到
+                </span>
+                <span
+                  v-else-if="errorSentences.includes(index) && !selectedSentences.includes(index)"
+                  class="indicator correct-missed"
+                >
+                  ❌ 未发现
+                </span>
+                <span
+                  v-else-if="!errorSentences.includes(index) && selectedSentences.includes(index)"
+                  class="indicator wrong-selected"
+                >
+                  ❌ 错误选择
+                </span>
               </span>
             </p>
           </div>
@@ -58,7 +62,7 @@
           <button
             class="btn submit-btn"
             @click="submitAnswers"
-            :disabled="selectedSentences.length !== 5"
+            :disabled="selectedSentences.length !== 5 || showResults"
           >
             <span class="btn-icon">✅</span>
             <span class="btn-text">确认提交</span>
@@ -90,6 +94,35 @@
               <p v-else-if="correctCount >= 3" class="message good">不错，但还有改进空间！</p>
               <p v-else class="message poor">需要加强对劳动法的了解哦！</p>
             </div>
+
+            <div class="correct-answers-section">
+              <h3 class="section-title">正确答案</h3>
+              <div class="correct-answers-list">
+                <div
+                  v-for="(index) in errorSentences"
+                  :key="index"
+                  class="correct-answer-item"
+                >
+                  <div class="answer-header">
+                    <span class="answer-number">{{ index + 1 }}.</span>
+                    <span class="answer-status">
+                      <span v-if="selectedSentences.includes(index)" class="found">✓ 已找到</span>
+                      <span v-else class="missed">✗ 未找到</span>
+                    </span>
+                  </div>
+                  <p class="answer-text">{{ contractSentences[index] }}</p>
+                  <div class="answer-explanation">
+                    <p v-if="index === 18">
+                      根据《劳动法》第三十九条，企业因生产特点不能实行标准工时制度的，必须经过劳动行政部门批准，不能自行安排。
+                    </p>
+                    <p v-else-if="index === 20">
+                      根据《劳动法》第四十四条，延长工作时间应安排补休或支付加班费，"偶尔"支付是错误表述。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <button class="btn play-again-btn" @click="resetGame">
               <span class="btn-icon">🎮</span>
               <span class="btn-text">再玩一次</span>
@@ -101,14 +134,14 @@
   </div>
 </template>
 
-<script>
-import { ref, onMounted, watch } from 'vue'
+<script>import { ref, onMounted, watch } from 'vue'
 
 export default {
   name: 'Game',
   setup() {
     const contractSentences = ref([])
-    const errorSentences = ref([18, 20])
+    // 修改错误索引为5个错误
+    const errorSentences = ref([6, 10, 14, 18, 20])
     const selectedSentences = ref([])
     const showResults = ref(false)
     const correctCount = ref(0)
@@ -116,6 +149,23 @@ export default {
     const timeLeft = ref(60)
     const gameActive = ref(false)
     let timer = null
+
+    // 计算句子的CSS类
+    const getSentenceClass = (index) => {
+      const classes = []
+
+      if (showResults.value) {
+        if (errorSentences.value.includes(index)) {
+          classes.push('correct-answer')
+        } else if (selectedSentences.value.includes(index)) {
+          classes.push('wrong-selected')
+        }
+      } else if (selectedSentences.value.includes(index)) {
+        classes.push('selected')
+      }
+
+      return classes
+    }
 
     const toggleSelection = (index) => {
       if (showResults.value) return
@@ -139,25 +189,34 @@ export default {
         console.error('获取合同数据失败:', error)
         // 如果后端不可用，使用默认数据
         contractSentences.value = [
-          "甲方：______", "乙方：______", "身份证号码：______",
+          "甲方：______",
+          "乙方：______",
+          "身份证号码：______",
           "根据《中华人民共和国劳动法》，经甲乙双方平等协商同意，自愿签订本合同，共同遵守本合同所列条项。",
-          "一、劳动合同期限", "第一条 本合同期限类型为______期限合同。",
-          "本合同生效日期：______年______月______日，终止日期：______年______月______日，其中试用期为______。",
-          "二、工作内容和义务", "第二条 乙方同意根据甲方工作需要，担任______岗位工作。甲方可依照有关规定，经与乙方协商，对乙方的工作职务和岗位进行调整。",
+          "一、劳动合同期限",
+          "第一条 本合同期限类型为______期限合同。",
+          "本合同生效日期：______年______月______日，终止日期：______年______月______日，其中试用期为______。", // 错误1
+          "二、工作内容和义务",
+          "第二条 乙方同意根据甲方工作需要，担任______岗位工作。甲方可依照有关规定，经与乙方协商，对乙方的工作职务和岗位进行调整。",
           "第三条 乙方应按照甲方的要求，按时完成规定的工作数量，达到规定的质量标准，并履行下列义务：",
-          "1. 遵守国家宪法、法律、法规；", "2. 遵守甲方的规章制度；", "3. 维护甲方的荣誉和利益；",
-          "4. 忠于职守，勤奋工作；", "5. 履行保守甲方商业秘密，不得利用甲方的商业秘密为本人或其他经济组织和个人谋取不正当的经济利益。",
+          "1. 遵守国家宪法、法律、法规；", // 错误2
+          "2. 遵守甲方的规章制度；", // 错误3
+          "3. 维护甲方的荣誉和利益；",
+          "4. 忠于职守，勤奋工作；",
+          "5. 履行保守甲方商业秘密，不得利用甲方的商业秘密为本人或其他经济组织和个人谋取不正当的经济利益。", // 错误4
           "三、劳动保护和劳动条件",
           "第四条 甲方安排乙方每日工作时间不超过八小时，平均每周不超过四十小时。甲方由于工作需要，经与工会和乙方协商后可以延长工作时间的，一般每日不得超过一小时，因特殊原因需要延长工作时间的，在保障乙方身体健康条件下延长工作时间，每日不得超过三个小时，每月不得超过三十六小时。",
           "执行综合计算工时制度的，平均日和周工作时间不超过标准工作时间。",
-          "执行不定时工时制度的，工作和休息休假乙方自行安排。",
+          "执行不定时工时制度的，工作和休息休假乙方自行安排。", // 错误5
           "甲方安排乙方执行______工时制度。",
-          "第五条 甲方延长乙方工作时间，应安排乙方同等时间偶尔或依法支付加班加点工资。"
+          "第五条 甲方延长乙方工作时间，应安排乙方同等时间偶尔或依法支付加班加点工资。" // 错误6 (保留作为备选)
         ]
       }
     }
 
     const submitAnswers = async () => {
+      if (showResults.value) return;
+
       clearInterval(timer)
       gameActive.value = false
 
@@ -238,7 +297,8 @@ export default {
       toggleSelection,
       submitAnswers,
       resetGame,
-      errorSentences
+      errorSentences,
+      getSentenceClass
     }
   }
 }
@@ -350,14 +410,14 @@ export default {
   border-left: 4px solid #28a745;
 }
 
-.contract-sentence.error {
-  background-color: #f8d7da;
-  border-left: 4px solid #dc3545;
-}
-
-.contract-sentence.correct {
+.contract-sentence.correct-answer {
   background-color: #d1ecf1;
   border-left: 4px solid #17a2b8;
+}
+
+.contract-sentence.wrong-selected {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
 }
 
 .sentence-number {
@@ -370,18 +430,30 @@ export default {
   flex: 1;
 }
 
-.error-indicator,
-.wrong-indicator {
-  font-size: 1.2rem;
+.indicator {
+  font-size: 0.9rem;
   font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
-.error-indicator {
-  color: #dc3545;
+.correct-found {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
 }
 
-.wrong-indicator {
-  color: #ffc107;
+.correct-missed {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+}
+
+.wrong-selected {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 .game-actions {
@@ -478,11 +550,9 @@ export default {
 
 .result-card {
   width: 100%;
-  max-width: 500px;
   padding: 30px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 12px;
-  text-align: center;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -490,6 +560,7 @@ export default {
   margin: 0 0 20px 0;
   color: #182848;
   font-size: 1.8rem;
+  text-align: center;
 }
 
 .result-stats {
@@ -522,6 +593,7 @@ export default {
 
 .result-message {
   margin-bottom: 25px;
+  text-align: center;
 }
 
 .message {
@@ -540,6 +612,76 @@ export default {
 
 .message.poor {
   color: #dc3545;
+}
+
+.correct-answers-section {
+  margin: 30px 0;
+}
+
+.section-title {
+  text-align: center;
+  color: #182848;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.correct-answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.correct-answer-item {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.answer-number {
+  font-weight: bold;
+  color: #4b6cb7;
+}
+
+.answer-status .found {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.answer-status .missed {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.answer-text {
+  font-style: italic;
+  margin: 0 0 15px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 3px solid #17a2b8;
+}
+
+.answer-explanation {
+  background: #e9f7ff;
+  padding: 15px;
+  border-radius: 5px;
+  border-left: 3px solid #4b6cb7;
+}
+
+.answer-explanation p {
+  margin: 0;
+  color: #182848;
+  line-height: 1.5;
 }
 
 /* 响应式设计 */
@@ -608,6 +750,12 @@ export default {
   .stat-value.score {
     font-size: 1.5rem;
   }
+
+  .answer-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -638,6 +786,10 @@ export default {
 
   .message {
     font-size: 1rem;
+  }
+
+  .correct-answer-item {
+    padding: 15px;
   }
 }
 </style>

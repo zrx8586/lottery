@@ -5,6 +5,8 @@ import PrizeManagement from "@/views/PrizeManagement.vue";
 import ActivityPrizeRelationship from "../views/ActivityPrizeRelationship.vue";
 import CacheManagement from "../views/CacheManagement.vue";
 import LotteryView from "../views/LotteryView.vue";
+import Game from '../views/Game.vue'
+
 import axios from "axios";
 
 const routes = [
@@ -15,6 +17,15 @@ const routes = [
     { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
     { path: "/lottery", component: LotteryView, meta: { requiresAuth: true } },
     { path: "/", redirect: "/activity" }, // 默认重定向到 /activity
+    {
+        path: '/',
+        redirect: '/game'
+      },
+      {
+        path: '/game',
+        name: 'Game',
+        component: Game
+      }
 ];
 
 const router = createRouter({

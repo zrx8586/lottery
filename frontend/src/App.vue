@@ -332,4 +332,122 @@ html, body {
     font-size: 12px;
   }
 }
+
+/* 全局样式放在这里 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Microsoft YaHei', sans-serif;
+}
+body {
+  background-color: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.header {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+.timer.warning {
+  color: #ff4757;
+}
+.content {
+  padding: 25px;
+}
+.contract {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+.contract p {
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.contract p:hover {
+  background-color: #f0f5ff;
+}
+.contract p.selected {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+.contract p.error {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+.submit-btn {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+}
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 108, 183, 0.4);
+}
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.reset-btn {
+  background: #6c757d;
+  color: white;
+}
+.reset-btn:hover {
+  background: #5a6268;
+}
+.result {
+  margin-top: 20px;
+  padding: 20px;
+  background: #e9ecef;
+  border-radius: 8px;
+  text-align: center;
+}
+.score {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4b6cb7;
+  margin: 10px 0;
+}
+.hint {
+  color: #6c757d;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
 </style>

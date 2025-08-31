@@ -30,26 +30,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // 禁用 CSRF
-                .cors(cors -> cors.configurationSource(request -> {
-                    var config = new CorsConfiguration();
-                    config.addAllowedOrigin("*"); // 根据需求设置允许的域名
-                    config.addAllowedMethod("*");
-                    config.addAllowedHeader("*");
-                    return config;
-                }))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                // 过滤 /api/test/oom
-                                "/api/test/oom",
-                                "/public/**").permitAll() // 公共路径允许访问
-                        .requestMatchers(permitAllPaths).permitAll() // 允许的路径 从配置文件中读取
-                        .anyRequest().authenticated() // 其他路径需要认证
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .csrf(AbstractHttpConfigurer::disable) // 禁用 CSRF
+            .cors(cors -> cors.configurationSource(request -> {
+                var config = new CorsConfiguration();
+                config.addAllowedOrigin("*"); // 根据需求设置允许的域名
+                config.addAllowedMethod("*");
+                config.addAllowedHeader("*");
+                return config;
+            }))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/api/test/**",       // 允许 /api/test/** 路径
+                    "/api/game/**",       // 允许 /api/game/** 路径
+                    "/test/**",           // 允许 /test/** 路径
+                    "/game",              // 允许 /game 路径（游戏页面）
+                    "/game/**",           // 允许 /game 相关路径
+                    "/public/**").permitAll() // 公共路径允许访问
+                .requestMatchers(permitAllPaths).permitAll() // 允许的路径 从配置文件中读取
+                .anyRequest().authenticated() // 其他路径需要认证
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -16,16 +16,8 @@ const routes = [
     { path: "/activityPrizeRelationship", component: ActivityPrizeRelationship, meta: { requiresAuth: true } },
     { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
     { path: "/lottery", component: LotteryView, meta: { requiresAuth: true } },
-    { path: "/", redirect: "/activity" }, // 默认重定向到 /activity
-    {
-        path: '/',
-        redirect: '/game'
-      },
-      {
-        path: '/game',
-        name: 'Game',
-        component: Game
-      }
+    { path: "/game", name: 'Game', component: Game }, // 游戏页面，无需认证
+    { path: "/", redirect: "/game" } // 根路径重定向到游戏页面
 ];
 
 const router = createRouter({
@@ -35,15 +27,17 @@ const router = createRouter({
 
 // 全局导航守卫
 router.beforeEach(async (to, from, next) => {
+    // 游戏页面不需要认证，直接放行
+    if (to.path === "/game") {
+        next();
+        return;
+    }
+
     const token = localStorage.getItem("token");
 
     if (to.path === "/") {
-        // 根路径重定向逻辑
-        if (token) {
-            next("/activity"); // 已登录跳转到 /activity
-        } else {
-            next("/login"); // 未登录跳转到 /login
-        }
+        // 根路径重定向到游戏页面
+        next("/game");
     } else if (to.meta.requiresAuth) {
         // 需要认证的页面
         if (!token) {

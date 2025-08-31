@@ -1,45 +1,46 @@
 #!/bin/bash
 
-# ÉèÖÃÊý¾Ý¿âÁ¬½ÓÐÅÏ¢
-DB_USER="root"
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+DB_USER="lottery2025"
 DB_NAME="lottery"
+DB_PASSWORD="123456"
 MYSQL_CMD="mysql -u${DB_USER} -p"
 
-# ÌáÊ¾ÓÃ»§ÊäÈëÃÜÂë
-echo "ÇëÊäÈëMySQLÃÜÂë:"
+# ï¿½ï¿½Ê¾ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+echo "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MySQLï¿½ï¿½ï¿½ï¿½:"
 read -s DB_PASSWORD
 MYSQL_CMD="mysql -u${DB_USER} -p${DB_PASSWORD}"
 
-# ´´½¨Êý¾Ý¿â£¨Èç¹û²»´æÔÚ£©
-echo "´´½¨Êý¾Ý¿â ${DB_NAME}..."
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿â£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½
+echo "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ ${DB_NAME}..."
 ${MYSQL_CMD} -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-# ÇÐ»»µ½Ä¿±êÊý¾Ý¿â
-echo "ÇÐ»»µ½Êý¾Ý¿â ${DB_NAME}..."
+# ï¿½Ð»ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½
+echo "ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ ${DB_NAME}..."
 ${MYSQL_CMD} -e "USE ${DB_NAME};"
 
-# Çå¿Õ±í
-echo "Çå¿Õ±í..."
+# ï¿½ï¿½Õ±ï¿½
+echo "ï¿½ï¿½Õ±ï¿½..."
 ${MYSQL_CMD} ${DB_NAME} < clear_tables_lottery.sql
 
-# ´´½¨±í½á¹¹
-echo "´´½¨±í½á¹¹..."
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹
+echo "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹..."
 ${MYSQL_CMD} ${DB_NAME} < create_table_lottery.sql
 
-# ³õÊ¼»¯»ù´¡Êý¾Ý
-echo "³õÊ¼»¯»ù´¡Êý¾Ý..."
+# ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+echo "ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..."
 ${MYSQL_CMD} ${DB_NAME} < init_data_lottery.sql
 
-# ³õÊ¼»¯µ¥ÓÃ»§²¢·¢²âÊÔÊý¾Ý
-echo "³õÊ¼»¯µ¥ÓÃ»§²¢·¢²âÊÔÊý¾Ý..."
+# ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+echo "ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..."
 ${MYSQL_CMD} ${DB_NAME} < test_data_single_user_concurrent_draw.sql
 
-# ³õÊ¼»¯¶àÓÃ»§²¢·¢²âÊÔÊý¾Ý
-echo "³õÊ¼»¯¶àÓÃ»§²¢·¢²âÊÔÊý¾Ý..."
+# ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+echo "ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..."
 ${MYSQL_CMD} ${DB_NAME} < test_data_multiple_user_concurrent_draw.sql
 
-# ÑéÖ¤Êý¾Ý
-echo "ÑéÖ¤Êý¾Ý..."
+# ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½
+echo "ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½..."
 ${MYSQL_CMD} ${DB_NAME} -e "
 SELECT 'lottery_activity' as table_name, COUNT(*) as count FROM lottery_activity;
 SELECT 'lottery_prize' as table_name, COUNT(*) as count FROM lottery_prize;
@@ -49,11 +50,11 @@ SELECT 'lottery_activity_user' as table_name, COUNT(*) as count FROM lottery_act
 SELECT 'users' as table_name, COUNT(*) as count FROM users;
 "
 
-echo "Êý¾Ý¿â³õÊ¼»¯Íê³É£¡"
-echo "Ô¤ÆÚÊý¾ÝÁ¿£º"
-echo "- lottery_activity: 10 Ìõ¼ÇÂ¼£¨°üº¬²âÊÔ»î¶¯£©"
-echo "- lottery_prize: 11 Ìõ¼ÇÂ¼£¨°üº¬²âÊÔ½±Æ·£©"
-echo "- lottery_activity_prize: 50 Ìõ¼ÇÂ¼£¨°üº¬²âÊÔ»î¶¯½±Æ·¹ØÁª£©"
-echo "- lottery_record: 25 Ìõ¼ÇÂ¼"
-echo "- lottery_activity_user: 35 Ìõ¼ÇÂ¼£¨°üº¬²âÊÔÓÃ»§²ÎÓë¼ÇÂ¼£©"
-echo "- users: Çë²é¿´ init_data_users.sql ÖÐµÄ¼ÇÂ¼Êý" 
+echo "ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½É£ï¿½"
+echo "Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+echo "- lottery_activity: 10 ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»î¶¯ï¿½ï¿½"
+echo "- lottery_prize: 11 ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½Æ·ï¿½ï¿½"
+echo "- lottery_activity_prize: 50 ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»î¶¯ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+echo "- lottery_record: 25 ï¿½ï¿½ï¿½ï¿½Â¼"
+echo "- lottery_activity_user: 35 ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½"
+echo "- users: ï¿½ï¿½é¿´ init_data_users.sql ï¿½ÐµÄ¼ï¿½Â¼ï¿½ï¿½"

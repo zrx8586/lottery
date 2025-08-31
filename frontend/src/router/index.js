@@ -6,6 +6,7 @@ import ActivityPrizeRelationship from "../views/ActivityPrizeRelationship.vue";
 import CacheManagement from "../views/CacheManagement.vue";
 import LotteryView from "../views/LotteryView.vue";
 import Game from '../views/Game.vue'
+import Test from '../views/Test.vue'
 
 import axios from "axios";
 
@@ -17,18 +18,19 @@ const routes = [
     { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
     { path: "/lottery", component: LotteryView, meta: { requiresAuth: true } },
     { path: "/game", name: 'Game', component: Game }, // 游戏页面，无需认证
+    { path: "/test", name: 'Test', component: Test }, // 测试页面，无需认证
     { path: "/", redirect: "/game" } // 根路径重定向到游戏页面
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(), // 改回history模式
     routes,
 });
 
 // 全局导航守卫
 router.beforeEach(async (to, from, next) => {
-    // 游戏页面不需要认证，直接放行
-    if (to.path === "/game") {
+    // 游戏页面和测试页面不需要认证，直接放行
+    if (to.path === "/game" || to.path === "/test") {
         next();
         return;
     }

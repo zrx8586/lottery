@@ -6,7 +6,7 @@ DB_NAME="lottery"
 DB_PASSWORD="123456"
 MYSQL_CMD="mysql -u${DB_USER} -p"
 
-# ��ʾ�û���������
+# ��ʾ�û��������a
 echo "������MySQL����:"
 read -s DB_PASSWORD
 MYSQL_CMD="mysql -u${DB_USER} -p${DB_PASSWORD}"

@@ -7,6 +7,33 @@
       </div>
 
       <div class="test-content">
+        <!-- 环境信息 -->
+        <div class="test-section">
+          <h2>环境信息</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">当前环境:</span>
+              <span class="info-value">{{ isProduction ? '生产环境' : '开发环境' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">前端端口:</span>
+              <span class="info-value">8081</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">后端端口:</span>
+              <span class="info-value">8080</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">API基础地址:</span>
+              <span class="info-value">{{ apiBaseUrl }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">测试时间:</span>
+              <span class="info-value">{{ currentTime }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- 基础连接测试 -->
         <div class="test-section">
           <h2>基础连接测试</h2>
@@ -50,7 +77,7 @@
           <div class="test-item">
             <button class="btn test-btn" @click="testGameAPI">
               <span class="btn-icon">🎮</span>
-              <span class="btn-text">测试 /api/game/contract API</span>
+              <span class="btn-text">测试 /api/game/contracts API</span>
             </button>
             <div class="test-result" v-if="gameResult">
               <span class="result-label">结果:</span>
@@ -80,29 +107,6 @@
           </div>
         </div>
 
-        <!-- 连接信息 -->
-        <div class="test-section">
-          <h2>连接信息</h2>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">前端端口:</span>
-              <span class="info-value">8081</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">后端端口:</span>
-              <span class="info-value">8080</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">后端地址:</span>
-              <span class="info-value">http://localhost:8080</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">测试时间:</span>
-              <span class="info-value">{{ currentTime }}</span>
-            </div>
-          </div>
-        </div>
-
         <!-- 批量测试 -->
         <div class="test-section">
           <h2>批量测试</h2>
@@ -122,13 +126,33 @@
             </div>
           </div>
         </div>
+
+        <!-- 测试日志 -->
+        <div class="test-section">
+          <h2>测试日志</h2>
+          <div class="log-container">
+            <div class="log-header">
+              <button class="btn btn-sm" @click="clearLogs">清空日志</button>
+              <span class="log-count">共 {{ testLogs.length }} 条记录</span>
+            </div>
+            <div class="log-content">
+              <div v-for="(log, index) in testLogs" :key="index" class="log-item">
+                <span class="log-time">{{ log.time }}</span>
+                <span :class="['log-status', log.success ? 'success' : 'error']">
+                  {{ log.success ? '✅' : '❌' }}
+                </span>
+                <span class="log-message">{{ log.message }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
 export default {
@@ -140,6 +164,40 @@ export default {
     const authResult = ref(null)
     const allTestsResult = ref(null)
     const currentTime = ref('')
+    const testLogs = ref([])
+
+    // 自动检测环境并设置API基础地址
+    const isProduction = computed(() => {
+      return window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    })
+
+    const apiBaseUrl = computed(() => {
+      if (isProduction.value) {
+        // 生产环境：使用相对路径，让Nginx代理
+        return ''
+      } else {
+        // 开发环境：使用localhost
+        return 'http://localhost:8080'
+      }
+    })
+
+    // 添加测试日志
+    const addLog = (message, success = true) => {
+      testLogs.value.unshift({
+        time: new Date().toLocaleTimeString('zh-CN'),
+        message,
+        success
+      })
+      // 限制日志数量
+      if (testLogs.value.length > 50) {
+        testLogs.value = testLogs.value.slice(0, 50)
+      }
+    }
+
+    // 清空日志
+    const clearLogs = () => {
+      testLogs.value = []
+    }
 
     // 更新当前时间
     const updateTime = () => {
@@ -149,80 +207,106 @@ export default {
     // 测试基础连接
     const testBasicConnection = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/test/input', {
+        const url = `${apiBaseUrl.value}/test/input`
+        addLog(`测试基础连接: ${url}`)
+        
+        const response = await axios.get(url, {
           timeout: 5000
         })
+        
         basicResult.value = {
           success: true,
           message: `状态码: ${response.status}, 响应: ${response.data}`
         }
+        addLog(`基础连接成功: ${response.status}`, true)
       } catch (error) {
         basicResult.value = {
           success: false,
           message: `错误: ${error.message}`
         }
+        addLog(`基础连接失败: ${error.message}`, false)
       }
     }
 
     // 测试 /test/input API
     const testInputAPI = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/test/input', {
+        const url = `${apiBaseUrl.value}/test/input`
+        addLog(`测试 /test/input API: ${url}`)
+        
+        const response = await axios.get(url, {
           timeout: 5000
         })
+        
         inputResult.value = {
           success: true,
           message: response.data
         }
+        addLog(`/test/input API 测试成功: ${response.data}`, true)
       } catch (error) {
         inputResult.value = {
           success: false,
           message: error.message
         }
+        addLog(`/test/input API 测试失败: ${error.message}`, false)
       }
     }
 
-    // 测试 /api/game/contract API
+    // 测试 /api/game/contracts API
     const testGameAPI = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/game/contract', {
+        const url = `${apiBaseUrl.value}/api/game/contracts`
+        addLog(`测试 /api/game/contracts API: ${url}`)
+        
+        const response = await axios.get(url, {
           timeout: 5000
         })
+        
         gameResult.value = {
           success: true,
-          message: `获取到 ${response.data.length} 条合同数据`
+          message: `获取到 ${response.data.total || response.data.length || 0} 条合同数据`
         }
+        addLog(`/api/game/contracts API 测试成功`, true)
       } catch (error) {
         gameResult.value = {
           success: false,
           message: error.message
         }
+        addLog(`/api/game/contracts API 测试失败: ${error.message}`, false)
       }
     }
 
     // 测试 /api/auth/register API
     const testAuthAPI = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/register', {
+        const url = `${apiBaseUrl.value}/api/auth/register`
+        addLog(`测试 /api/auth/register API: ${url}`)
+        
+        const response = await axios.post(url, {
           username: 'testuser',
           password: 'testpass'
         }, {
           timeout: 5000
         })
+        
         authResult.value = {
           success: true,
           message: `注册API响应: ${JSON.stringify(response.data)}`
         }
+        addLog(`/api/auth/register API 测试成功`, true)
       } catch (error) {
         authResult.value = {
           success: false,
           message: error.message
         }
+        addLog(`/api/auth/register API 测试失败: ${error.message}`, false)
       }
     }
 
     // 运行所有测试
     const runAllTests = async () => {
+      addLog('开始运行所有测试...')
+      
       // 清空之前的结果
       basicResult.value = null
       inputResult.value = null
@@ -244,12 +328,18 @@ export default {
         success: successCount === totalCount,
         message: `测试完成: ${successCount}/${totalCount} 通过`
       }
+      
+      addLog(`所有测试完成: ${successCount}/${totalCount} 通过`, successCount === totalCount)
     }
 
     onMounted(() => {
       updateTime()
       // 每秒更新时间
       setInterval(updateTime, 1000)
+      
+      // 添加启动日志
+      addLog(`页面加载完成，当前环境: ${isProduction.value ? '生产环境' : '开发环境'}`)
+      addLog(`API基础地址: ${apiBaseUrl.value || '相对路径'}`)
     })
 
     return {
@@ -259,11 +349,15 @@ export default {
       authResult,
       allTestsResult,
       currentTime,
+      testLogs,
+      isProduction,
+      apiBaseUrl,
       testBasicConnection,
       testInputAPI,
       testGameAPI,
       testAuthAPI,
-      runAllTests
+      runAllTests,
+      clearLogs
     }
   }
 }
@@ -281,7 +375,7 @@ export default {
 
 .test-wrapper {
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -352,6 +446,11 @@ export default {
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.9rem;
 }
 
 .test-btn {
@@ -431,6 +530,62 @@ export default {
   font-weight: 500;
 }
 
+/* 日志样式 */
+.log-container {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.log-count {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.log-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.log-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #f1f3f4;
+  font-size: 0.9rem;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  color: #6c757d;
+  font-family: monospace;
+  min-width: 80px;
+}
+
+.log-status {
+  font-size: 1rem;
+  min-width: 20px;
+}
+
+.log-message {
+  color: #495057;
+  flex: 1;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .test-container {
@@ -460,6 +615,12 @@ export default {
   .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .log-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
   }
 }
 </style>

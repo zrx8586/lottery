@@ -84,7 +84,7 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
-        
+
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
         loginResponse.setUsername(user.getUsername());

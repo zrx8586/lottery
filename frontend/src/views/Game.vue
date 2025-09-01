@@ -1,132 +1,169 @@
-// frontend/src/views/Game.vue
 <template>
   <div class="game-container">
     <div class="game-wrapper">
-      <div class="game-header">
-        <h1 class="game-title">劳动合同找茬小游戏</h1>
-        <div class="timer-section">
-          <div class="timer" :class="{ warning: timeLeft < 10 }">
-            <span class="time-label">倒计时:</span>
-            <span class="time-value">{{ timeLeft }}s</span>
+      <!-- 合同选择界面 -->
+      <div v-if="!selectedContract" class="contract-selection">
+        <div class="selection-header">
+          <h1 class="selection-title">选择合同进行游戏</h1>
+          <p class="selection-subtitle">请选择一套合同，找出其中的5个错误点</p>
+        </div>
+        
+        <div class="contract-grid">
+          <div 
+            v-for="contract in availableContracts" 
+            :key="contract.id"
+            class="contract-card"
+            @click="selectContract(contract.id)"
+          >
+            <div class="contract-icon">📄</div>
+            <h3 class="contract-name">{{ contract.title }}</h3>
+            <p class="contract-desc">{{ contract.description }}</p>
+            <div class="contract-info">
+              <span class="info-item">错误点: {{ contract.totalErrors }}个</span>
+              <span class="info-item">时间: 60秒</span>
+            </div>
           </div>
         </div>
-        <p class="game-instruction">找出合同中的5个错误描述，点击选择你认为错误的句子</p>
       </div>
 
-      <div class="game-content">
-        <div class="contract-container">
-          <div class="contract-content">
-            <p
-              v-for="(sentence, index) in contractSentences"
-              :key="index"
-              @click="toggleSelection(index)"
-              :class="getSentenceClass(index)"
-              class="contract-sentence"
+      <!-- 游戏界面 -->
+      <div v-else class="game-interface">
+        <div class="game-header">
+          <div class="contract-info-header">
+            <button class="back-btn" @click="backToSelection">
+              <span class="btn-icon">←</span>
+              <span class="btn-text">返回选择</span>
+            </button>
+            <h2 class="contract-title">{{ selectedContract.title }}</h2>
+          </div>
+          
+          <div class="timer-section">
+            <div class="timer" :class="{ warning: timeLeft < 10 }">
+              <span class="time-label">倒计时:</span>
+              <span class="time-value">{{ timeLeft }}s</span>
+            </div>
+          </div>
+          
+          <p class="game-instruction">找出合同中的5个错误描述，点击选择你认为错误的句子</p>
+        </div>
+
+        <div class="game-content">
+          <div class="contract-container">
+            <div class="contract-content">
+              <p
+                v-for="(sentence, index) in contractSentences"
+                :key="index"
+                @click="toggleSelection(index)"
+                :class="getSentenceClass(index)"
+                class="contract-sentence"
+              >
+                <span class="sentence-number">{{ index + 1 }}.</span>
+                <span class="sentence-text">{{ sentence }}</span>
+                <span v-if="showResults">
+                  <span
+                    v-if="errorSentences.includes(index) && selectedSentences.includes(index)"
+                    class="indicator correct-found"
+                  >
+                    ✅ 已找到
+                  </span>
+                  <span
+                    v-else-if="errorSentences.includes(index) && !selectedSentences.includes(index)"
+                    class="indicator correct-missed"
+                  >
+                    ❌ 未发现
+                  </span>
+                  <span
+                    v-else-if="!errorSentences.includes(index) && selectedSentences.includes(index)"
+                    class="indicator wrong-selected"
+                  >
+                    ❌ 错误选择
+                  </span>
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="game-actions">
+            <button class="btn reset-btn" @click="resetGame">
+              <span class="btn-icon">🔄</span>
+              <span class="btn-text">重新开始</span>
+            </button>
+
+            <div class="selection-info">
+              <span class="selection-count">已选择: {{ selectedSentences.length }}/5</span>
+            </div>
+
+            <button
+              class="btn submit-btn"
+              @click="submitAnswers"
+              :disabled="selectedSentences.length !== 5 || showResults"
             >
-              <span class="sentence-number">{{ index + 1 }}.</span>
-              <span class="sentence-text">{{ sentence }}</span>
-              <span v-if="showResults">
-                <span
-                  v-if="errorSentences.includes(index) && selectedSentences.includes(index)"
-                  class="indicator correct-found"
-                >
-                  ✅ 已找到
-                </span>
-                <span
-                  v-else-if="errorSentences.includes(index) && !selectedSentences.includes(index)"
-                  class="indicator correct-missed"
-                >
-                  ❌ 未发现
-                </span>
-                <span
-                  v-else-if="!errorSentences.includes(index) && selectedSentences.includes(index)"
-                  class="indicator wrong-selected"
-                >
-                  ❌ 错误选择
-                </span>
-              </span>
-            </p>
-          </div>
-        </div>
-
-        <div class="game-actions">
-          <button class="btn reset-btn" @click="resetGame">
-            <span class="btn-icon">🔄</span>
-            <span class="btn-text">重新开始</span>
-          </button>
-
-          <div class="selection-info">
-            <span class="selection-count">已选择: {{ selectedSentences.length }}/5</span>
+              <span class="btn-icon">✅</span>
+              <span class="btn-text">确认提交</span>
+            </button>
           </div>
 
-          <button
-            class="btn submit-btn"
-            @click="submitAnswers"
-            :disabled="selectedSentences.length !== 5 || showResults"
-          >
-            <span class="btn-icon">✅</span>
-            <span class="btn-text">确认提交</span>
-          </button>
-        </div>
-
-        <div class="hint-section" v-if="!showResults">
-          <div class="hint-box">
-            <span class="hint-icon">💡</span>
-            <span class="hint-text">提示: 合同中有5处与《中华人民共和国劳动法》不符的描述，请仔细查找</span>
-          </div>
-        </div>
-
-        <div class="result-section" v-if="showResults">
-          <div class="result-card">
-            <h2 class="result-title">游戏结果</h2>
-            <div class="result-stats">
-              <div class="stat-item">
-                <span class="stat-label">找到错误:</span>
-                <span class="stat-value">{{ correctCount }} 个</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">得分:</span>
-                <span class="stat-value score">{{ score }}/100</span>
-              </div>
+          <div class="hint-section" v-if="!showResults">
+            <div class="hint-box">
+              <span class="hint-icon">💡</span>
+              <span class="hint-text">提示: 合同中有5处与相关法律不符的描述，请仔细查找</span>
             </div>
-            <div class="result-message">
-              <p v-if="correctCount === 5" class="message perfect">太棒了！你找到了所有错误！</p>
-              <p v-else-if="correctCount >= 3" class="message good">不错，但还有改进空间！</p>
-              <p v-else class="message poor">需要加强对劳动法的了解哦！</p>
-            </div>
+          </div>
 
-            <div class="correct-answers-section">
-              <h3 class="section-title">正确答案</h3>
-              <div class="correct-answers-list">
-                <div
-                  v-for="(index) in errorSentences"
-                  :key="index"
-                  class="correct-answer-item"
-                >
-                  <div class="answer-header">
-                    <span class="answer-number">{{ index + 1 }}.</span>
-                    <span class="answer-status">
-                      <span v-if="selectedSentences.includes(index)" class="found">✓ 已找到</span>
-                      <span v-else class="missed">✗ 未找到</span>
-                    </span>
-                  </div>
-                  <p class="answer-text">{{ contractSentences[index] }}</p>
-                  <div class="answer-explanation">
-                    <p v-if="index === 18">
-                      根据《劳动法》第三十九条，企业因生产特点不能实行标准工时制度的，必须经过劳动行政部门批准，不能自行安排。
-                    </p>
-                    <p v-else-if="index === 20">
-                      根据《劳动法》第四十四条，延长工作时间应安排补休或支付加班费，"偶尔"支付是错误表述。
-                    </p>
+          <div class="result-section" v-if="showResults">
+            <div class="result-card">
+              <h2 class="result-title">游戏结果</h2>
+              <div class="result-stats">
+                <div class="stat-item">
+                  <span class="stat-label">找到错误:</span>
+                  <span class="stat-value">{{ correctCount }} 个</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">得分:</span>
+                  <span class="stat-value score">{{ score }}/100</span>
+                </div>
+              </div>
+              <div class="result-message">
+                <p v-if="correctCount === 5" class="message perfect">太棒了！你找到了所有错误！</p>
+                <p v-else-if="correctCount >= 3" class="message good">不错，但还有改进空间！</p>
+                <p v-else class="message poor">需要加强对相关法律的了解哦！</p>
+              </div>
+
+              <div class="correct-answers-section">
+                <h3 class="section-title">正确答案</h3>
+                <div class="correct-answers-list">
+                  <div
+                    v-for="(index) in errorSentences"
+                    :key="index"
+                    class="correct-answer-item"
+                  >
+                    <div class="answer-header">
+                      <span class="answer-number">{{ index + 1 }}.</span>
+                      <span class="answer-status">
+                        <span v-if="selectedSentences.includes(index)" class="found">✓ 已找到</span>
+                        <span v-else class="missed">✗ 未找到</span>
+                      </span>
+                    </div>
+                    <p class="answer-text">{{ contractSentences[index] }}</p>
+                    <div class="error-explanation" v-if="errorExplanations[index]">
+                      <span class="explanation-label">错误说明:</span>
+                      <span class="explanation-text">{{ errorExplanations[index] }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <button class="btn play-again-btn" @click="resetGame">
-              <span class="btn-icon">🎮</span>
-              <span class="btn-text">再玩一次</span>
-            </button>
+              <div class="action-buttons">
+                <button class="btn play-again-btn" @click="resetGame">
+                  <span class="btn-icon">🎮</span>
+                  <span class="btn-text">再玩一次</span>
+                </button>
+                <button class="btn select-other-btn" @click="backToSelection">
+                  <span class="btn-icon">📄</span>
+                  <span class="btn-text">选择其他合同</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -134,14 +171,24 @@
   </div>
 </template>
 
-<script>import { ref, onMounted, watch } from 'vue'
+<script>
+import { ref, onMounted, watch } from 'vue'
+import { 
+  getAvailableContracts, 
+  getContractById, 
+  getContractTitle, 
+  getErrorIndices, 
+  getErrorExplanations 
+} from '@/data/contracts.js'
 
 export default {
   name: 'Game',
   setup() {
+    const availableContracts = ref([])
+    const selectedContract = ref(null)
     const contractSentences = ref([])
-    // 修改错误索引为5个错误
-    const errorSentences = ref([6, 10, 14, 18, 20])
+    const errorSentences = ref([])
+    const errorExplanations = ref({})
     const selectedSentences = ref([])
     const showResults = ref(false)
     const correctCount = ref(0)
@@ -149,6 +196,83 @@ export default {
     const timeLeft = ref(60)
     const gameActive = ref(false)
     let timer = null
+
+    // 获取可选择的合同列表
+    const fetchAvailableContracts = async () => {
+      try {
+        const response = await fetch('/api/game/contracts')
+        
+        if (response.ok) {
+          const data = await response.json()
+          availableContracts.value = Array.from(data.contracts).map(id => ({
+            id: id,
+            title: getContractTitle(id),
+            description: (getContractById(id) && getContractById(id).description) || '标准合同模板',
+            totalErrors: (getContractById(id) && getContractById(id).totalErrors) || 5
+          }))
+          console.log('成功从后端获取合同列表')
+        } else {
+          throw new Error(`HTTP ${response.status}`)
+        }
+      } catch (error) {
+        // 后端不可用时，静默使用本地数据
+        console.log('后端服务不可用，使用本地合同数据')
+        availableContracts.value = getAvailableContracts()
+      }
+    }
+
+    // 选择合同
+    const selectContract = async (contractId) => {
+      try {
+        const response = await fetch(`/api/game/contract/${contractId}`)
+        
+        if (response.ok) {
+          const data = await response.json()
+          
+          selectedContract.value = {
+            id: data.id,
+            title: data.title
+          }
+          contractSentences.value = data.content
+          errorSentences.value = getErrorIndices(contractId)
+          errorExplanations.value = getErrorExplanations(contractId)
+          
+          resetGame()
+          console.log('成功从后端获取合同内容')
+        } else {
+          throw new Error(`HTTP ${response.status}`)
+        }
+      } catch (error) {
+        // 后端不可用时，使用本地数据
+        console.log('后端服务不可用，使用本地合同数据')
+        const localContract = getContractById(contractId)
+        if (localContract) {
+          selectedContract.value = { 
+            id: localContract.id, 
+            title: localContract.title 
+          }
+          contractSentences.value = localContract.content
+          errorSentences.value = localContract.errorIndices
+          errorExplanations.value = localContract.errorExplanations
+          resetGame()
+        }
+      }
+    }
+
+    // 返回合同选择界面
+    const backToSelection = () => {
+      selectedContract.value = null
+      contractSentences.value = []
+      errorSentences.value = []
+      errorExplanations.value = {}
+      selectedSentences.value = []
+      showResults.value = false
+      correctCount.value = 0
+      score.value = 0
+      timeLeft.value = 60
+      gameActive.value = false
+      if (timer) clearInterval(timer)
+    }
 
     // 计算句子的CSS类
     const getSentenceClass = (index) => {
@@ -180,40 +304,6 @@ export default {
       }
     }
 
-    const fetchContract = async () => {
-      try {
-        const response = await fetch('/api/game/contract')
-        const data = await response.json()
-        contractSentences.value = data
-      } catch (error) {
-        console.error('获取合同数据失败:', error)
-        // 如果后端不可用，使用默认数据
-        contractSentences.value = [
-          "甲方：______",
-          "乙方：______",
-          "身份证号码：______",
-          "根据《中华人民共和国劳动法》，经甲乙双方平等协商同意，自愿签订本合同，共同遵守本合同所列条项。",
-          "一、劳动合同期限",
-          "第一条 本合同期限类型为______期限合同。",
-          "本合同生效日期：______年______月______日，终止日期：______年______月______日，其中试用期为______。", // 错误1
-          "二、工作内容和义务",
-          "第二条 乙方同意根据甲方工作需要，担任______岗位工作。甲方可依照有关规定，经与乙方协商，对乙方的工作职务和岗位进行调整。",
-          "第三条 乙方应按照甲方的要求，按时完成规定的工作数量，达到规定的质量标准，并履行下列义务：",
-          "1. 遵守国家宪法、法律、法规；", // 错误2
-          "2. 遵守甲方的规章制度；", // 错误3
-          "3. 维护甲方的荣誉和利益；",
-          "4. 忠于职守，勤奋工作；",
-          "5. 履行保守甲方商业秘密，不得利用甲方的商业秘密为本人或其他经济组织和个人谋取不正当的经济利益。", // 错误4
-          "三、劳动保护和劳动条件",
-          "第四条 甲方安排乙方每日工作时间不超过八小时，平均每周不超过四十小时。甲方由于工作需要，经与工会和乙方协商后可以延长工作时间的，一般每日不得超过一小时，因特殊原因需要延长工作时间的，在保障乙方身体健康条件下延长工作时间，每日不得超过三个小时，每月不得超过三十六小时。",
-          "执行综合计算工时制度的，平均日和周工作时间不超过标准工作时间。",
-          "执行不定时工时制度的，工作和休息休假乙方自行安排。", // 错误5
-          "甲方安排乙方执行______工时制度。",
-          "第五条 甲方延长乙方工作时间，应安排乙方同等时间偶尔或依法支付加班加点工资。" // 错误6 (保留作为备选)
-        ]
-      }
-    }
-
     const submitAnswers = async () => {
       if (showResults.value) return;
 
@@ -228,7 +318,8 @@ export default {
           },
           body: JSON.stringify({
             selectedIndices: selectedSentences.value,
-            timeLeft: timeLeft.value
+            timeLeft: timeLeft.value,
+            contractId: selectedContract.value.id
           })
         })
 
@@ -236,12 +327,15 @@ export default {
           const result = await response.json()
           correctCount.value = result.correctCount
           score.value = result.score
+          console.log('成功提交答案到后端')
         } else {
-          // 如果后端不可用，前端计算
+          // 如果后端返回错误，使用前端计算
+          console.log('后端返回错误，使用前端计算')
           calculateResultLocally()
         }
       } catch (error) {
-        console.error('提交答案失败，使用前端计算:', error)
+        // 后端不可用时，使用前端计算
+        console.log('后端服务不可用，使用前端计算')
         calculateResultLocally()
       }
 
@@ -283,21 +377,25 @@ export default {
     })
 
     onMounted(() => {
-      fetchContract()
-      resetGame()
+      fetchAvailableContracts()
     })
 
     return {
+      availableContracts,
+      selectedContract,
       contractSentences,
       selectedSentences,
       showResults,
       correctCount,
       score,
       timeLeft,
+      errorSentences,
+      errorExplanations,
+      selectContract,
+      backToSelection,
       toggleSelection,
       submitAnswers,
       resetGame,
-      errorSentences,
       getSentenceClass
     }
   }
@@ -323,6 +421,89 @@ export default {
   overflow: hidden;
 }
 
+.contract-selection {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.selection-header {
+  margin-bottom: 40px;
+}
+
+.selection-title {
+  font-size: 2.5rem;
+  color: #182848;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.selection-subtitle {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.contract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.contract-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 30px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contract-card:hover {
+  transform: translateY(-8px);
+  border-color: #4b6cb7;
+  box-shadow: 0 8px 25px rgba(75, 108, 183, 0.3);
+}
+
+.contract-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.contract-name {
+  font-size: 1.4rem;
+  color: #182848;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.contract-desc {
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.contract-info {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.info-item {
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.game-interface {
+  display: block;
+}
+
 .game-header {
   background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
   color: white;
@@ -330,10 +511,38 @@ export default {
   text-align: center;
 }
 
-.game-title {
-  margin: 0 0 15px 0;
-  font-size: 2rem;
+.contract-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.contract-title {
+  margin: 0;
+  font-size: 1.8rem;
   font-weight: 700;
+  flex: 1;
+  text-align: center;
 }
 
 .timer-section {
@@ -504,8 +713,11 @@ export default {
 .play-again-btn {
   background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
   color: white;
-  margin-top: 20px;
-  padding: 14px 28px;
+}
+
+.select-other-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
 }
 
 .selection-info {
@@ -671,20 +883,32 @@ export default {
   border-left: 3px solid #17a2b8;
 }
 
-.answer-explanation {
-  background: #e9f7ff;
-  padding: 15px;
-  border-radius: 5px;
-  border-left: 3px solid #4b6cb7;
+.error-explanation {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
 }
 
-.answer-explanation p {
-  margin: 0;
-  color: #182848;
-  line-height: 1.5;
+.explanation-label {
+  font-weight: 600;
+  color: #495057;
+  margin-right: 8px;
 }
 
-/* 响应式设计 */
+.explanation-text {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
 @media (max-width: 768px) {
   .game-container {
     padding: 10px;
@@ -694,7 +918,29 @@ export default {
     border-radius: 12px;
   }
 
-  .game-title {
+  .selection-title {
+    font-size: 2rem;
+  }
+
+  .contract-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contract-card {
+    padding: 25px 15px;
+  }
+
+  .contract-info-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .back-btn {
+    align-self: flex-start;
+  }
+
+  .contract-title {
     font-size: 1.5rem;
   }
 
@@ -756,6 +1002,11 @@ export default {
     align-items: flex-start;
     gap: 10px;
   }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -763,8 +1014,16 @@ export default {
     padding: 20px 15px;
   }
 
-  .game-title {
-    font-size: 1.3rem;
+  .selection-title {
+    font-size: 1.8rem;
+  }
+
+  .selection-subtitle {
+    font-size: 1rem;
+  }
+
+  .contract-selection {
+    padding: 30px 15px;
   }
 
   .game-instruction {

@@ -11,20 +11,22 @@
     overflow-x: hidden;
   }
   
-  .game-wrapper {
-    width: 100%;
-    max-width: 1000px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    box-shadow: 
-      0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(255, 255, 255, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-  }
+    /* 修复游戏包装器宽度 */
+    .game-wrapper {
+        width: 100%;
+        max-width: 1000px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        box-sizing: border-box; /* 确保padding和border不会影响总宽度 */
+    }
   
   /* 动态背景粒子 */
   .particles-bg {
@@ -1630,7 +1632,8 @@
     padding: 25px;
   }
   
-  .contract-container {
+/* 修复合同容器宽度 */
+.contract-container {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
     border-radius: 12px;
@@ -1638,11 +1641,15 @@
     margin-bottom: 25px;
     max-height: 50vh;
     overflow-y: auto;
+    width: 100%; /* 确保容器占满可用宽度 */
+    box-sizing: border-box;
   }
   
   .contract-content {
     line-height: 1.8;
+    width: 100%; /* 确保内容区域占满容器 */
   }
+  
   
   .contract-sentence {
     margin-bottom: 15px;
@@ -1656,6 +1663,8 @@
     position: relative;
     border-left: 4px solid transparent;
     animation: sentenceFadeIn 0.5s ease-in-out;
+    width: 100%; /* 确保宽度占满容器 */
+    box-sizing: border-box; /* 确保padding不会影响总宽度 */
   }
   
   @keyframes sentenceFadeIn {
@@ -1666,13 +1675,16 @@
   .contract-sentence:hover {
     background-color: #e9f7ff;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 添加悬停阴影 */
   }
   
-  .contract-sentence.selected {
-    background-color: #d4edda;
-    border-left: 4px solid #28a745;
-    animation: sentenceSelect 0.3s ease-in-out;
-  }
+    /* 确保选择状态下的样式正确 */
+    .contract-sentence.selected {
+        background-color: #d4edda;
+        border-left: 4px solid #28a745;
+        animation: sentenceSelect 0.3s ease-in-out;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+    }
   
   @keyframes sentenceSelect {
     0% { transform: scale(1); }
@@ -1683,30 +1695,38 @@
   .contract-sentence.correct-answer {
     background-color: #d1ecf1;
     border-left: 4px solid #17a2b8;
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.2);
   }
   
   .contract-sentence.wrong-selected {
     background-color: #f8d7da;
     border-left: 4px solid #dc3545;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
   }
   
   .sentence-number {
     font-weight: 600;
     color: #4b6cb7;
-    min-width: 24px;
+    min-width: 30px; /* 增加最小宽度，确保数字有足够空间 */
+    flex-shrink: 0; /* 防止数字被压缩 */
   }
   
   .sentence-text {
-    flex: 1;
+    flex: 1; /* 让文本占据剩余空间 */
+    word-wrap: break-word; /* 长文本自动换行 */
+    line-height: 1.6; /* 增加行高，提高可读性 */
   }
   
-  .indicator {
-    font-size: 0.9rem;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
+    /* 修复指示器样式，确保不会影响布局 */
+    .indicator {
+        font-size: 0.9rem;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        flex-shrink: 0; /* 防止指示器被压缩 */
+        margin-left: auto; /* 将指示器推到右侧 */
+    }
   
   .correct-found {
     color: #0c5460;
@@ -2241,17 +2261,43 @@
       padding: 6px 15px;
     }
   
+   /* 修复游戏内容区域宽度 */
     .game-content {
-      padding: 15px;
+        padding: 25px;
+        width: 100%; /* 确保游戏内容区域占满可用宽度 */
+        box-sizing: border-box;
+    }
+
+    /* 修复游戏界面宽度 */
+    .game-interface {
+        display: block;
+        width: 100%; /* 确保游戏界面占满可用宽度 */
     }
   
-    .contract-container {
-      padding: 15px 10px;
-    }
   
+    .sentence-text {
+        flex: 1; /* 让文本占据剩余空间 */
+        word-wrap: break-word; /* 长文本自动换行 */
+        line-height: 1.6; /* 增加行高，提高可读性 */
+      }
+      
+  
+    /* 优化句子布局，确保所有元素都能正确显示 */
     .contract-sentence {
-      padding: 12px;
-      margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px; /* 增加间距 */
+        padding: 16px; /* 增加内边距 */
+        margin-bottom: 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        border-left: 4px solid transparent;
+        animation: sentenceFadeIn 0.5s ease-in-out;
+        width: 100%;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.8); /* 添加背景色 */
     }
   
     .sentence-number {

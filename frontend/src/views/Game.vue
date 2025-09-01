@@ -21,7 +21,7 @@
                 <div class="decoration-line"></div>
                 <div class="decoration-star">⭐</div>
                 <div class="decoration-line"></div>
-              </div>
+            </div>
             </div>
             
             <div class="stats-section">

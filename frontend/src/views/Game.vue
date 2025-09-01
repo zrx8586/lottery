@@ -4,8 +4,35 @@
       <!-- 合同选择界面 -->
       <div v-if="!selectedContract" class="contract-selection">
         <div class="selection-header">
-          <h1 class="selection-title">选择合同进行游戏</h1>
-          <p class="selection-subtitle">请选择一套合同，找出其中的5个错误点</p>
+          <div class="header-content">
+            <div class="title-section">
+              <h1 class="selection-title">🎯 合同找错游戏</h1>
+              <p class="selection-subtitle">选择一份合同，在60秒内找出其中的5个法律错误点</p>
+            </div>
+            <div class="stats-section">
+              <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ availableContracts.length }}</span>
+                  <span class="stat-label">套合同</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-info">
+                  <span class="stat-number">60</span>
+                  <span class="stat-label">秒时限</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-info">
+                  <span class="stat-number">5</span>
+                  <span class="stat-label">个错误点</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div class="contract-grid">
@@ -15,12 +42,52 @@
             class="contract-card"
             @click="selectContract(contract.id)"
           >
-            <div class="contract-icon">📄</div>
-            <h3 class="contract-name">{{ contract.title }}</h3>
-            <p class="contract-desc">{{ contract.description }}</p>
-            <div class="contract-info">
-              <span class="info-item">错误点: {{ contract.totalErrors }}个</span>
-              <span class="info-item">时间: 60秒</span>
+            <div class="card-header">
+              <div class="contract-icon">
+                <span class="icon-emoji">{{ getContractIcon(contract.id) }}</span>
+              </div>
+              <div class="difficulty-badge">
+                <span class="difficulty-text">难度 {{ getDifficultyLevel(contract.id) }}</span>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <h3 class="contract-name">{{ contract.title }}</h3>
+              <p class="contract-desc">{{ contract.description }}</p>
+              
+              <div class="contract-features">
+                <div class="feature-item">
+                  <span class="feature-icon">🔍</span>
+                  <span class="feature-text">{{ contract.totalErrors }}个错误点</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">⏰</span>
+                  <span class="feature-text">60秒时限</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">📝</span>
+                  <span class="feature-text">{{ getContractLength(contract.id) }}条条款</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <div class="play-button">
+                <span class="play-icon">▶️</span>
+                <span class="play-text">开始游戏</span>
+              </div>
+            </div>
+            
+            <div class="card-hover-effect"></div>
+          </div>
+        </div>
+        
+        <div class="game-info">
+          <div class="info-card">
+            <div class="info-icon">💡</div>
+            <div class="info-content">
+              <h4>游戏说明</h4>
+              <p>仔细阅读合同内容，找出与相关法律法规不符的条款。每找到一个错误点可得20分，剩余时间作为额外奖励。</p>
             </div>
           </div>
         </div>
@@ -237,6 +304,9 @@ export default {
           errorSentences.value = getErrorIndices(contractId)
           errorExplanations.value = getErrorExplanations(contractId)
           
+          // 更新页面标题为具体合同名称
+          document.title = `${data.title} - 合同纠错游戏`
+          
           resetGame()
           console.log('成功从后端获取合同内容')
         } else {
@@ -254,6 +324,10 @@ export default {
           contractSentences.value = localContract.content
           errorSentences.value = localContract.errorIndices
           errorExplanations.value = localContract.errorExplanations
+          
+          // 更新页面标题为具体合同名称
+          document.title = `${localContract.title} - 合同纠错游戏`
+          
           resetGame()
         }
       }
@@ -272,6 +346,8 @@ export default {
       timeLeft.value = 60
       gameActive.value = false
       if (timer) clearInterval(timer)
+      // 更新页面标题
+      document.title = '合同纠错游戏'
     }
 
     // 计算句子的CSS类
@@ -378,7 +454,45 @@ export default {
 
     onMounted(() => {
       fetchAvailableContracts()
+      // 设置页面标题
+      document.title = '合同纠错游戏'
     })
+
+    // 获取合同图标
+    const getContractIcon = (contractId) => {
+      const icons = {
+        1: '💼', // 劳动合同
+        2: '🏠', // 房屋租赁
+        3: '📦', // 购销合同
+        4: '💻', // 技术开发
+        5: '🔧'  // 服务合同
+      }
+      return icons[contractId] || '📄'
+    }
+
+    // 获取难度等级
+    const getDifficultyLevel = (contractId) => {
+      const difficulties = {
+        1: '⭐',    // 劳动合同 - 基础
+        2: '⭐⭐',  // 房屋租赁 - 中等
+        3: '⭐⭐⭐', // 购销合同 - 较难
+        4: '⭐⭐⭐⭐', // 技术开发 - 困难
+        5: '⭐⭐⭐⭐⭐' // 服务合同 - 专家
+      }
+      return difficulties[contractId] || '⭐'
+    }
+
+    // 获取合同长度
+    const getContractLength = (contractId) => {
+      const lengths = {
+        1: 25, // 劳动合同
+        2: 25, // 房屋租赁
+        3: 22, // 购销合同
+        4: 26, // 技术开发
+        5: 26  // 服务合同
+      }
+      return lengths[contractId] || 20
+    }
 
     return {
       availableContracts,
@@ -396,13 +510,25 @@ export default {
       toggleSelection,
       submitAnswers,
       resetGame,
-      getSentenceClass
+      getSentenceClass,
+      getContractIcon,
+      getDifficultyLevel,
+      getContractLength
     }
   }
 }
 </script>
 
 <style scoped>
+/* CSS变量定义 */
+:root {
+  --mobile-padding: 20px;
+  --mobile-gap: 25px;
+  --mobile-card-padding: 20px;
+  --mobile-title-size: 2.5rem;
+  --mobile-subtitle-size: 1.2rem;
+}
+
 .game-container {
   display: flex;
   justify-content: center;
@@ -424,83 +550,301 @@ export default {
 .contract-selection {
   padding: 40px 20px;
   text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: white;
+  /* 移动端优化 */
+  padding-bottom: 100px;
 }
 
 .selection-header {
+  margin-bottom: 50px;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title-section {
   margin-bottom: 40px;
 }
 
 .selection-title {
-  font-size: 2.5rem;
-  color: #182848;
-  margin-bottom: 15px;
-  font-weight: 700;
+  font-size: 3.5rem;
+  color: white;
+  margin-bottom: 20px;
+  font-weight: 800;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .selection-subtitle {
-  font-size: 1.2rem;
-  color: #6c757d;
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  font-weight: 300;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.stats-section {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.stat-info {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
 }
 
 .contract-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  /* 移动端优化 */
+  padding-bottom: 20px;
 }
 
 .contract-card {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 16px;
-  padding: 30px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .contract-card:hover {
-  transform: translateY(-8px);
-  border-color: #4b6cb7;
-  box-shadow: 0 8px 25px rgba(75, 108, 183, 0.3);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 25px 25px 20px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .contract-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+}
+
+.icon-emoji {
+  font-size: 2rem;
+}
+
+.difficulty-badge {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 25px;
 }
 
 .contract-name {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   color: #182848;
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .contract-desc {
   color: #6c757d;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   font-size: 1rem;
-  line-height: 1.4;
+  line-height: 1.5;
+  min-height: 3em;
 }
 
-.contract-info {
+.contract-features {
   display: flex;
-  justify-content: space-around;
-  gap: 15px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.info-item {
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
   background: #f8f9fa;
-  padding: 8px 12px;
-  border-radius: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.feature-text {
   font-size: 0.9rem;
   color: #495057;
   font-weight: 500;
 }
 
-.game-interface {
+.card-footer {
+  padding: 0 25px 25px;
+}
+
+.play-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.play-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.play-icon {
+  font-size: 1.2rem;
+}
+
+.card-hover-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+  .contract-card:hover .card-hover-effect {
+    opacity: 1;
+  }
+  
+  .game-info {
+    margin-top: 50px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .info-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+  }
+  
+  .info-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .info-content h4 {
+    color: white;
+    font-size: 1.3rem;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+  }
+  
+  .info-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .game-interface {
   display: block;
 }
 
@@ -919,16 +1263,76 @@ export default {
   }
 
   .selection-title {
-    font-size: 2rem;
+    font-size: 2.5rem;
+  }
+
+  .selection-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .stats-section {
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 20px 25px;
+    min-width: 100px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
   }
 
   .contract-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 25px;
+    margin-top: 30px;
+    /* 移动端网格优化 */
+    margin-bottom: 30px;
   }
 
   .contract-card {
-    padding: 25px 15px;
+    margin: 0 10px;
+    /* 移动端卡片优化 */
+    max-width: 100%;
+  }
+
+  .card-header {
+    padding: 20px 20px 15px;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .card-footer {
+    padding: 0 20px 20px;
+  }
+
+  /* 移动端统计卡片优化 */
+  .stats-section {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 15px;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: auto;
+    padding: 15px 20px;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .stat-number {
+    font-size: 1.3rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
   }
 
   .contract-info-header {
@@ -1015,7 +1419,7 @@ export default {
   }
 
   .selection-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .selection-subtitle {
@@ -1023,7 +1427,69 @@ export default {
   }
 
   .contract-selection {
-    padding: 30px 15px;
+    padding: 20px 15px;
+    /* 小屏幕底部间距优化 */
+    padding-bottom: 80px;
+  }
+
+  .stats-section {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 10px;
+  }
+
+  .stat-card {
+    flex: 1;
+    max-width: none;
+    padding: 12px 15px;
+  }
+
+  .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .stat-number {
+    font-size: 1.1rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .contract-grid {
+    margin-top: 20px;
+    /* 小屏幕网格优化 */
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    padding: 15px 15px 10px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .card-footer {
+    padding: 0 15px 15px;
+  }
+
+  .info-card {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* 小屏幕标题优化 */
+  .title-section {
+    margin-bottom: 25px;
+  }
+
+  .selection-title {
+    margin-bottom: 15px;
   }
 
   .game-instruction {
@@ -1049,6 +1515,237 @@ export default {
 
   .correct-answer-item {
     padding: 15px;
+  }
+}
+
+/* 苹果设备特殊优化 */
+@supports (-webkit-touch-callout: none) {
+  .contract-selection {
+    /* 苹果设备安全区域优化 */
+    padding-bottom: env(safe-area-inset-bottom, 100px);
+  }
+  
+  .contract-grid {
+    /* 苹果设备网格优化 */
+    margin-bottom: env(safe-area-inset-bottom, 30px);
+  }
+  
+  .game-info {
+    /* 苹果设备底部间距优化 */
+    margin-bottom: env(safe-area-inset-bottom, 20px);
+  }
+}
+
+/* iPhone 14 等设备优化 */
+@media (max-width: 390px) and (max-height: 844px) {
+  .contract-selection {
+    padding: 15px 15px 80px;
+  }
+  
+  .selection-header {
+    margin-bottom: 25px;
+  }
+  
+  .title-section {
+    margin-bottom: 15px;
+  }
+  
+  .selection-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .selection-subtitle {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .stats-section {
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-card {
+    padding: 12px 15px;
+    width: 100%;
+    max-width: 200px;
+    margin-bottom: 8px;
+  }
+  
+  .stat-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  
+  .stat-number {
+    font-size: 1.2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+  }
+  
+  .contract-grid {
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .contract-card {
+    margin: 0 5px;
+  }
+  
+  .card-header {
+    padding: 15px 15px 10px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  .card-footer {
+    padding: 0 15px 15px;
+  }
+  
+  .game-info {
+    margin-top: 30px;
+  }
+  
+  .info-card {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 375px) {
+  .contract-selection {
+    padding: 15px 15px 70px;
+  }
+  
+  .selection-title {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  
+  .selection-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+  
+  .stats-section {
+    gap: 6px;
+    margin-bottom: 15px;
+  }
+  
+  .stat-card {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  
+  .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  
+  .stat-number {
+    font-size: 1rem;
+  }
+  
+  .stat-label {
+    font-size: 0.65rem;
+  }
+  
+  .contract-grid {
+    gap: 12px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .card-header {
+    padding: 12px 12px 8px;
+  }
+  
+  .card-body {
+    padding: 12px;
+  }
+  
+  .card-footer {
+    padding: 0 12px 12px;
+  }
+  
+  .info-card {
+    padding: 15px;
+  }
+}
+
+/* 针对iPhone 14等设备的特殊优化 */
+@media (max-width: 390px) and (max-height: 844px) {
+  .stats-section {
+    /* 在iPhone 14上使用更紧凑的布局 */
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 0 10px 15px;
+  }
+  
+  .stat-card {
+    flex: 1;
+    max-width: none;
+    margin-bottom: 0;
+    padding: 10px 8px;
+  }
+  
+  .stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  
+  .stat-number {
+    font-size: 1rem;
+  }
+  
+  .stat-label {
+    font-size: 0.7rem;
+  }
+  
+  .contract-grid {
+    /* 减少卡片间距，让更多内容可见 */
+    gap: 12px;
+    margin-top: 15px;
+  }
+  
+  .contract-card {
+    /* 稍微减小卡片高度 */
+    margin: 0 3px;
+  }
+  
+  .card-header {
+    padding: 12px 15px 8px;
+  }
+  
+  .card-body {
+    padding: 12px 15px;
+  }
+  
+  .card-footer {
+    padding: 0 15px 12px;
+  }
+  
+  .play-button {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .play-icon {
+    font-size: 1rem;
+  }
+  
+  .play-text {
+    font-size: 0.9rem;
   }
 }
 </style>

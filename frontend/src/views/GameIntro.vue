@@ -185,7 +185,7 @@ export default {
 
     // 开始游戏
     const startGame = () => {
-      router.push('/game')
+      router.push('/select')
     }
 
     onMounted(() => {

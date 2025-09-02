@@ -246,3 +246,24 @@
     gap: 25px;
     margin-top: 40px;
   }
+
+  /* 用户 vs AI 对比区域 */
+  .user-ai-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 10px 0 20px;
+  }
+  .user-ai-compare .compare-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,.05);
+  }
+  .user-ai-compare .compare-card.ai { border-color: #c7d2fe; box-shadow: 0 6px 14px rgba(99,102,241,.12) }
+  .user-ai-compare .compare-title { color:#495057; font-weight:600; margin-bottom:6px }
+  .user-ai-compare .compare-number { color:#4b6cb7; font-size: 1.8rem; font-weight: 800 }
+  .user-ai-compare .compare-sub { color:#6c757d; font-size:.95rem }
+  @media (max-width: 480px){ .user-ai-compare{ grid-template-columns:1fr } }

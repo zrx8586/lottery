@@ -229,6 +229,20 @@
                   <span class="stat-value">{{ 60 - timeLeft }}s</span>
                 </div>
               </div>
+
+              <!-- 用户 vs AI 对比（占位AI值，后续接入真实数据） -->
+              <div class="user-ai-compare">
+                <div class="compare-card">
+                  <div class="compare-title">你的成绩</div>
+                  <div class="compare-number">{{ correctCount }}</div>
+                  <div class="compare-sub">在 {{ 60 - timeLeft }}s 内找到</div>
+                </div>
+                <div class="compare-card ai">
+                  <div class="compare-title">AI成绩</div>
+                  <div class="compare-number">{{ correctCount }}</div>
+                  <div class="compare-sub">同样用时可找到</div>
+                </div>
+              </div>
               
               <div class="result-message">
                 <p v-if="correctCount === 5" class="message perfect">�� 太棒了！你找到了所有错误！🎊</p>
@@ -236,29 +250,7 @@
                 <p v-else class="message poor">💪 需要加强对相关法律的了解哦！</p>
               </div>
 
-              <div class="correct-answers-section">
-                <h3 class="section-title">📋 正确答案</h3>
-                <div class="correct-answers-list">
-                  <div
-                    v-for="(index) in errorSentences"
-                    :key="index"
-                    class="correct-answer-item"
-                  >
-                    <div class="answer-header">
-                      <span class="answer-number">{{ index + 1 }}.</span>
-                      <span class="answer-status">
-                        <span v-if="selectedSentences.includes(index)" class="found">✓ 已找到</span>
-                        <span v-else class="missed">✗ 未找到</span>
-                      </span>
-                    </div>
-                    <p class="answer-text">{{ contractSentences[index] }}</p>
-                    <div class="error-explanation" v-if="errorExplanations[index]">
-                      <span class="explanation-label">错误说明:</span>
-                      <span class="explanation-text">{{ errorExplanations[index] }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!-- 详细的正确答案已迁移至结果详情页（ResultsDetail.vue） -->
 
               <div class="action-buttons">
                 <button class="btn play-again-btn" @click="resetGame">
@@ -294,9 +286,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
-  getAvailableContracts, 
   getContractById, 
-  getContractTitle, 
   getErrorIndices, 
   getErrorExplanations 
 } from '@/data/contracts.js'
@@ -325,31 +315,7 @@ export default {
       { icon: '🎯', value: 5, label: '个错误点' }
     ])
 
-    // 获取可选择的合同列表
-    const fetchAvailableContracts = async () => {
-      try {
-        const response = await fetch('/api/game/contracts')
-        
-        if (response.ok) {
-          const data = await response.json()
-          availableContracts.value = Array.from(data.contracts).map(id => ({
-            id: id,
-            title: getContractTitle(id),
-            description: (getContractById(id) && getContractById(id).description) || '标准合同模板',
-            totalErrors: (getContractById(id) && getContractById(id).totalErrors) || 5
-          }))
-          stats.value[0].value = availableContracts.value.length
-          console.log('成功从后端获取合同列表')
-        } else {
-          throw new Error(`HTTP ${response.status}`)
-        }
-      } catch (error) {
-        // 后端不可用时，静默使用本地数据
-        console.log('后端服务不可用，使用本地合同数据')
-        availableContracts.value = getAvailableContracts()
-        stats.value[0].value = availableContracts.value.length
-      }
-    }
+    // Note: 合同选择已移至 ContractSelect.vue，这里不再拉取选择列表
 
     // 选择合同
     const selectContract = async (contractId) => {
@@ -398,6 +364,22 @@ export default {
 
     // 返回合同选择界面
     const backToSelection = () => {
+      // 若来自结果详情且带有缓存，则恢复结果页而不是回到选择
+      try {
+        const cached = JSON.parse(sessionStorage.getItem('resultsDetail') || 'null')
+        if (cached && cached.sentences && cached.errorIndices) {
+          // 恢复到结果视图
+          contractSentences.value = cached.sentences
+          errorSentences.value = cached.errorIndices
+          selectedSentences.value = cached.userSelections || []
+          errorExplanations.value = cached.errorExplanations || {}
+          showResults.value = true
+          correctCount.value = cached.userFound || 0
+          score.value = Math.min(100, (cached.userFound || 0) * 20 + Math.floor(timeLeft.value / 2))
+          return
+        }
+      } catch (e) { /* ignore */ }
+
       selectedContract.value = null
       contractSentences.value = []
       errorSentences.value = []
@@ -479,20 +461,40 @@ export default {
       }
 
       showResults.value = true
+
+      // 跳转到结果页并传递结果（也写入缓存，支持刷新/返回）
+      const payload = {
+        sentences: contractSentences.value,
+        errorIndices: errorSentences.value,
+        userSelections: selectedSentences.value,
+        errorExplanations: errorExplanations.value,
+        userFound: correctCount.value,
+        aiFound: correctCount.value, // TODO: 替换为真实AI值
+        score: score.value,
+        timeUsed: 60 - timeLeft.value,
+        contractId: selectedContract.value && selectedContract.value.id
+      }
+      try { sessionStorage.setItem('gameResult', JSON.stringify(payload)) } catch (e) { /* ignore */ }
+      router.push({ name: 'GameResult', state: payload })
     }
 
     // 跳转到结果详情
     const goToResultsDetail = () => {
       if (!showResults.value) return
+      const payload = {
+        sentences: contractSentences.value,
+        errorIndices: errorSentences.value,
+        userSelections: selectedSentences.value,
+        errorExplanations: errorExplanations.value,
+        userFound: correctCount.value,
+        aiFound: correctCount.value // TODO 接入真实AI值
+      }
+      try {
+        sessionStorage.setItem('resultsDetail', JSON.stringify(payload))
+      } catch (e) { /* ignore quota or unavailable storage */ }
       router.push({
         name: 'ResultsDetail',
-        state: {
-          sentences: contractSentences.value,
-          errorIndices: errorSentences.value,
-          userSelections: selectedSentences.value,
-          userFound: correctCount.value,
-          aiFound: correctCount.value // 占位：AI结果后续接入
-        }
+        state: payload
       })
     }
 
@@ -504,7 +506,8 @@ export default {
         state: {
           // 可根据需要传入结果概要信息
           userFound: correctCount.value,
-          totalErrors: errorSentences.value.length
+          totalErrors: errorSentences.value.length,
+          timeUsed: 60 - timeLeft.value
         }
       })
     }
@@ -544,8 +547,36 @@ export default {
     })
 
     onMounted(() => {
-      fetchAvailableContracts()
-      // 设置页面标题
+      // 1) 如果路由带有 id（从选择页进入），优先开始新游戏并清理旧缓存
+      const idStr = (typeof window !== 'undefined' && window.location && new URL(window.location.href).searchParams.get('id')) || null
+      if (idStr) {
+        try { sessionStorage.removeItem('resultsDetail') } catch (e) { /* ignore */ }
+        const id = parseInt(idStr, 10)
+        if (!Number.isNaN(id)) {
+          selectContract(id)
+        }
+        document.title = '合同纠错游戏'
+        return
+      }
+
+      // 2) 否则：若从详情页返回且有缓存，直接恢复结果视图
+      try {
+        const cached = JSON.parse(sessionStorage.getItem('resultsDetail') || 'null')
+        if (cached && cached.sentences && cached.errorIndices) {
+          contractSentences.value = cached.sentences
+          errorSentences.value = cached.errorIndices
+          selectedSentences.value = cached.userSelections || []
+          errorExplanations.value = cached.errorExplanations || {}
+          showResults.value = true
+          correctCount.value = cached.userFound || 0
+          score.value = Math.min(100, (cached.userFound || 0) * 20 + Math.floor(timeLeft.value / 2))
+          document.title = '合同纠错游戏'
+          return
+        }
+      } catch (e) { /* ignore */ }
+
+      // 3) 两者都没有，则回到选择页
+      try { router.replace({ name: 'GameSelect' }) } catch (e) { /* ignore navigation error */ }
       document.title = '合同纠错游戏'
     })
 

@@ -223,6 +223,11 @@
                   <span class="stat-label">得分:</span>
                   <span class="stat-value score">{{ score }}/100</span>
                 </div>
+                <div class="stat-item">
+                  <div class="stat-icon">⏱️</div>
+                  <span class="stat-label">用时:</span>
+                  <span class="stat-value">{{ 60 - timeLeft }}s</span>
+                </div>
               </div>
               
               <div class="result-message">
@@ -266,6 +271,16 @@
                   <span class="btn-text">选择其他合同</span>
                   <div class="btn-glow"></div>
                 </button>
+                <button class="btn select-other-btn" @click="goToResultsDetail">
+                  <span class="btn-icon">🔎</span>
+                  <span class="btn-text">查看详情</span>
+                  <div class="btn-glow"></div>
+                </button>
+                <button class="btn select-other-btn" @click="goToAIAnalysis">
+                  <span class="btn-icon">🤖</span>
+                  <span class="btn-text">AI分析</span>
+                  <div class="btn-glow"></div>
+                </button>
               </div>
             </div>
           </div>
@@ -277,6 +292,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { 
   getAvailableContracts, 
   getContractById, 
@@ -288,6 +304,7 @@ import {
 export default {
   name: 'Game',
   setup() {
+    const router = useRouter()
     const availableContracts = ref([])
     const selectedContract = ref(null)
     const contractSentences = ref([])
@@ -464,6 +481,34 @@ export default {
       showResults.value = true
     }
 
+    // 跳转到结果详情
+    const goToResultsDetail = () => {
+      if (!showResults.value) return
+      router.push({
+        name: 'ResultsDetail',
+        state: {
+          sentences: contractSentences.value,
+          errorIndices: errorSentences.value,
+          userSelections: selectedSentences.value,
+          userFound: correctCount.value,
+          aiFound: correctCount.value // 占位：AI结果后续接入
+        }
+      })
+    }
+
+    // 跳转到AI分析
+    const goToAIAnalysis = () => {
+      if (!showResults.value) return
+      router.push({
+        name: 'AIAnalysis',
+        state: {
+          // 可根据需要传入结果概要信息
+          userFound: correctCount.value,
+          totalErrors: errorSentences.value.length
+        }
+      })
+    }
+
     const calculateResultLocally = () => {
       correctCount.value = selectedSentences.value.filter(
         index => errorSentences.value.includes(index)
@@ -570,7 +615,9 @@ export default {
       getContractIcon,
       getDifficultyLevel,
       getContractLength,
-      getContractFeatures
+      getContractFeatures,
+      goToResultsDetail,
+      goToAIAnalysis
     }
   }
 }

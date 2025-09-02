@@ -179,6 +179,17 @@
   overflow-wrap: break-word;
 }
 
+/* 段间距在不同设备上更紧凑（移动/平板/桌面） */
+@media (max-width: 480px) {
+  .contract-sentence { margin-bottom: 10px; padding: 14px; }
+}
+@media (min-width: 481px) and (max-width: 1024px) {
+  .contract-sentence { margin-bottom: 12px; padding: 16px; }
+}
+@media (min-width: 1025px) {
+  .contract-sentence { margin-bottom: 14px; padding: 18px; }
+}
+
 @keyframes sentenceFadeIn {
   0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }

@@ -71,6 +71,9 @@
     justify-content: space-around;
     margin-bottom: 30px;
   }
+  /* 使统计区域文字在浅色卡片上更易读 */
+  .result-stats .stat-icon { color: #182848; }
+  .result-stats .stat-label { color: #495057; }
   
   .stat-item {
     display: flex;

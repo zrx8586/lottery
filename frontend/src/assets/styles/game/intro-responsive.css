@@ -1,0 +1,433 @@
+/* 游戏介绍页面响应式样式 */
+
+/* 平板设备 */
+@media (max-width: 768px) {
+  .game-intro-container .intro-wrapper {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .game-intro-container .main-title {
+    font-size: 2.5rem;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .game-intro-container .title-glow, .game-intro-container .title-sparkle {
+    font-size: 2rem;
+  }
+  
+  .game-intro-container .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .game-intro-container .contracts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+  
+  .game-intro-container .game-stats {
+    gap: 20px;
+  }
+  
+  .game-intro-container .stat-number {
+    font-size: 1.5rem;
+  }
+}
+
+/* 手机设备 */
+@media (max-width: 480px) {
+  .game-intro-container .intro-wrapper {
+    padding: 20px 15px;
+  }
+  
+  .game-intro-container .main-title {
+    font-size: 2rem;
+  }
+  
+  .game-intro-container .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .game-intro-container .feature-card {
+    padding: 20px;
+  }
+  
+  .game-intro-container .start-game-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+  }
+  
+  .game-intro-container .game-stats {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+/* iPhone 14 等设备优化 */
+@media (max-width: 390px) and (max-height: 844px) {
+  .game-intro-container .intro-wrapper {
+    padding: 18px 12px;
+    margin: 8px;
+  }
+  
+  .game-intro-container .main-title {
+    font-size: 1.8rem;
+    gap: 8px;
+  }
+  
+  .game-intro-container .title-glow, .game-intro-container .title-sparkle {
+    font-size: 1.6rem;
+  }
+  
+  .game-intro-container .subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .game-intro-container .section-title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+  
+  .game-intro-container .features-grid {
+    gap: 15px;
+  }
+  
+  .game-intro-container .feature-card {
+    padding: 18px;
+  }
+  
+  .game-intro-container .feature-icon {
+    font-size: 2.5rem;
+  }
+  
+  .game-intro-container .feature-title {
+    font-size: 1.1rem;
+  }
+  
+  .game-intro-container .feature-description {
+    font-size: 0.9rem;
+  }
+  
+  .game-intro-container .rules-content {
+    padding: 20px;
+  }
+  
+  .game-intro-container .rule-item {
+    padding: 12px;
+    gap: 15px;
+  }
+  
+  .game-intro-container .rule-number {
+    width: 25px;
+    height: 25px;
+    font-size: 0.9rem;
+  }
+  
+  .game-intro-container .rule-text {
+    font-size: 0.9rem;
+  }
+  
+  .game-intro-container .contracts-grid {
+    gap: 12px;
+  }
+  
+  .game-intro-container .contract-preview {
+    padding: 15px;
+  }
+  
+  .game-intro-container .contract-icon {
+    font-size: 2rem;
+  }
+  
+  .game-intro-container .contract-name {
+    font-size: 1rem;
+  }
+  
+  .game-intro-container .contract-desc {
+    font-size: 0.8rem;
+  }
+  
+  .game-intro-container .start-game-btn {
+    padding: 12px 25px;
+    font-size: 1rem;
+    gap: 10px;
+  }
+  
+  .game-intro-container .btn-icon {
+    font-size: 1.2rem;
+  }
+  
+  .game-intro-container .game-stats {
+    gap: 12px;
+  }
+  
+  .game-intro-container .stat-number {
+    font-size: 1.3rem;
+  }
+  
+  .game-intro-container .stat-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* iPhone X 等设备特殊优化 */
+@media (max-width: 375px) {
+  .game-intro-container .intro-wrapper {
+    padding: 15px 10px;
+    margin: 5px;
+  }
+  
+  .game-intro-container .main-title {
+    font-size: 1.6rem;
+    gap: 6px;
+  }
+  
+  .game-intro-container .title-glow, .game-intro-container .title-sparkle {
+    font-size: 1.4rem;
+  }
+  
+  .game-intro-container .subtitle {
+    font-size: 1rem;
+  }
+  
+  .game-intro-container .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+  }
+  
+  .game-intro-container .features-grid {
+    gap: 12px;
+  }
+  
+  .game-intro-container .feature-card {
+    padding: 15px;
+  }
+  
+  .game-intro-container .feature-icon {
+    font-size: 2.2rem;
+  }
+  
+  .game-intro-container .feature-title {
+    font-size: 1rem;
+  }
+  
+  .game-intro-container .feature-description {
+    font-size: 0.85rem;
+  }
+  
+  .game-intro-container .rules-content {
+    padding: 15px;
+  }
+  
+  .game-intro-container .rule-item {
+    padding: 10px;
+    gap: 12px;
+  }
+  
+  .game-intro-container .rule-number {
+    width: 22px;
+    height: 22px;
+    font-size: 0.8rem;
+  }
+  
+  .game-intro-container .rule-text {
+    font-size: 0.85rem;
+  }
+  
+  .game-intro-container .contracts-grid {
+    gap: 10px;
+  }
+  
+  .game-intro-container .contract-preview {
+    padding: 12px;
+  }
+  
+  .game-intro-container .contract-icon {
+    font-size: 1.8rem;
+  }
+  
+  .game-intro-container .contract-name {
+    font-size: 0.95rem;
+  }
+  
+  .game-intro-container .contract-desc {
+    font-size: 0.75rem;
+  }
+  
+  .game-intro-container .start-game-btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    gap: 8px;
+  }
+  
+  .game-intro-container .btn-icon {
+    font-size: 1.1rem;
+  }
+  
+  .game-intro-container .game-stats {
+    gap: 10px;
+  }
+  
+  .game-intro-container .stat-number {
+    font-size: 1.2rem;
+  }
+  
+  .game-intro-container .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 320px) {
+  .game-intro-container .intro-wrapper {
+    padding: 12px 8px;
+    margin: 3px;
+  }
+  
+  .game-intro-container .main-title {
+    font-size: 1.4rem;
+    gap: 4px;
+  }
+  
+  .game-intro-container .title-glow, .game-intro-container .title-sparkle {
+    font-size: 1.2rem;
+  }
+  
+  .game-intro-container .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .game-intro-container .section-title {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .game-intro-container .features-grid {
+    gap: 10px;
+  }
+  
+  .game-intro-container .feature-card {
+    padding: 12px;
+  }
+  
+  .game-intro-container .feature-icon {
+    font-size: 2rem;
+  }
+  
+  .game-intro-container .feature-title {
+    font-size: 0.95rem;
+  }
+  
+  .game-intro-container .feature-description {
+    font-size: 0.8rem;
+  }
+  
+  .game-intro-container .rules-content {
+    padding: 12px;
+  }
+  
+  .game-intro-container .rule-item {
+    padding: 8px;
+    gap: 10px;
+  }
+  
+  .game-intro-container .rule-number {
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+  }
+  
+  .game-intro-container .rule-text {
+    font-size: 0.8rem;
+  }
+  
+  .game-intro-container .contracts-grid {
+    gap: 8px;
+  }
+  
+  .game-intro-container .contract-preview {
+    padding: 10px;
+  }
+  
+  .game-intro-container .contract-icon {
+    font-size: 1.6rem;
+  }
+  
+  .game-intro-container .contract-name {
+    font-size: 0.9rem;
+  }
+  
+  .game-intro-container .contract-desc {
+    font-size: 0.7rem;
+  }
+  
+  .game-intro-container .start-game-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    gap: 6px;
+  }
+  
+  .game-intro-container .btn-icon {
+    font-size: 1rem;
+  }
+  
+  .game-intro-container .game-stats {
+    gap: 8px;
+  }
+  
+  .game-intro-container .stat-number {
+    font-size: 1.1rem;
+  }
+  
+  .game-intro-container .stat-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* 苹果设备特殊优化 */
+@supports (-webkit-touch-callout: none) {
+  .intro-wrapper {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  
+  .feature-card {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  
+  .contract-preview {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  
+  .rules-content {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* 修复iOS Safari的滚动问题 */
+  .game-intro-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* 修复iOS Safari的字体渲染问题 */
+  .main-title,
+  .section-title,
+  .feature-title,
+  .contract-name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
+  }
+  
+  /* 修复iOS Safari的transform问题 */
+  .feature-card:hover,
+  .contract-preview:hover,
+  .start-game-btn:hover {
+    -webkit-transform: translateY(-3px);
+    transform: translateY(-3px);
+  }
+}

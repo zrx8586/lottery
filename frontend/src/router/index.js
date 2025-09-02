@@ -5,6 +5,7 @@ import PrizeManagement from "@/views/PrizeManagement.vue";
 import ActivityPrizeRelationship from "../views/ActivityPrizeRelationship.vue";
 import CacheManagement from "../views/CacheManagement.vue";
 import LotteryView from "../views/LotteryView.vue";
+import GameIntro from '../views/GameIntro.vue'
 import Game from '../views/Game.vue'
 import Test from '../views/Test.vue'
 
@@ -17,9 +18,10 @@ const routes = [
     { path: "/activityPrizeRelationship", component: ActivityPrizeRelationship, meta: { requiresAuth: true } },
     { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
     { path: "/lottery", component: LotteryView, meta: { requiresAuth: true } },
+    { path: "/intro", name: 'GameIntro', component: GameIntro }, // 游戏介绍页面，无需认证
     { path: "/game", name: 'Game', component: Game }, // 游戏页面，无需认证
     { path: "/test", name: 'Test', component: Test }, // 测试页面，无需认证
-    { path: "/", redirect: "/game" } // 根路径重定向到游戏页面
+    { path: "/", redirect: "/intro" } // 根路径重定向到游戏介绍页面
 ];
 
 const router = createRouter({
@@ -29,8 +31,8 @@ const router = createRouter({
 
 // 全局导航守卫
 router.beforeEach(async (to, from, next) => {
-    // 游戏页面和测试页面不需要认证，直接放行
-    if (to.path === "/game" || to.path === "/test") {
+    // 游戏介绍页面、游戏页面和测试页面不需要认证，直接放行
+    if (to.path === "/intro" || to.path === "/game" || to.path === "/test") {
         next();
         return;
     }
@@ -38,8 +40,8 @@ router.beforeEach(async (to, from, next) => {
     const token = localStorage.getItem("token");
 
     if (to.path === "/") {
-        // 根路径重定向到游戏页面
-        next("/game");
+        // 根路径重定向到游戏介绍页面
+        next("/intro");
     } else if (to.meta.requiresAuth) {
         // 需要认证的页面
         if (!token) {

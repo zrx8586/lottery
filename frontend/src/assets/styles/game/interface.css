@@ -1,0 +1,489 @@
+/* 游戏界面样式 */
+
+.game-interface {
+  display: block;
+}
+
+.game-header {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.back-btn:hover::before {
+  left: 100%;
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+.btn-text {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.contract-title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+}
+
+.timer-section {
+  margin-bottom: 15px;
+}
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  animation: timerPulse 2s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.timer.warning {
+  background: rgba(255, 71, 87, 0.3);
+  animation: timerWarning 1s infinite;
+}
+
+@keyframes timerWarning {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.timer.danger {
+  background: rgba(220, 53, 69, 0.4);
+  animation: timerDanger 0.5s infinite;
+}
+
+@keyframes timerDanger {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.time-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.time-value {
+  font-weight: 800;
+}
+
+.game-instruction {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* 游戏内容区域 */
+.game-content {
+  padding: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 合同容器 */
+.contract-container {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  max-height: 60vh;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.contract-content {
+  line-height: 1.8;
+  width: 100%;
+}
+
+/* 合同句子选择区域 */
+.contract-sentence {
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  position: relative;
+  border-left: 4px solid transparent;
+  animation: sentenceFadeIn 0.5s ease-in-out;
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 60px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@keyframes sentenceFadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.contract-sentence:hover {
+  background-color: #e9f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.contract-sentence.selected {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+  animation: sentenceSelect 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+@keyframes sentenceSelect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.contract-sentence.correct-answer {
+  background-color: #d1ecf1;
+  border-left: 4px solid #17a2b8;
+  box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
+  border-color: rgba(23, 162, 184, 0.3);
+}
+
+.contract-sentence.wrong-selected {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.sentence-number {
+  font-weight: 600;
+  color: #4b6cb7;
+  min-width: 40px;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sentence-text {
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.7;
+  font-size: 1rem;
+  color: #333;
+  padding: 8px 0;
+  white-space: normal;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+
+/* 指示器样式 */
+.indicator {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+  border: 1px solid;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.correct-found {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+.correct-missed {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+.wrong-selected {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+/* 游戏操作按钮样式 */
+.game-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+/* 选择信息样式 */
+.selection-info {
+  display: flex;
+  align-items: center;
+}
+
+/* 选择计数器 */
+.selection-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 25px;
+  background: rgba(73, 80, 87, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(73, 80, 87, 0.2);
+  min-width: 120px;
+}
+
+.counter-label {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.counter-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #495057;
+}
+
+.counter-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(73, 80, 87, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* 提示框样式 */
+.hint-section {
+  margin-bottom: 25px;
+}
+
+.hint-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 25px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 12px;
+  color: #856404;
+  position: relative;
+  overflow: hidden;
+  animation: hintGlow 2s ease-in-out infinite alternate;
+  margin-bottom: 30px;
+}
+
+@keyframes hintGlow {
+  0% { box-shadow: 0 0 5px rgba(255, 193, 7, 0.3); }
+  100% { box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
+}
+
+.hint-icon {
+  font-size: 1.5rem;
+  animation: hintIconBounce 2s ease-in-out infinite;
+}
+
+@keyframes hintIconBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.hint-text {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.hint-sparkle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 193, 7, 0.2), transparent);
+  animation: hintSparkle 3s ease-in-out infinite;
+}
+
+@keyframes hintSparkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* 计时器粒子效果 */
+.timer-particles .particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: timerParticleFloat 2s ease-in-out infinite;
+}
+
+.timer-particles .particle:nth-child(1) {
+  top: -5px;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.timer-particles .particle:nth-child(2) {
+  top: -5px;
+  right: 20%;
+  animation-delay: 0.7s;
+}
+
+.timer-particles .particle:nth-child(3) {
+  bottom: -5px;
+  left: 50%;
+  animation-delay: 1.4s;
+}
+
+@keyframes timerParticleFloat {
+  0%, 100% { 
+    transform: translateY(0px) scale(1);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateY(-6px) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* 计时器发光效果 */
+.timer-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  border-radius: inherit;
+  animation: timerGlow 2s ease-in-out infinite;
+}
+
+@keyframes timerGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* 按钮发光效果 */
+.btn-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  border-radius: inherit;
+  animation: btnGlow 2s ease-in-out infinite;
+}
+
+@keyframes btnGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}

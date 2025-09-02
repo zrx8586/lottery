@@ -576,6 +576,10 @@ export default {
 }
 </script>
 <style>
-/* 引入外部样式文件 */
-@import '../assets/styles/game.css';
+/* 引入拆分后的样式文件 */
+@import '../assets/styles/game/base.css';
+@import '../assets/styles/game/selection.css';
+@import '../assets/styles/game/interface.css';
+@import '../assets/styles/game/result.css';
+@import '../assets/styles/game/responsive.css';
 </style>

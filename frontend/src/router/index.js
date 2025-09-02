@@ -6,8 +6,10 @@ import ActivityPrizeRelationship from "../views/ActivityPrizeRelationship.vue";
 import CacheManagement from "../views/CacheManagement.vue";
 import LotteryView from "../views/LotteryView.vue";
 import GameIntro from '../views/GameIntro.vue'
-import ResultsDetail from '../views/ResultsDetail.vue'
+import GameSelect from '../views/GameSelect.vue'
+import GameResultsDetail from '../views/GameResultsDetail.vue'
 import AIAnalysis from '../views/AIAnalysis.vue'
+import GameResult from '../views/GameResult.vue'
 import Game from '../views/Game.vue'
 import Test from '../views/Test.vue'
 
@@ -21,8 +23,10 @@ const routes = [
     { path: "/cache", component: CacheManagement, meta: { requiresAuth: true } },
     { path: "/lottery", component: LotteryView, meta: { requiresAuth: true } },
     { path: "/intro", name: 'GameIntro', component: GameIntro }, // 游戏介绍页面，无需认证
+    { path: "/select", name: 'GameSelect', component: GameSelect }, // 合同选择页
     { path: "/game", name: 'Game', component: Game }, // 游戏页面，无需认证
-    { path: "/results/detail", name: 'ResultsDetail', component: ResultsDetail }, // 游戏结果页，无需认证
+    { path: "/game/result", name: 'GameResult', component: GameResult }, // 游戏结果页
+    { path: "/results/detail", name: 'ResultsDetail', component: GameResultsDetail }, // 游戏结果页，无需认证
     { path: "/analysis/ai", name: 'AIAnalysis', component: AIAnalysis }, // AI分析结果页，无需认证
     { path: "/test", name: 'Test', component: Test }, // 测试页面，无需认证
     { path: "/", redirect: "/intro" } // 根路径重定向到游戏介绍页面

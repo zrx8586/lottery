@@ -3,24 +3,18 @@
 /* 主容器 */
 .game-intro-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f7fa;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 20px;
 }
 
-/* 动态背景粒子 */
+/* 简化背景装饰 */
 .particles-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
+  display: none; /* 移动端隐藏复杂动画 */
 }
 
 .particle {
@@ -63,16 +57,16 @@
 
 /* 主容器 */
 .intro-wrapper {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 40px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
   max-width: 1200px;
   width: 100%;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 2;
   animation: introFadeIn 1s ease-out;
+  margin: 20px 0;
 }
 
 @keyframes introFadeIn {
@@ -93,15 +87,14 @@
 }
 
 .main-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: #2d3748;
-  margin: 0 0 20px 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  animation: titleGlow 2s ease-in-out infinite alternate;
+  gap: 12px;
 }
 
 @keyframes titleGlow {
@@ -128,10 +121,10 @@
 }
 
 .subtitle {
-  font-size: 1.3rem;
-  color: #718096;
-  margin: 0 0 30px 0;
-  font-weight: 500;
+  font-size: 14px;
+  color: #6c757d;
+  margin: 0 0 20px 0;
+  font-weight: 400;
 }
 
 .title-decoration {
@@ -169,11 +162,11 @@
 }
 
 .section-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #2d3748;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   position: relative;
 }
 
@@ -191,25 +184,25 @@
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 .feature-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .feature-icon-wrapper {
@@ -218,9 +211,8 @@
 }
 
 .feature-icon {
-  font-size: 3rem;
+  font-size: 2rem;
   display: inline-block;
-  animation: iconBounce 2s ease-in-out infinite;
 }
 
 @keyframes iconBounce {
@@ -256,16 +248,16 @@
 }
 
 .feature-title {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 15px;
+  color: #333;
+  margin-bottom: 8px;
 }
 
 .feature-description {
-  color: #718096;
-  line-height: 1.6;
-  font-size: 1rem;
+  color: #6c757d;
+  line-height: 1.5;
+  font-size: 14px;
 }
 
 .feature-particles {
@@ -310,26 +302,27 @@
 }
 
 .rules-content {
-  background: rgba(102, 126, 234, 0.05);
-  border-radius: 16px;
-  padding: 30px;
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
 }
 
 .rule-item {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
 }
 
 .rule-item:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateX(5px);
+  background: #f8f9fa;
+  transform: translateX(2px);
 }
 
 .rule-item:last-child {
@@ -337,9 +330,9 @@
 }
 
 .rule-number {
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  width: 24px;
+  height: 24px;
+  background: #ff6b35;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -347,12 +340,13 @@
   justify-content: center;
   font-weight: 600;
   flex-shrink: 0;
+  font-size: 12px;
 }
 
 .rule-text {
-  color: #4a5568;
-  line-height: 1.6;
-  font-size: 1rem;
+  color: #6c757d;
+  line-height: 1.5;
+  font-size: 14px;
 }
 
 /* 合同预览区域 */
@@ -362,54 +356,55 @@
 
 .contracts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
 }
 
 .contract-preview {
-  background: rgba(255, 255, 255, 0.8);
+  background: #ffffff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .contract-preview:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .contract-icon {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
 }
 
 .contract-name {
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 10px;
+  color: #333;
+  margin-bottom: 6px;
 }
 
 .contract-desc {
-  color: #718096;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  line-height: 1.4;
+  color: #6c757d;
+  font-size: 12px;
+  margin-bottom: 8px;
+  line-height: 1.3;
 }
 
 .difficulty-badge {
   display: inline-block;
-  background: rgba(102, 126, 234, 0.1);
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  background: #ff6b35;
+  padding: 3px 8px;
+  border-radius: 12px;
+  color: white;
 }
 
 .difficulty-text {
-  color: #667eea;
-  font-size: 0.9rem;
+  color: white;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -419,27 +414,27 @@
 }
 
 .start-game-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ff6b35;
   color: white;
   border: none;
-  padding: 20px 50px;
-  border-radius: 50px;
-  font-size: 1.3rem;
-  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  gap: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
 }
 
 .start-game-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
 .start-game-btn:active {
@@ -522,7 +517,7 @@
 .game-stats {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 24px;
 }
 
 .stat-item {
@@ -531,46 +526,45 @@
 
 .stat-number {
   display: block;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #667eea;
-  margin-bottom: 5px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ff6b35;
+  margin-bottom: 4px;
 }
 
 .stat-label {
-  color: #718096;
-  font-size: 1rem;
-  font-weight: 500;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 /* ========== Scoped namespace to avoid global conflicts ========== */
 /* 通过为关键选择器增加 .game-intro-container 前缀，提高特异性，恢复拆分前的观感 */
 
 .game-intro-container .main-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: #2d3748;
-  margin: 0 0 20px 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  animation: titleGlow 2s ease-in-out infinite alternate;
+  gap: 12px;
 }
 
 .game-intro-container .subtitle {
-  font-size: 1.3rem;
-  color: #718096;
-  margin: 0 0 30px 0;
-  font-weight: 500;
+  font-size: 14px;
+  color: #6c757d;
+  margin: 0 0 20px 0;
+  font-weight: 400;
 }
 
 .game-intro-container .section-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #2d3748;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   position: relative;
 }
 
@@ -587,115 +581,117 @@
 }
 
 .game-intro-container .feature-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .game-intro-container .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .game-intro-container .feature-title {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 15px;
+  color: #333;
+  margin-bottom: 8px;
 }
 
 .game-intro-container .feature-description {
-  color: #718096;
-  line-height: 1.6;
-  font-size: 1rem;
+  color: #6c757d;
+  line-height: 1.5;
+  font-size: 14px;
 }
 
 .game-intro-container .rule-item {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
 }
 
 .game-intro-container .rule-item:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateX(5px);
+  background: #f8f9fa;
+  transform: translateX(2px);
 }
 
 .game-intro-container .contract-preview {
-  background: rgba(255, 255, 255, 0.8);
+  background: #ffffff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .game-intro-container .contract-preview:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .game-intro-container .contract-name {
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 10px;
+  color: #333;
+  margin-bottom: 6px;
 }
 
 .game-intro-container .contract-desc {
-  color: #718096;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  line-height: 1.4;
+  color: #6c757d;
+  font-size: 12px;
+  margin-bottom: 8px;
+  line-height: 1.3;
 }
 
 .game-intro-container .difficulty-badge {
   display: inline-block;
-  background: rgba(102, 126, 234, 0.1);
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  background: #ff6b35;
+  padding: 3px 8px;
+  border-radius: 12px;
+  color: white;
 }
 
 .game-intro-container .difficulty-text {
-  color: #667eea;
-  font-size: 0.9rem;
+  color: white;
+  font-size: 11px;
   font-weight: 500;
 }
 
 .game-intro-container .start-game-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ff6b35;
   color: white;
   border: none;
-  padding: 20px 50px;
-  border-radius: 50px;
-  font-size: 1.3rem;
-  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  gap: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
 }
 
 .game-intro-container .start-game-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
 .game-intro-container .btn-icon {
@@ -726,21 +722,21 @@
 .game-intro-container .game-stats {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 24px;
 }
 
 .game-intro-container .stat-item { text-align: center; }
 
 .game-intro-container .stat-number {
   display: block;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #667eea;
-  margin-bottom: 5px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ff6b35;
+  margin-bottom: 4px;
 }
 
 .game-intro-container .stat-label {
-  color: #718096;
-  font-size: 1rem;
-  font-weight: 500;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 400;
 }

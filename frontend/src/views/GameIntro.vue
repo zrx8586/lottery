@@ -1,5 +1,5 @@
 <template>
-  <div class="game-intro-container">
+  <div class="game-intro-container use-vh safe-area-bottom">
     <!-- 动态背景粒子 -->
     <div class="particles-bg">
       <div class="particle" v-for="n in 30" :key="n"></div>
@@ -144,44 +144,11 @@ export default {
       '找到所有错误可获得满分100分'
     ])
 
-    // 合同类型
-    const contractTypes = ref([
-      {
-        id: 1,
-        icon: '💼',
-        name: '劳动合同',
-        description: '基础难度，适合初学者',
-        difficulty: '⭐'
-      },
-      {
-        id: 2,
-        icon: '🏠',
-        name: '房屋租赁',
-        description: '中等难度，涉及物权法',
-        difficulty: '⭐⭐'
-      },
-      {
-        id: 3,
-        icon: '📦',
-        name: '购销合同',
-        description: '较难，涉及合同法',
-        difficulty: '⭐⭐⭐'
-      },
-      {
-        id: 4,
-        icon: '💻',
-        name: '技术开发',
-        description: '困难，涉及知识产权',
-        difficulty: '⭐⭐⭐⭐'
-      },
-      {
-        id: 5,
-        icon: '🔧',
-        name: '服务合同',
-        description: '专家级，综合法律知识',
-        difficulty: '⭐⭐⭐⭐⭐'
-      }
-    ])
+    // 合同类型（动态从数据源加载，保持与选择页一致）
+    const contractTypes = ref([])
+
+    const getIconById = (id) => ({ 1:'💼',2:'🏠',3:'📦',4:'💻',5:'🔧',6:'🛡️' }[id] || '📄')
+    const getDifficultyById = (id) => ({ 1:'⭐',2:'⭐⭐',3:'⭐⭐⭐',4:'⭐⭐⭐⭐',5:'⭐⭐⭐⭐⭐',6:'⭐⭐⭐' }[id] || '⭐')
 
     // 开始游戏
     const startGame = () => {
@@ -192,10 +159,17 @@ export default {
       // 设置页面标题
       document.title = '合同找错游戏 - 游戏介绍'
       
-      // 获取实际合同数量
+      // 获取实际合同数量与类型列表（与选择页一致）
       try {
         const contracts = getAvailableContracts()
         totalContracts.value = contracts.length
+        contractTypes.value = contracts.map(c => ({
+          id: c.id,
+          icon: getIconById(c.id),
+          name: c.title,
+          description: c.description || '标准合同模板',
+          difficulty: getDifficultyById(c.id)
+        }))
       } catch (error) {
         console.log('获取合同数据失败，使用默认值')
       }

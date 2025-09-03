@@ -1,5 +1,5 @@
 <template>
-  <div class="contract-selection">
+  <div class="contract-selection safe-area-bottom">
     <div class="selection-header">
       <div class="header-content">
         <div class="title-section">
@@ -85,17 +85,140 @@ export default {
 </script>
 
 <style scoped>
-.contract-selection { padding: 20px }
-.contract-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:16px }
-.contract-card { background:#fff; border:1px solid #e9ecef; border-radius:14px; cursor:pointer; transition:.2s; overflow:hidden }
-.contract-card:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.06) }
-.card-header { display:flex; justify-content:space-between; align-items:center; padding:14px }
-.contract-icon .icon-emoji{ font-size:28px }
-.difficulty-badge{ background:#eef2ff; border:1px solid #c7d2fe; padding:4px 10px; border-radius:14px; color:#4f46e5 }
-.card-body{ padding:0 14px 14px }
-.contract-name{ margin:0 0 6px 0 }
-.contract-desc{ margin:0; color:#6b7280; font-size:.95rem }
-.card-footer{ padding:0 14px 14px }
-.play-button{ display:inline-flex; align-items:center; gap:6px; background:#4b6cb7; color:#fff; padding:8px 12px; border-radius:20px }
+/* 主容器 - 与Intro页面保持一致的滚动效果 */
+.contract-selection { 
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 内容包装器 - 类似Intro的wrapper结构 */
+.selection-header {
+  width: 100%;
+  max-width: 1200px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.contract-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); 
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.contract-card { 
+  background: #fff; 
+  border: 1px solid #e9ecef; 
+  border-radius: 14px; 
+  cursor: pointer; 
+  transition: .2s; 
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.contract-card:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+.card-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 14px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.contract-icon .icon-emoji{ 
+  font-size: 28px;
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: #e9ecef;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.difficulty-badge{ 
+  background: #ff6b35; 
+  padding: 4px 10px; 
+  border-radius: 14px; 
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.card-body{ 
+  padding: 16px 14px;
+}
+
+.contract-name{ 
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.contract-desc{ 
+  margin: 0; 
+  color: #6c757d; 
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.card-footer{ 
+  padding: 0 14px 14px;
+}
+
+.play-button{ 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  background: #007bff; 
+  color: #fff; 
+  padding: 8px 12px; 
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.play-button:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* 标题样式优化 */
+.selection-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.selection-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
 </style>
 

@@ -1,10 +1,5 @@
 <template>
-  <div class="game-container">
-    <!-- 动态背景粒子 -->
-    <div class="particles-bg">
-      <div class="particle" v-for="n in 20" :key="n"></div>
-    </div>
-    
+  <div class="game-container use-vh safe-area-bottom">
     <div class="game-wrapper">
       <!-- 合同选择界面 -->
       <div v-if="!selectedContract" class="contract-selection">

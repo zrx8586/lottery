@@ -3,78 +3,54 @@
 .game-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    padding: 16px;
+    background: #f5f7fa;
     position: relative;
     overflow-x: hidden;
+    overflow-y: auto;
   }
+
+  /* 移动端优化：支持 --vh 与安全区域 */
+  .use-vh { height: calc(var(--vh, 1vh) * 100); }
+  .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-area-top { padding-top: env(safe-area-inset-top); }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { overscroll-behavior: none; }
   
   .game-wrapper {
     width: 100%;
-    max-width: 1000px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    box-shadow: 
-      0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(255, 255, 255, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    overflow: hidden;
+    max-width: 1200px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: visible;
     position: relative;
     z-index: 1;
     box-sizing: border-box;
+    margin: 20px 0;
   }
   
-  /* 动态背景粒子 */
+  /* 简化背景装饰 */
   .particles-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
+    display: none; /* 移动端隐藏复杂动画 */
   }
   
-  .particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  .particle:nth-child(odd) {
-    animation-duration: 8s;
-    animation-delay: 1s;
-  }
-  
-  .particle:nth-child(even) {
-    animation-duration: 10s;
-    animation-delay: 2s;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-    50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
-  }
-  
-  /* 通用按钮样式 */
+  /* 通用按钮样式 - 携程风格 */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
+    gap: 6px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
   }
@@ -87,8 +63,8 @@
   }
   
   .btn:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
   .btn::before {
@@ -106,39 +82,39 @@
     left: 100%;
   }
   
-  /* 按钮变体 */
+  /* 按钮变体 - 携程风格 */
   .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #ff6b35;
     color: white;
   }
   
   .btn-secondary {
-    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    background: #6c757d;
     color: white;
   }
   
   .btn-danger {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    background: #dc3545;
     color: white;
   }
   
   .reset-btn {
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    background: #6c757d;
     color: white;
   }
   
   .submit-btn {
-    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    background: #007bff;
     color: white;
   }
   
   .play-again-btn {
-    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    background: #28a745;
     color: white;
   }
   
   .select-other-btn {
-    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    background: #17a2b8;
     color: white;
   }
   

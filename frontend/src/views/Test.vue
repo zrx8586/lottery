@@ -375,7 +375,7 @@ export default {
 
 .test-wrapper {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);

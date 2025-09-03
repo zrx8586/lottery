@@ -7,6 +7,8 @@ export const contracts = {
     title: '劳动合同',
     description: '根据《中华人民共和国劳动法》制定的标准劳动合同',
     totalErrors: 5,
+    // 头部信息（不可选择）的原始索引
+    headerIndices: [0, 1, 2, 3],
     errorIndices: [6, 10, 14, 18, 20],
     content: [
       "甲方：______",
@@ -44,6 +46,7 @@ export const contracts = {
     title: '房屋租赁合同',
     description: '标准房屋租赁合同模板',
     totalErrors: 5,
+    headerIndices: [0, 1, 2, 3],
     errorIndices: [5, 12, 16, 19, 22],
     content: [
       "出租方（甲方）：______",
@@ -89,6 +92,7 @@ export const contracts = {
     title: '购销合同',
     description: '标准购销合同模板',
     totalErrors: 5,
+    headerIndices: [0, 1, 2, 3, 4, 5, 6, 7],
     errorIndices: [4, 9, 15, 18, 21],
     content: [
       "供方（甲方）：______",
@@ -137,6 +141,7 @@ export const contracts = {
     title: '技术开发合同',
     description: '技术开发项目合同模板',
     totalErrors: 5,
+    headerIndices: [0, 1, 2, 3, 4],
     errorIndices: [7, 13, 17, 20, 24],
     content: [
       "委托方（甲方）：______",
@@ -189,6 +194,7 @@ export const contracts = {
     title: '服务合同',
     description: '服务项目合同模板',
     totalErrors: 5,
+    headerIndices: [0, 1, 2, 3, 4],
     errorIndices: [6, 11, 16, 19, 23],
     content: [
       "服务方（甲方）：______",
@@ -262,6 +268,12 @@ export const getContractTitle = (id) => {
   return contract ? contract.title : `合同${id}`
 }
 
+// 获取头部信息索引（不可选择）
+export const getHeaderIndices = (id) => {
+  const contract = contracts[id]
+  return contract && Array.isArray(contract.headerIndices) ? contract.headerIndices : []
+}
+
 // 获取错误索引
 export const getErrorIndices = (id) => {
   const contract = contracts[id]
@@ -278,4 +290,35 @@ export const getContractContent = (id) => {
 export const getErrorExplanations = (id) => {
   const contract = contracts[id]
   return contract ? contract.errorExplanations : {}
+}
+
+// 基于需求：
+// 1) 过滤掉不可选择的头部信息（headerIndices）
+// 2) 返回用于游戏的可选择条款列表
+export const getPlayableContent = (id) => {
+  const contract = contracts[id]
+  if (!contract) return []
+  const headerSet = new Set(contract.headerIndices || [])
+  const playable = (contract.content || []).map((t, i) => ({ t, i })).filter(row => !headerSet.has(row.i))
+  // 若后续需要“约20条”的严格数量控制，可在此处做 slice 或补齐
+  return playable.map(row => row.t)
+}
+
+// 将错误索引映射到可选择条款的新索引空间
+export const getPlayableErrorIndices = (id) => {
+  const contract = contracts[id]
+  if (!contract) return []
+  const headerSet = new Set(contract.headerIndices || [])
+  // 原 -> 新 的索引映射
+  let newIndex = -1
+  const mapOldToNew = new Map()
+  ;(contract.content || []).forEach((_, oldIdx) => {
+    if (!headerSet.has(oldIdx)) {
+      newIndex += 1
+      mapOldToNew.set(oldIdx, newIndex)
+    }
+  })
+  return (contract.errorIndices || [])
+    .map(oldIdx => mapOldToNew.has(oldIdx) ? mapOldToNew.get(oldIdx) : null)
+    .filter(v => v !== null)
 }

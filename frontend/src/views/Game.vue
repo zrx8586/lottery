@@ -130,32 +130,40 @@
         </div>
 
         <div class="game-content">
+          <!-- 合同头部信息（不可选择） -->
+          <div v-if="headerInfoSentences.length" class="contract-header">
+            <div class="header-title">合同基本信息</div>
+            <ul class="header-list">
+              <li v-for="(line, i) in headerInfoSentences" :key="i">{{ line }}</li>
+            </ul>
+          </div>
+
           <div class="contract-container">
             <div class="contract-content">
               <p
-                v-for="(sentence, index) in contractSentences"
-                :key="index"
-                @click="toggleSelection(index)"
-                :class="getSentenceClass(index)"
+                v-for="(idx, pos) in displayedIndices"
+                :key="idx"
+                @click="toggleSelection(idx)"
+                :class="getSentenceClass(idx)"
                 class="contract-sentence"
               >
-                <span class="sentence-number">{{ index + 1 }}.</span>
-                <span class="sentence-text">{{ sentence }}</span>
+                <span class="sentence-number">{{ pos + 1 }}.</span>
+                <span class="sentence-text">{{ contractSentences[idx] }}</span>
                 <span v-if="showResults">
                   <span
-                    v-if="errorSentences.includes(index) && selectedSentences.includes(index)"
+                    v-if="errorSentences.includes(idx) && selectedSentences.includes(idx)"
                     class="indicator correct-found"
                   >
                     ✅ 已找到
                   </span>
                   <span
-                    v-else-if="errorSentences.includes(index) && !selectedSentences.includes(index)"
+                    v-else-if="errorSentences.includes(idx) && !selectedSentences.includes(idx)"
                     class="indicator correct-missed"
                   >
                     ❌ 未发现
                   </span>
                   <span
-                    v-else-if="!errorSentences.includes(index) && selectedSentences.includes(index)"
+                    v-else-if="!errorSentences.includes(idx) && selectedSentences.includes(idx)"
                     class="indicator wrong-selected"
                   >
                     ❌ 错误选择
@@ -288,7 +296,8 @@ import { useRouter } from 'vue-router'
 import { 
   getContractById, 
   getErrorIndices, 
-  getErrorExplanations 
+  getErrorExplanations,
+  getHeaderIndices
 } from '@/data/contracts.js'
 
 export default {
@@ -301,6 +310,9 @@ export default {
     const errorSentences = ref([])
     const errorExplanations = ref({})
     const selectedSentences = ref([])
+    const staticInfoIndices = ref(new Set())
+    const headerInfoSentences = ref([])
+    const displayedIndices = ref([])
     const showResults = ref(false)
     const correctCount = ref(0)
     const score = ref(0)
@@ -330,6 +342,8 @@ export default {
             title: data.title
           }
           contractSentences.value = data.content
+          computeStaticHeader(contractSentences.value, contractId)
+          recomputeDisplayedIndices()
           errorSentences.value = getErrorIndices(contractId)
           errorExplanations.value = getErrorExplanations(contractId)
           
@@ -351,6 +365,8 @@ export default {
             title: localContract.title 
           }
           contractSentences.value = localContract.content
+          computeStaticHeader(contractSentences.value, contractId)
+          recomputeDisplayedIndices()
           errorSentences.value = localContract.errorIndices
           errorExplanations.value = localContract.errorExplanations
           
@@ -399,6 +415,10 @@ export default {
     const getSentenceClass = (index) => {
       const classes = []
 
+      if (staticInfoIndices.value.has(index)) {
+        classes.push('non-selectable')
+      }
+
       if (showResults.value) {
         if (errorSentences.value.includes(index)) {
           classes.push('correct-answer')
@@ -414,6 +434,7 @@ export default {
 
     const toggleSelection = (index) => {
       if (showResults.value) return
+      if (staticInfoIndices.value.has(index)) return
 
       const position = selectedSentences.value.indexOf(index)
       if (position === -1) {
@@ -580,6 +601,53 @@ export default {
       document.title = '合同纠错游戏'
     })
 
+    // 计算合同头部信息：将甲乙方等固定信息标记为不可选择并提取展示
+    const computeStaticHeader = (sentences, contractId) => {
+      staticInfoIndices.value = new Set()
+      headerInfoSentences.value = []
+      // 先使用数据源中定义的头部索引
+      const dsHeader = (contractId && getHeaderIndices(contractId)) || []
+      if (dsHeader.length > 0) {
+        dsHeader.forEach(i => {
+          if (sentences[i] != null) {
+            staticInfoIndices.value.add(i)
+            headerInfoSentences.value.push(sentences[i])
+          }
+        })
+        return
+      }
+      const headerKeywords = [
+        '甲方', '乙方', '丙方', '身份证', '联系方式', '联系电话', '联系地址', '房屋地址',
+        '签订日期', '签订地点', '合同编号', '供方', '需方', '委托方', '开发方', '服务方', '项目名称'
+      ]
+      // 判断是否属于头部信息的函数
+      const isHeaderLine = (line) => {
+        if (!line) return false
+        const trimmed = String(line).trim()
+        // 硬性规则：明显的章节起始视作正文
+        if (/^一、|^二、|^三、|^四、|^五、/.test(trimmed)) return false
+        // 前若干行且命中关键词，视作头部
+        if (headerKeywords.some(k => trimmed.startsWith(k))) return true
+        return false
+      }
+      // 提取连续的头部段落（通常位于前部）
+      for (let i = 0; i < sentences.length; i++) {
+        const line = sentences[i]
+        if (isHeaderLine(line)) {
+          staticInfoIndices.value.add(i)
+          headerInfoSentences.value.push(line)
+        }
+        // 当遇到首个明显章节标题后可以停止进一步收集
+        if (/^一、/.test(String(line).trim())) break
+      }
+    }
+
+    const recomputeDisplayedIndices = () => {
+      displayedIndices.value = contractSentences.value
+        .map((_, i) => i)
+        .filter(i => !staticInfoIndices.value.has(i))
+    }
+
     // 获取合同图标
     const getContractIcon = (contractId) => {
       const icons = {
@@ -647,6 +715,8 @@ export default {
       getDifficultyLevel,
       getContractLength,
       getContractFeatures,
+      headerInfoSentences,
+      displayedIndices,
       goToResultsDetail,
       goToAIAnalysis
     }

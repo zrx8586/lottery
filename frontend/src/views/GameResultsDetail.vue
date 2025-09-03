@@ -20,12 +20,12 @@
       <h3 class="sub-title">📋 合同内容与判定</h3>
       <div class="list">
         <div
-          v-for="idx in filteredIndices"
+          v-for="(idx, pos) in filteredIndices"
           :key="idx"
           class="detail-item"
           :class="{ found: userSelections.includes(idx) && errorIndices.includes(idx) }"
         >
-          <div class="index">{{ idx + 1 }}.</div>
+          <div class="index">{{ pos + 1 }}.</div>
           <div class="text">
             <div class="sentence">{{ sentences[idx] }}</div>
             <div class="explain" v-if="errorExplain[idx]"><strong>错误说明：</strong>{{ errorExplain[idx] }}</div>
@@ -64,8 +64,23 @@ export default {
       aiFound: (state.aiFound !== undefined && state.aiFound !== null)
         ? state.aiFound
         : ((state.userFound !== undefined && state.userFound !== null) ? state.userFound : 0),
-      filterMode: 'errors'
+      filterMode: 'errors',
+      contractId: state.contractId || null,
+      headerIndices: []
     }
+  },
+  created(){
+    // 若能拿到 contractId，拉取头部索引以在详情页同样标识
+    try {
+      if (this.contractId != null) {
+        // 动态导入以避免循环依赖
+        const mod = require('@/data/contracts.js')
+        const getHeaderIndices = mod && mod.getHeaderIndices ? mod.getHeaderIndices : null
+        if (getHeaderIndices) {
+          this.headerIndices = getHeaderIndices(this.contractId) || []
+        }
+      }
+    } catch (e) { /* ignore */ }
   },
   methods: {
     goBack() {
@@ -76,6 +91,7 @@ export default {
   computed: {
     filteredIndices(){
       const indices = this.sentences.map((_, i) => i)
+        .filter(i => !(this.headerIndices || []).includes(i))
       if (this.filterMode === 'all') return indices
       if (this.filterMode === 'errors') return indices.filter(i => this.errorIndices.includes(i))
       if (this.filterMode === 'missed') return indices.filter(i => this.errorIndices.includes(i) && !this.userSelections.includes(i))

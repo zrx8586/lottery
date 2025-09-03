@@ -108,7 +108,8 @@ export default {
         userSelections: this.userSelections,
         errorExplanations: this.errorExplanations,
         userFound: this.userFound,
-        aiFound: this.aiFound
+        aiFound: this.aiFound,
+        contractId: this.contractId
       }
       try { sessionStorage.setItem('resultsDetail', JSON.stringify(payload)) } catch (e) { /* ignore */ }
       this.$router.push({ name: 'ResultsDetail', state: payload })

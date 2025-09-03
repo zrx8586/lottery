@@ -157,10 +157,33 @@
   width: 100%;
 }
 
+/* 合同头部信息（不可选择） */
+.contract-header {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 0 0 18px 0;
+}
+.contract-header .header-title {
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 8px;
+}
+.contract-header .header-list {
+  margin: 0; padding: 0 0 0 18px; color: #6c757d;
+}
+.contract-sentence.non-selectable {
+  cursor: default;
+  background: #fbfbfb;
+  border-left-color: transparent;
+}
+.contract-sentence.non-selectable:hover { transform:none; background:#fbfbfb; box-shadow:none }
+
 /* 合同句子选择区域 */
 .contract-sentence {
-  margin-bottom: 15px;
-  padding: 20px;
+  margin-bottom: 12px;
+  padding: 18px;
   border-radius: 12px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -181,13 +204,13 @@
 
 /* 段间距在不同设备上更紧凑（移动/平板/桌面） */
 @media (max-width: 480px) {
-  .contract-sentence { margin-bottom: 10px; padding: 14px; }
+  .contract-sentence { margin-bottom: 8px; padding: 12px; }
 }
 @media (min-width: 481px) and (max-width: 1024px) {
-  .contract-sentence { margin-bottom: 12px; padding: 16px; }
+  .contract-sentence { margin-bottom: 10px; padding: 14px; }
 }
 @media (min-width: 1025px) {
-  .contract-sentence { margin-bottom: 14px; padding: 18px; }
+  .contract-sentence { margin-bottom: 12px; padding: 16px; }
 }
 
 @keyframes sentenceFadeIn {

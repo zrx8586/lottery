@@ -12,6 +12,19 @@
   padding: 20px;
 }
 
+/* 移动端优化 - 减少左右边距 */
+@media (max-width: 768px) {
+  .game-intro-container {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-intro-container {
+    padding: 8px;
+  }
+}
+
 /* 简化背景装饰 */
 .particles-bg {
   display: none; /* 移动端隐藏复杂动画 */
@@ -67,6 +80,23 @@
   z-index: 2;
   animation: introFadeIn 1s ease-out;
   margin: 20px 0;
+}
+
+/* 移动端优化 - 减少边距，让内容更贴近屏幕边缘 */
+@media (max-width: 768px) {
+  .intro-wrapper {
+    margin: 8px 0;
+    border-radius: 12px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-wrapper {
+    margin: 4px 0;
+    border-radius: 8px;
+    padding: 16px;
+  }
 }
 
 @keyframes introFadeIn {

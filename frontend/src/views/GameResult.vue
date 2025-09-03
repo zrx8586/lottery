@@ -306,12 +306,13 @@ export default {
 /* 移动端适配 */
 @media (max-width: 768px) {
   .result-section {
-    padding: 16px;
+    padding: 12px;
   }
   
   .result-wrapper {
     padding: 20px;
-    margin: 16px 0;
+    margin: 8px 0;
+    border-radius: 12px;
   }
   
   .result-stats {
@@ -347,13 +348,13 @@ export default {
 /* 小屏幕适配 */
 @media (max-width: 480px) {
   .result-section {
-    padding: 12px;
+    padding: 8px;
   }
   
   .result-wrapper {
     padding: 16px;
-    margin: 12px 0;
-    border-radius: 12px;
+    margin: 4px 0;
+    border-radius: 8px;
   }
   
   .result-title {

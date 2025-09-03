@@ -177,12 +177,13 @@ export default { name: 'AIAnalysis' }
 /* 移动端适配 */
 @media (max-width: 768px) {
   .ai-analysis-page {
-    padding: 16px;
+    padding: 12px;
   }
   
   .analysis-wrapper {
     padding: 20px;
-    margin: 16px 0;
+    margin: 8px 0;
+    border-radius: 12px;
   }
   
   .grid {
@@ -193,13 +194,13 @@ export default { name: 'AIAnalysis' }
 
 @media (max-width: 480px) {
   .ai-analysis-page {
-    padding: 12px;
+    padding: 8px;
   }
   
   .analysis-wrapper {
     padding: 16px;
-    margin: 12px 0;
-    border-radius: 12px;
+    margin: 4px 0;
+    border-radius: 8px;
   }
   
   .title {

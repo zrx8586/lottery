@@ -12,6 +12,19 @@
     overflow-y: auto;
   }
 
+  /* 移动端优化 - 减少左右边距 */
+  @media (max-width: 768px) {
+    .game-container {
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .game-container {
+      padding: 8px;
+    }
+  }
+
   /* 移动端优化：支持 --vh 与安全区域 */
   .use-vh { height: calc(var(--vh, 1vh) * 100); }
   .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
@@ -31,6 +44,21 @@
     z-index: 1;
     box-sizing: border-box;
     margin: 20px 0;
+  }
+
+  /* 移动端优化 - 减少边距，让内容更贴近屏幕边缘 */
+  @media (max-width: 768px) {
+    .game-wrapper {
+      margin: 8px 0;
+      border-radius: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .game-wrapper {
+      margin: 4px 0;
+      border-radius: 8px;
+    }
   }
   
   /* 简化背景装饰 */

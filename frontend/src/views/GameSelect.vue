@@ -96,6 +96,19 @@ export default {
   align-items: center;
 }
 
+/* 移动端优化 - 减少左右边距 */
+@media (max-width: 768px) {
+  .contract-selection {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-selection {
+    padding: 8px;
+  }
+}
+
 /* 内容包装器 - 类似Intro的wrapper结构 */
 .selection-header {
   width: 100%;

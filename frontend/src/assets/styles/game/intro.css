@@ -1,786 +1,492 @@
-/* 游戏介绍页面样式 */
+/* 腾讯电子签风格 - 游戏介绍页面样式 */
 
 /* 主容器 */
 .game-intro-container {
   min-height: 100vh;
   background: #f5f7fa;
   position: relative;
-  overflow: auto;
+  overflow-y: auto;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 20px;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
 }
 
-/* 移动端优化 - 全屏显示 */
+/* 移动端全屏优化 */
 @media (max-width: 768px) {
   .game-intro-container {
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-  }
-  
-  .intro-wrapper {
-    margin: 0;
-    border-radius: 0;
-    min-height: 100vh;
-    padding: 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-@media (max-width: 480px) {
-  .game-intro-container {
-    padding: 0;
-    margin: 0;
-  }
-  
-  .intro-wrapper {
-    padding: 12px;
-  }
+/* 顶部状态栏 */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  height: 44px;
+  box-sizing: border-box;
 }
 
-/* 简化背景装饰 */
-.particles-bg {
-  display: none; /* 移动端隐藏复杂动画 */
-}
-
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  animation: particleFloat 6s ease-in-out infinite;
-}
-
-.particle:nth-child(odd) {
-  animation-delay: -2s;
-  animation-duration: 8s;
-}
-
-.particle:nth-child(3n) {
-  animation-delay: -4s;
-  animation-duration: 10s;
-}
-
-@keyframes particleFloat {
-  0%, 100% {
-    transform: translateY(0px) translateX(0px);
-    opacity: 0.6;
-  }
-  25% {
-    transform: translateY(-20px) translateX(10px);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(-40px) translateX(-5px);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translateY(-20px) translateX(-10px);
-    opacity: 1;
-  }
-}
-
-/* 主容器 */
-.intro-wrapper {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  max-width: 1200px;
-  width: 100%;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  position: relative;
-  z-index: 2;
-  animation: introFadeIn 1s ease-out;
-  margin: 20px 0;
-}
-
-/* 移动端优化 - 减少边距，让内容更贴近屏幕边缘 */
-@media (max-width: 768px) {
-  .intro-wrapper {
-    margin: 8px 0;
-    border-radius: 12px;
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .intro-wrapper {
-    margin: 4px 0;
-    border-radius: 8px;
-    padding: 16px;
-  }
-}
-
-@keyframes introFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 标题区域 */
-.intro-header {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.main-title {
-  font-size: 2rem;
+.status-left .time {
   font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
+}
+
+.status-center {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 4px;
+}
+
+.signal-bars {
+  display: flex;
+  align-items: end;
+  gap: 2px;
+  height: 12px;
+}
+
+.signal-bars .bar {
+  width: 3px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.signal-bars .bar:nth-child(1) { height: 4px; }
+.signal-bars .bar:nth-child(2) { height: 6px; }
+.signal-bars .bar:nth-child(3) { height: 8px; }
+.signal-bars .bar:nth-child(4) { height: 10px; }
+
+.network-text {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.battery {
+  font-size: 12px;
+}
+
+.battery-icon {
+  width: 20px;
+  height: 10px;
+  border: 1px solid #fff;
+  border-radius: 2px;
+  position: relative;
+}
+
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 2px;
+  width: 2px;
+  height: 6px;
+  background: #fff;
+  border-radius: 0 1px 1px 0;
+}
+
+/* 头部区域 - 青绿色主题 */
+.header-section {
+  background: #00BFA5;
+  padding: 16px;
+  color: #fff;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.version-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
   gap: 12px;
 }
 
-@keyframes titleGlow {
-  0% {
-    text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-  }
-  100% {
-    text-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
-  }
+.action-icon {
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.title-glow, .title-sparkle {
-  font-size: 2.5rem;
-  animation: sparkle 1.5s ease-in-out infinite;
+/* 用户信息栏 */
+.user-info-bar {
+  background: #fff;
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
 }
 
-@keyframes sparkle {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.2) rotate(180deg);
-  }
+.user-info-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.subtitle {
-  font-size: 14px;
-  color: #6c757d;
-  margin: 0 0 20px 0;
-  font-weight: 400;
-}
-
-.title-decoration {
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #f8f9fa;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
 }
 
-.decoration-line {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #667eea, transparent);
+.avatar-icon {
+  font-size: 20px;
+  color: #6c757d;
 }
 
-.decoration-star {
-  font-size: 1.5rem;
-  animation: starTwinkle 2s ease-in-out infinite;
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-@keyframes starTwinkle {
-  0%, 100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.3);
-  }
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
 }
 
-/* 特色区域 */
-.features-section {
-  margin-bottom: 50px;
+.user-status {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.user-action .action-text {
+  color: #00BFA5;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* 快速开始区域 */
+.quick-start-section {
+  padding: 20px 16px;
+  background: #fff;
+  margin-bottom: 8px;
 }
 
 .section-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2px;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.feature-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.feature-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.feature-icon-wrapper {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.feature-icon {
-  font-size: 2rem;
-  display: inline-block;
-}
-
-@keyframes iconBounce {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.feature-ripple {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  border: 2px solid rgba(102, 126, 234, 0.3);
-  border-radius: 50%;
-  animation: ripple 2s ease-in-out infinite;
-}
-
-@keyframes ripple {
-  0% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0;
-  }
-}
-
-.feature-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.feature-description {
-  color: #6c757d;
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-.feature-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.particle-dot {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: rgba(102, 126, 234, 0.6);
-  border-radius: 50%;
-  animation: particleFloat 3s ease-in-out infinite;
-}
-
-.particle-dot:nth-child(1) {
-  top: 20%;
-  left: 20%;
-  animation-delay: 0s;
-}
-
-.particle-dot:nth-child(2) {
-  top: 60%;
-  right: 20%;
-  animation-delay: 1s;
-}
-
-.particle-dot:nth-child(3) {
-  bottom: 20%;
-  left: 60%;
-  animation-delay: 2s;
-}
-
-/* 规则区域 */
-.rules-section {
-  margin-bottom: 50px;
-}
-
-.rules-content {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #e9ecef;
-}
-
-.rule-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
-}
-
-.rule-item:hover {
-  background: #f8f9fa;
-  transform: translateX(2px);
-}
-
-.rule-item:last-child {
-  margin-bottom: 0;
-}
-
-.rule-number {
-  width: 24px;
-  height: 24px;
-  background: #ff6b35;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  flex-shrink: 0;
-  font-size: 12px;
-}
-
-.rule-text {
-  color: #6c757d;
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-/* 合同预览区域 */
-.contracts-preview {
-  margin-bottom: 50px;
-}
-
-.contracts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-}
-
-.contract-preview {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.contract-preview:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.contract-icon {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-}
-
-.contract-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-.contract-desc {
-  color: #6c757d;
-  font-size: 12px;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.difficulty-badge {
-  display: inline-block;
-  background: #ff6b35;
-  padding: 3px 8px;
-  border-radius: 12px;
-  color: white;
-}
-
-.difficulty-text {
-  color: white;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-/* 操作区域 */
-.action-section {
-  text-align: center;
-}
-
-.start-game-btn {
-  background: #ff6b35;
-  color: white;
-  border: none;
-  padding: 12px 32px;
-  border-radius: 20px;
   font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
-}
-
-.start-game-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
-}
-
-.start-game-btn:active {
-  transform: translateY(-1px);
-}
-
-.btn-icon {
-  font-size: 1.5rem;
-  animation: btnIconBounce 1.5s ease-in-out infinite;
-}
-
-@keyframes btnIconBounce {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.btn-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.btn-particles .particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: btnParticleFloat 2s ease-in-out infinite;
-}
-
-.btn-particles .particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
-.btn-particles .particle:nth-child(2) { top: 30%; right: 20%; animation-delay: 0.2s; }
-.btn-particles .particle:nth-child(3) { bottom: 20%; left: 30%; animation-delay: 0.4s; }
-.btn-particles .particle:nth-child(4) { bottom: 30%; right: 30%; animation-delay: 0.6s; }
-.btn-particles .particle:nth-child(5) { top: 50%; left: 10%; animation-delay: 0.8s; }
-.btn-particles .particle:nth-child(6) { top: 50%; right: 10%; animation-delay: 1s; }
-.btn-particles .particle:nth-child(7) { top: 70%; left: 50%; animation-delay: 1.2s; }
-.btn-particles .particle:nth-child(8) { top: 10%; left: 50%; animation-delay: 1.4s; }
-
-@keyframes btnParticleFloat {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translateY(-10px) scale(1.2);
-    opacity: 1;
-  }
-}
-
-.btn-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  border-radius: inherit;
-  animation: btnGlow 2s ease-in-out infinite;
-}
-
-@keyframes btnGlow {
-  0%, 100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* 游戏统计 */
-.game-stats {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-number {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #ff6b35;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  color: #6c757d;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-/* ========== Scoped namespace to avoid global conflicts ========== */
-/* 通过为关键选择器增加 .game-intro-container 前缀，提高特异性，恢复拆分前的观感 */
-
-.game-intro-container .main-title {
-  font-size: 2rem;
   font-weight: 600;
   color: #333;
   margin: 0 0 16px 0;
+}
+
+.quick-actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 12px;
 }
 
-.game-intro-container .subtitle {
-  font-size: 14px;
-  color: #6c757d;
-  margin: 0 0 20px 0;
-  font-weight: 400;
-}
-
-.game-intro-container .section-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.game-intro-container .section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2px;
-}
-
-.game-intro-container .feature-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.game-intro-container .feature-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.game-intro-container .feature-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.game-intro-container .feature-description {
-  color: #6c757d;
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-.game-intro-container .rule-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  border: 1px solid #e9ecef;
-}
-
-.game-intro-container .rule-item:hover {
+.quick-action-card {
+  flex: 1;
   background: #f8f9fa;
-  transform: translateX(2px);
-}
-
-.game-intro-container .contract-preview {
-  background: #ffffff;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
+  cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.game-intro-container .contract-preview:hover {
+.quick-action-card:hover {
+  background: #e9ecef;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.game-intro-container .contract-name {
+.quick-action-card .action-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.quick-action-card .action-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 合同模板区域 */
+.contract-templates-section {
+  padding: 20px 16px;
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.more-link {
+  color: #6c757d;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.templates-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.template-card {
+  min-width: 200px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.template-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.template-icon {
+  font-size: 20px;
+  color: #00BFA5;
+}
+
+.template-title {
   font-size: 14px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 6px;
+  margin: 0;
 }
 
-.game-intro-container .contract-desc {
+.template-desc {
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.template-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.difficulty {
+  color: #00BFA5;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.errors {
   color: #6c757d;
   font-size: 12px;
+}
+
+/* 游戏管理区域 */
+.game-management-section {
+  padding: 20px 16px;
+  background: #fff;
   margin-bottom: 8px;
-  line-height: 1.3;
 }
 
-.game-intro-container .difficulty-badge {
-  display: inline-block;
-  background: #ff6b35;
-  padding: 3px 8px;
-  border-radius: 12px;
-  color: white;
+.management-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-.game-intro-container .difficulty-text {
-  color: white;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.game-intro-container .start-game-btn {
-  background: #ff6b35;
-  color: white;
-  border: none;
-  padding: 12px 32px;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  display: inline-flex;
+.management-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
 }
 
-.game-intro-container .start-game-btn:hover {
+.management-item:hover {
+  background: #e9ecef;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
-.game-intro-container .btn-icon {
-  font-size: 1.5rem;
-  animation: btnIconBounce 1.5s ease-in-out infinite;
+.management-icon {
+  font-size: 24px;
 }
 
-.game-intro-container .btn-particles .particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: btnParticleFloat 2s ease-in-out infinite;
+.management-text {
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
 }
 
-.game-intro-container .btn-glow {
-  position: absolute;
-  top: 0;
+/* 游戏工具区域 */
+.game-tools-section {
+  padding: 20px 16px;
+  background: #fff;
+  margin-bottom: 80px; /* 为底部导航留出空间 */
+}
+
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+}
+
+.tool-item:hover {
+  background: #e9ecef;
+}
+
+.tool-icon {
+  font-size: 20px;
+}
+
+.tool-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 底部导航 */
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  border-radius: inherit;
-  animation: btnGlow 2s ease-in-out infinite;
-}
-
-.game-intro-container .game-stats {
+  background: #fff;
+  border-top: 1px solid #e9ecef;
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  padding: 8px 0;
+  z-index: 1000;
 }
 
-.game-intro-container .stat-item { text-align: center; }
-
-.game-intro-container .stat-number {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #ff6b35;
-  margin-bottom: 4px;
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.game-intro-container .stat-label {
+.nav-item.active {
+  color: #00BFA5;
+}
+
+.nav-item:not(.active) {
   color: #6c757d;
-  font-size: 14px;
-  font-weight: 400;
+}
+
+.nav-icon {
+  font-size: 20px;
+}
+
+.nav-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .quick-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .quick-action-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+  
+  .quick-action-card .action-icon {
+    margin-bottom: 0;
+  }
+  
+  .management-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .template-card {
+    min-width: 160px;
+  }
+}
+
+/* 滚动条样式 */
+.templates-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.templates-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.templates-grid::-webkit-scrollbar-thumb {
+  background: #00BFA5;
+  border-radius: 2px;
+}
+
+.templates-grid::-webkit-scrollbar-thumb:hover {
+  background: #00A693;
 }

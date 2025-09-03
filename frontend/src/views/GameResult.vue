@@ -1,69 +1,116 @@
 <template>
   <div class="result-section safe-area-bottom">
-    <div class="result-wrapper">
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+      <div class="nav-content">
+        <button class="back-btn" @click="goBack">
+          <span class="back-icon">←</span>
+        </button>
+        <h1 class="page-title">游戏结果</h1>
+        <div class="nav-actions">
+          <span class="action-icon">📊</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结果卡片 -->
+    <div class="result-content">
       <div class="result-card">
-      <div class="result-header">
-        <h2 class="result-title">🎉 游戏结果 🎉</h2>
-        <div class="result-decoration">
-          <div class="decoration-star">⭐</div>
-          <div class="decoration-line"></div>
-          <div class="decoration-star">⭐</div>
+        <div class="result-header">
+          <div class="result-icon">🎉</div>
+          <h2 class="result-title">挑战完成</h2>
+          <p class="result-subtitle">恭喜你完成了合同找错挑战</p>
         </div>
-      </div>
 
-      <div class="result-stats">
-        <div class="stat-item">
-          <div class="stat-icon">🎯</div>
-          <span class="stat-label">找到错误:</span>
-          <span class="stat-value">{{ userFound }} 个</span>
+        <!-- 成绩统计 -->
+        <div class="score-section">
+          <div class="score-display">
+            <div class="score-number">{{ score }}</div>
+            <div class="score-label">总分</div>
+          </div>
+          <div class="score-details">
+            <div class="detail-item">
+              <span class="detail-icon">🎯</span>
+              <span class="detail-text">找到 {{ userFound }} 个错误</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">⏱️</span>
+              <span class="detail-text">用时 {{ timeUsed }} 秒</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">📊</span>
+              <span class="detail-text">准确率 {{ Math.round((userFound / 5) * 100) }}%</span>
+            </div>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-icon">🏆</div>
-          <span class="stat-label">得分:</span>
-          <span class="stat-value score">{{ score }}/100</span>
-        </div>
-        <div class="stat-item">
-          <div class="stat-icon">⏱️</div>
-          <span class="stat-label">用时:</span>
-          <span class="stat-value">{{ timeUsed }}s</span>
-        </div>
-      </div>
 
-      <div class="user-ai-compare">
-        <div class="compare-card">
-          <div class="compare-title">你的成绩</div>
-          <div class="compare-number">{{ userFound }}</div>
-          <div class="compare-sub">在 {{ timeUsed }}s 内找到</div>
+        <!-- 用户 vs AI 对比 -->
+        <div class="comparison-section">
+          <h3 class="comparison-title">成绩对比</h3>
+          <div class="comparison-cards">
+            <div class="comparison-card user">
+              <div class="card-header">
+                <div class="user-avatar">👤</div>
+                <div class="user-info">
+                  <div class="user-name">你的成绩</div>
+                  <div class="user-time">用时 {{ timeUsed }}s</div>
+                </div>
+              </div>
+              <div class="card-score">
+                <div class="score-value">{{ userFound }}</div>
+                <div class="score-unit">个错误</div>
+              </div>
+            </div>
+            <div class="comparison-card ai">
+              <div class="card-header">
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-info">
+                  <div class="ai-name">AI成绩</div>
+                  <div class="ai-time">同样用时</div>
+                </div>
+              </div>
+              <div class="card-score">
+                <div class="score-value">{{ aiFound }}</div>
+                <div class="score-unit">个错误</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="compare-card ai">
-          <div class="compare-title">AI成绩</div>
-          <div class="compare-number">{{ aiFound }}</div>
-          <div class="compare-sub">同样用时可找到</div>
-        </div>
-      </div>
 
-      <div class="action-buttons">
-        <button class="btn play-again-btn" @click="playAgain">
-          <span class="btn-icon">🎮</span>
-          <span class="btn-text">再玩一次</span>
-          <div class="btn-particles"></div>
-        </button>
-        <button class="btn select-other-btn" @click="backToSelect">
-          <span class="btn-icon">📄</span>
-          <span class="btn-text">选择其他合同</span>
-          <div class="btn-glow"></div>
-        </button>
-        <button class="btn select-other-btn" @click="goToResultsDetail">
-          <span class="btn-icon">🔎</span>
-          <span class="btn-text">查看详情</span>
-          <div class="btn-glow"></div>
-        </button>
-        <button class="btn select-other-btn" @click="goToAIAnalysis">
-          <span class="btn-icon">🤖</span>
-          <span class="btn-text">AI分析</span>
-          <div class="btn-glow"></div>
-        </button>
-      </div>
+        <!-- 结果评价 -->
+        <div class="evaluation-section">
+          <div class="evaluation-card" :class="getEvaluationClass()">
+            <div class="evaluation-icon">{{ getEvaluationIcon() }}</div>
+            <div class="evaluation-content">
+              <h4 class="evaluation-title">{{ getEvaluationTitle() }}</h4>
+              <p class="evaluation-text">{{ getEvaluationText() }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-section">
+          <div class="primary-actions">
+            <button class="action-btn primary" @click="playAgain">
+              <span class="btn-icon">🎮</span>
+              <span class="btn-text">再玩一次</span>
+            </button>
+            <button class="action-btn secondary" @click="backToSelect">
+              <span class="btn-icon">📄</span>
+              <span class="btn-text">选择其他合同</span>
+            </button>
+          </div>
+          <div class="secondary-actions">
+            <button class="action-btn outline" @click="goToResultsDetail">
+              <span class="btn-icon">🔎</span>
+              <span class="btn-text">查看详情</span>
+            </button>
+            <button class="action-btn outline" @click="goToAIAnalysis">
+              <span class="btn-icon">🤖</span>
+              <span class="btn-text">AI分析</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -93,6 +140,9 @@ export default {
     }
   },
   methods: {
+    goBack(){
+      this.$router.back()
+    },
     playAgain(){
       if (this.contractId != null) {
         this.$router.replace({ name: 'Game', query: { id: String(this.contractId) } })
@@ -118,286 +168,550 @@ export default {
     },
     goToAIAnalysis(){
       this.$router.push({ name: 'AIAnalysis', state: { userFound: this.userFound, totalErrors: this.errorIndices.length, timeUsed: this.timeUsed } })
+    },
+    getEvaluationClass(){
+      if (this.userFound === 5) return 'excellent'
+      if (this.userFound >= 3) return 'good'
+      return 'needs-improvement'
+    },
+    getEvaluationIcon(){
+      if (this.userFound === 5) return '🎉'
+      if (this.userFound >= 3) return '👍'
+      return '💪'
+    },
+    getEvaluationTitle(){
+      if (this.userFound === 5) return '完美表现！'
+      if (this.userFound >= 3) return '表现不错！'
+      return '继续努力！'
+    },
+    getEvaluationText(){
+      if (this.userFound === 5) return '你找到了所有错误，法律意识很强！'
+      if (this.userFound >= 3) return '找到了大部分错误，还有提升空间。'
+      return '建议多学习相关法律知识，提高合同审查能力。'
     }
   }
 }
 </script>
 
 <style>
-/* 复用全局游戏样式，保持与项目一致并启用响应式 */
-@import '../assets/styles/game/base.css';
-@import '../assets/styles/game/result.css';
-@import '../assets/styles/game/responsive.css';
+/* 腾讯电子签风格 - 游戏结果页面 */
 
-/* 统一布局样式 - 与Intro和Select页面保持一致 */
+/* 引入基础样式 */
+@import '../assets/styles/game/base.css';
+
+/* 主容器 */
 .result-section {
   min-height: 100vh;
   background: #f5f7fa;
-  padding: 20px;
+  position: relative;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+/* 移动端全屏优化 */
+@media (max-width: 768px) {
+  .result-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 顶部导航栏 */
+.top-nav {
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.result-wrapper {
-  width: 100%;
-  max-width: 1200px;
-  background: #ffffff;
+.back-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #f8f9fa;
+}
+
+.back-icon {
+  font-size: 18px;
+  color: #333;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-icon {
+  font-size: 16px;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.action-icon:hover {
+  background: #f8f9fa;
+}
+
+/* 结果内容区域 */
+.result-content {
+  flex: 1;
+  padding: 16px;
+  background: #fff;
+}
+
+.result-card {
+  background: #fff;
   border-radius: 16px;
   padding: 24px;
-  margin: 20px 0;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* 优化结果卡片样式 */
-.result-card {
-  width: 100%;
+/* 结果头部 */
+.result-header {
+  text-align: center;
+  margin-bottom: 32px;
 }
 
-/* 优化标题样式 */
+.result-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
 .result-title {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 600;
   color: #333;
-  text-align: center;
-  margin: 0 0 20px 0;
+  margin: 0 0 8px 0;
 }
 
-/* 优化统计项样式 */
-.result-stats {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
+.result-subtitle {
+  font-size: 16px;
+  color: #6c757d;
+  margin: 0;
 }
 
-.stat-item {
+/* 成绩展示区域 */
+.score-section {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, #00BFA5, #00A693);
+  border-radius: 16px;
+  color: #fff;
 }
 
-.stat-icon {
-  font-size: 1.2rem;
+.score-display {
+  text-align: center;
+  flex-shrink: 0;
 }
 
-.stat-label {
-  font-size: 14px;
-  color: #6c757d;
+.score-number {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.score-label {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.score-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.detail-icon {
+  font-size: 20px;
+}
+
+.detail-text {
   font-weight: 500;
 }
 
-.stat-value {
-  font-size: 16px;
+/* 对比区域 */
+.comparison-section {
+  margin-bottom: 32px;
+}
+
+.comparison-title {
+  font-size: 18px;
   font-weight: 600;
   color: #333;
+  margin: 0 0 16px 0;
+  text-align: center;
 }
 
-.stat-value.score {
-  color: #ff6b35;
-}
-
-/* 优化对比卡片 */
-.user-ai-compare {
-  display: flex;
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  margin-bottom: 24px;
-  justify-content: center;
 }
 
-.compare-card {
-  flex: 1;
-  max-width: 200px;
+.comparison-card {
   background: #f8f9fa;
   border-radius: 12px;
-  padding: 16px;
-  text-align: center;
+  padding: 20px;
   border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
 }
 
-.compare-card.ai {
+.comparison-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-card.user {
+  border-color: #00BFA5;
+}
+
+.comparison-card.ai {
   background: #e3f2fd;
   border-color: #bbdefb;
 }
 
-.compare-title {
-  font-size: 14px;
-  color: #6c757d;
-  margin-bottom: 8px;
-  font-weight: 500;
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.compare-number {
-  font-size: 2rem;
+.user-avatar,
+.ai-avatar {
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info,
+.ai-info {
+  flex: 1;
+}
+
+.user-name,
+.ai-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.user-time,
+.ai-time {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.card-score {
+  text-align: center;
+}
+
+.score-value {
+  font-size: 36px;
   font-weight: 700;
-  color: #ff6b35;
+  color: #00BFA5;
+  line-height: 1;
   margin-bottom: 4px;
 }
 
-.compare-sub {
-  font-size: 12px;
+.score-unit {
+  font-size: 14px;
   color: #6c757d;
 }
 
-/* 优化按钮组 */
-.action-buttons {
+/* 评价区域 */
+.evaluation-section {
+  margin-bottom: 32px;
+}
+
+.evaluation-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.evaluation-card.excellent {
+  background: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.evaluation-card.good {
+  background: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+.evaluation-card.needs-improvement {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.evaluation-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.evaluation-content {
+  flex: 1;
+}
+
+.evaluation-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.evaluation-text {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 操作按钮区域 */
+.action-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+  gap: 16px;
 }
 
-.btn {
-  display: inline-flex;
+.primary-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.action-btn {
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 20px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 160px;
-  justify-content: center;
+  text-decoration: none;
 }
 
-.play-again-btn {
-  background: #ff6b35;
-  color: white;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+.action-btn.primary {
+  background: #00BFA5;
+  color: #fff;
 }
 
-.play-again-btn:hover {
-  background: #e55a2b;
+.action-btn.primary:hover {
+  background: #00A693;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
-.select-other-btn {
-  background: #007bff;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+.action-btn.secondary {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #e9ecef;
 }
 
-.select-other-btn:hover {
-  background: #0056b3;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+.action-btn.secondary:hover {
+  background: #e9ecef;
+}
+
+.action-btn.outline {
+  background: #fff;
+  color: #00BFA5;
+  border: 1px solid #00BFA5;
+}
+
+.action-btn.outline:hover {
+  background: #f0fffe;
 }
 
 .btn-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .btn-text {
-  font-size: 14px;
+  font-weight: 500;
 }
 
-/* 移动端适配 - 全屏显示 */
+/* 移动端适配 */
 @media (max-width: 768px) {
-  .result-section {
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-  }
-  
-  .result-wrapper {
-    padding: 16px;
-    margin: 0;
-    border-radius: 0;
-    min-height: 100vh;
-  }
-  
-  .result-stats {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .user-ai-compare {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .compare-card {
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  .action-buttons {
-    width: 100%;
-    gap: 10px;
-  }
-  
-  .btn {
-    width: 100%;
-    max-width: 100%;
-    padding: 14px 20px;
-    font-size: 15px;
-  }
-}
-
-/* 小屏幕适配 */
-@media (max-width: 480px) {
-  .result-section {
-    padding: 0;
-    margin: 0;
-  }
-  
-  .result-wrapper {
+  .result-content {
     padding: 12px;
-    margin: 0;
-    border-radius: 0;
+  }
+  
+  .result-card {
+    padding: 16px;
+  }
+  
+  .result-icon {
+    font-size: 48px;
   }
   
   .result-title {
-    font-size: 1.3rem;
-    margin-bottom: 16px;
+    font-size: 20px;
   }
   
-  .result-stats {
-    gap: 10px;
-    margin-bottom: 20px;
+  .score-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
   }
   
-  .stat-item {
-    padding: 10px 12px;
-    font-size: 14px;
+  .score-number {
+    font-size: 36px;
   }
   
-  .user-ai-compare {
-    gap: 10px;
-    margin-bottom: 20px;
+  .score-details {
+    gap: 8px;
   }
   
-  .compare-card {
+  .detail-item {
+    justify-content: center;
+  }
+  
+  .comparison-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .primary-actions,
+  .secondary-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .evaluation-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .result-content {
+    padding: 8px;
+  }
+  
+  .result-card {
     padding: 12px;
   }
   
-  .compare-number {
-    font-size: 1.5rem;
+  .result-icon {
+    font-size: 36px;
   }
   
-  .action-buttons {
-    gap: 8px;
-    padding-bottom: 20px; /* 确保底部有足够空间 */
+  .result-title {
+    font-size: 18px;
   }
   
-  .btn {
-    padding: 12px 16px;
+  .result-subtitle {
     font-size: 14px;
-    min-height: 44px; /* 确保按钮足够大，便于点击 */
+  }
+  
+  .score-section {
+    padding: 16px;
+  }
+  
+  .score-number {
+    font-size: 28px;
+  }
+  
+  .score-label {
+    font-size: 14px;
+  }
+  
+  .detail-item {
+    font-size: 14px;
+  }
+  
+  .comparison-card {
+    padding: 16px;
+  }
+  
+  .score-value {
+    font-size: 28px;
+  }
+  
+  .evaluation-card {
+    padding: 16px;
+  }
+  
+  .evaluation-icon {
+    font-size: 24px;
+  }
+  
+  .evaluation-title {
+    font-size: 16px;
+  }
+  
+  .evaluation-text {
+    font-size: 13px;
+  }
+  
+  .action-btn {
+    padding: 12px 16px;
+    font-size: 13px;
   }
 }
 </style>

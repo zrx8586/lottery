@@ -1,9 +1,16 @@
 <template>
   <div class="ai-analysis-page">
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+      <div class="nav-content">
+        <button class="back-btn" @click="$router.back()"><span class="back-icon">←</span></button>
+        <h1 class="page-title">AI 风险分析</h1>
+        <div class="nav-actions"><span class="action-icon">📈</span></div>
+      </div>
+    </div>
     <div class="analysis-wrapper">
       <div class="header">
-        <button class="back-btn" @click="$router.back()">← 返回</button>
-        <h2 class="title">AI 风险分析</h2>
+        <h2 class="title">总体评估</h2>
       </div>
 
       <div class="grid">
@@ -38,11 +45,22 @@ export default { name: 'AIAnalysis' }
 </script>
 
 <style scoped>
+/* 腾讯电子签风格 - AI 分析页面 */
+/* 顶部导航栏 */
+.top-nav { background: #fff; border-bottom: 1px solid #e9ecef; padding: 12px 16px; position: sticky; top: 0; z-index: 100; }
+.nav-content { display: flex; justify-content: space-between; align-items: center; }
+.back-btn { background: none; border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: background-color .2s ease; }
+.back-btn:hover { background: #f8f9fa; }
+.back-icon { font-size: 18px; color: #333; }
+.page-title { margin: 0; font-size: 18px; font-weight: 600; color: #333; }
+.nav-actions { display: flex; gap: 8px; }
+.action-icon { font-size: 16px; color: #6c757d; padding: 8px; border-radius: 8px; }
+
 /* 统一布局样式 - 与其他页面保持一致 */
 .ai-analysis-page {
   min-height: 100vh;
   background: #f5f7fa;
-  padding: 20px;
+  padding: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -111,10 +129,7 @@ export default { name: 'AIAnalysis' }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.card.highlight { 
-  border-color: #ff6b35; 
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
-}
+.card.highlight { border-color: #00BFA5; box-shadow: 0 4px 12px rgba(0, 191, 165, 0.15); }
 
 .card h3 {
   margin: 0 0 12px 0;
@@ -142,17 +157,7 @@ export default { name: 'AIAnalysis' }
   line-height: 1.5;
 }
 
-.placeholder { 
-  margin-top: 12px; 
-  padding: 12px; 
-  border: 1px dashed #ff6b35; 
-  border-radius: 8px; 
-  color: #ff6b35; 
-  background: #fff5f0;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-}
+.placeholder { margin-top: 12px; padding: 12px; border: 1px dashed #00BFA5; border-radius: 8px; color: #00BFA5; background: #f0fffe; text-align: center; font-size: 14px; font-weight: 500; }
 
 .brand { 
   margin-top: 20px; 

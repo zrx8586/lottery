@@ -1,9 +1,17 @@
 <template>
   <div class="results-detail-page safe-area-bottom">
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+      <div class="nav-content">
+        <button class="back-btn" @click="goBack"><span class="back-icon">←</span></button>
+        <h1 class="page-title">结果详情</h1>
+        <div class="nav-actions"><span class="action-icon">🔎</span></div>
+      </div>
+    </div>
+
     <div class="detail-wrapper">
       <div class="header">
-        <button class="back-btn" @click="goBack">← 返回结果</button>
-        <h2 class="title">详细结果</h2>
+        <h2 class="title">合同内容与判定</h2>
       </div>
 
       <div class="content">
@@ -104,11 +112,22 @@ export default {
 </script>
 
 <style scoped>
+/* 腾讯电子签风格 - 结果详情页面 */
+/* 顶部导航栏 */
+.top-nav { background: #fff; border-bottom: 1px solid #e9ecef; padding: 12px 16px; position: sticky; top: 0; z-index: 100; }
+.nav-content { display: flex; justify-content: space-between; align-items: center; }
+.back-btn { background: none; border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: background-color .2s ease; }
+.back-btn:hover { background: #f8f9fa; }
+.back-icon { font-size: 18px; color: #333; }
+.page-title { margin: 0; font-size: 18px; font-weight: 600; color: #333; }
+.nav-actions { display: flex; gap: 8px; }
+.action-icon { font-size: 16px; color: #6c757d; padding: 8px; border-radius: 8px; }
+
 /* 统一布局样式 - 与其他页面保持一致 */
 .results-detail-page {
   min-height: 100vh;
   background: #f5f7fa;
-  padding: 20px;
+  padding: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -125,30 +144,7 @@ export default {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.header { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.back-btn { 
-  padding: 8px 16px; 
-  border-radius: 20px; 
-  border: 1px solid #e9ecef; 
-  background: #f8f9fa; 
-  cursor: pointer;
-  color: #6c757d;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.back-btn:hover {
-  background: #e9ecef;
-  color: #495057;
-}
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e9ecef; }
 
 .title { 
   margin: 0; 
@@ -177,7 +173,7 @@ export default {
 }
 
 .summary .item strong { 
-  color: #ff6b35; 
+  color: #00BFA5; 
   margin: 0 4px;
   font-weight: 600;
 }
@@ -207,11 +203,7 @@ export default {
   transition: all 0.2s ease;
 }
 
-.filter-btn.active { 
-  background: #ff6b35; 
-  border-color: #ff6b35; 
-  color: white;
-}
+.filter-btn.active { background: #00BFA5; border-color: #00BFA5; color: #fff; }
 
 .list { 
   display: flex; 
@@ -243,7 +235,7 @@ export default {
   width: 32px; 
   height: 32px; 
   border-radius: 8px; 
-  background: #ff6b35; 
+  background: #00BFA5; 
   color: white; 
   display: flex; 
   align-items: center; 
@@ -295,11 +287,7 @@ export default {
 
 /* 移动端适配 - 全屏显示 */
 @media (max-width: 768px) {
-  .results-detail-page {
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-  }
+  .results-detail-page { padding: 0; margin: 0; border-radius: 0; }
   
   .detail-wrapper {
     padding: 16px;

@@ -1,58 +1,56 @@
 <template>
-  <div class="game-container use-vh safe-area-bottom">
-    <div class="game-wrapper">
-      <!-- 合同选择界面 -->
-      <div v-if="!selectedContract" class="contract-selection">
-        <div class="selection-header">
-          <div class="header-content">
-            <div class="title-section">
-              <h1 class="selection-title">
-                <span class="title-glow">🎯</span>
-                <span class="title-text">合同找错游戏</span>
-                <span class="title-sparkle">✨</span>
-              </h1>
-              <p class="selection-subtitle">选择一份合同，在60秒内找出其中的5个法律错误点</p>
-              <div class="title-decoration">
-                <div class="decoration-line"></div>
-                <div class="decoration-star">⭐</div>
-                <div class="decoration-line"></div>
-            </div>
-            </div>
-            
-            <div class="stats-section">
-              <div class="stat-card" v-for="(stat, index) in stats" :key="index">
-                <div class="stat-icon-wrapper">
-                  <div class="stat-icon">{{ stat.icon }}</div>
-                  <div class="stat-ripple"></div>
-                </div>
-                <div class="stat-info">
-                  <span class="stat-number">{{ stat.value }}</span>
-                  <span class="stat-label">{{ stat.label }}</span>
-                </div>
-                <div class="stat-particles">
-                  <span class="particle-dot" v-for="n in 3" :key="n"></span>
-                </div>
-              </div>
-            </div>
+  <div class="game-container safe-area-bottom">
+    <!-- 合同选择界面 -->
+    <div v-if="!selectedContract" class="contract-selection">
+      <!-- 顶部导航栏 -->
+      <div class="top-nav">
+        <div class="nav-content">
+          <button class="back-btn" @click="goBack">
+            <span class="back-icon">←</span>
+          </button>
+          <h1 class="page-title">选择合同</h1>
+          <div class="nav-actions">
+            <span class="action-icon">🔍</span>
           </div>
         </div>
+      </div>
+
+      <!-- 游戏说明卡片 -->
+      <div class="game-info-section">
+        <div class="info-card">
+          <div class="info-header">
+            <div class="info-icon">💡</div>
+            <h3 class="info-title">游戏说明</h3>
+          </div>
+          <p class="info-text">仔细阅读合同内容，找出与相关法律法规不符的条款。每找到一个错误点可得20分，剩余时间作为额外奖励。</p>
+        </div>
+      </div>
+
+      <!-- 合同列表 -->
+      <div class="contracts-section">
+        <div class="section-header">
+          <h2 class="section-title">合同模板</h2>
+          <span class="contract-count">{{ availableContracts.length }} 个合同</span>
+        </div>
         
-        <div class="contract-grid">
+        <div class="contracts-grid">
           <div 
             v-for="contract in availableContracts" 
             :key="contract.id"
             class="contract-card"
             @click="selectContract(contract.id)"
           >
-            <div class="card-glow"></div>
             <div class="card-header">
               <div class="contract-icon">
                 <span class="icon-emoji">{{ getContractIcon(contract.id) }}</span>
-                <div class="icon-ring"></div>
               </div>
-              <div class="difficulty-badge">
-                <span class="difficulty-text">{{ getDifficultyLevel(contract.id) }}</span>
-                <div class="badge-glow"></div>
+              <div class="card-actions">
+                <div class="difficulty-badge">
+                  <span class="difficulty-text">{{ getDifficultyLevel(contract.id) }}</span>
+                </div>
+                <div class="play-indicator">
+                  <span class="play-icon">▶</span>
+                </div>
               </div>
             </div>
             
@@ -60,149 +58,156 @@
               <h3 class="contract-name">{{ contract.title }}</h3>
               <p class="contract-desc">{{ contract.description }}</p>
               
-              <div class="contract-features">
-                <div class="feature-item" v-for="(feature, index) in getContractFeatures(contract)" :key="index">
-                  <span class="feature-icon">{{ feature.icon }}</span>
-                  <span class="feature-text">{{ feature.text }}</span>
-                  <div class="feature-line"></div>
+              <div class="contract-meta">
+                <div class="meta-item">
+                  <span class="meta-icon">⏱️</span>
+                  <span class="meta-text">60秒</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">🎯</span>
+                  <span class="meta-text">5个错误</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">📊</span>
+                  <span class="meta-text">中等难度</span>
                 </div>
               </div>
             </div>
             
             <div class="card-footer">
-              <div class="play-button">
-                <span class="play-icon">▶️</span>
-                <span class="play-text">开始游戏</span>
-                <div class="button-particles">
-                  <span class="particle" v-for="n in 5" :key="n"></span>
-                </div>
+              <div class="start-button">
+                <span class="button-text">开始挑战</span>
+                <span class="button-icon">→</span>
               </div>
             </div>
-            
-            <div class="card-hover-effect"></div>
           </div>
         </div>
-        
-        <div class="game-info">
-          <div class="info-card">
-            <div class="info-icon">💡</div>
-            <div class="info-content">
-              <h4>游戏说明</h4>
-              <p>仔细阅读合同内容，找出与相关法律法规不符的条款。每找到一个错误点可得20分，剩余时间作为额外奖励。</p>
-            </div>
-            <div class="info-decoration">
-              <div class="decoration-circle"></div>
-              <div class="decoration-dot"></div>
+      </div>
+    </div>
+
+    <!-- 游戏界面 -->
+    <div v-else class="game-interface">
+      <!-- 顶部导航栏 -->
+      <div class="top-nav">
+        <div class="nav-content">
+          <button class="back-btn" @click="backToSelection">
+            <span class="back-icon">←</span>
+          </button>
+          <h1 class="page-title">{{ selectedContract.title }}</h1>
+          <div class="nav-actions">
+            <div class="timer-display" :class="{ warning: timeLeft < 10, danger: timeLeft < 5 }">
+              <span class="timer-icon">⏱️</span>
+              <span class="timer-text">{{ timeLeft }}s</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 游戏界面 -->
-      <div v-else class="game-interface">
-        <div class="game-header">
-          <div class="contract-info-header">
-            <button class="back-btn" @click="backToSelection">
-              <span class="btn-icon">←</span>
-              <span class="btn-text">返回选择</span>
-              <div class="btn-glow"></div>
-            </button>
-            <h2 class="contract-title">{{ selectedContract.title }}</h2>
-          </div>
-          
-          <div class="timer-section">
-            <div class="timer" :class="{ warning: timeLeft < 10, danger: timeLeft < 5 }">
-              <div class="timer-glow"></div>
-              <span class="time-label">倒计时:</span>
-              <span class="time-value">{{ timeLeft }}s</span>
-              <div class="timer-particles">
-                <span class="particle" v-for="n in 3" :key="n"></span>
-              </div>
+      <!-- 游戏状态栏 -->
+      <div class="game-status-bar">
+        <div class="status-content">
+          <div class="progress-info">
+            <span class="progress-text">已选择: {{ selectedSentences.length }}/5</span>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: (selectedSentences.length / 5) * 100 + '%' }"></div>
             </div>
           </div>
-          
-          <p class="game-instruction">找出合同中的5个错误描述，点击选择你认为错误的句子</p>
+          <div class="game-instruction">
+            <span class="instruction-icon">💡</span>
+            <span class="instruction-text">找出合同中的5个错误描述，点击选择你认为错误的句子</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 合同内容区域 -->
+      <div class="contract-content-section">
+        <!-- 合同头部信息（不可选择） -->
+        <div v-if="headerInfoSentences.length" class="contract-header-card">
+          <div class="header-card-title">
+            <span class="header-icon">📋</span>
+            <span class="header-text">合同基本信息</span>
+          </div>
+          <div class="header-info-list">
+            <div v-for="(line, i) in headerInfoSentences" :key="i" class="header-info-item">
+              {{ line }}
+            </div>
+          </div>
         </div>
 
-        <div class="game-content">
-          <!-- 合同头部信息（不可选择） -->
-          <div v-if="headerInfoSentences.length" class="contract-header">
-            <div class="header-title">合同基本信息</div>
-            <ul class="header-list">
-              <li v-for="(line, i) in headerInfoSentences" :key="i">{{ line }}</li>
-            </ul>
+        <!-- 合同条款列表 -->
+        <div class="contract-clauses-section">
+          <div class="clauses-header">
+            <h3 class="clauses-title">合同条款</h3>
+            <span class="clauses-count">{{ displayedIndices.length }} 条</span>
           </div>
-
-          <div class="contract-container">
-            <div class="contract-content">
-              <p
-                v-for="(idx, pos) in displayedIndices"
-                :key="idx"
-                @click="toggleSelection(idx)"
-                :class="getSentenceClass(idx)"
-                class="contract-sentence"
-              >
-                <span class="sentence-number">{{ pos + 1 }}.</span>
-                <span class="sentence-text">{{ contractSentences[idx] }}</span>
-                <span v-if="showResults">
+          
+          <div class="clauses-list">
+            <div
+              v-for="(idx, pos) in displayedIndices"
+              :key="idx"
+              @click="toggleSelection(idx)"
+              :class="getSentenceClass(idx)"
+              class="clause-item"
+            >
+              <div class="clause-number">{{ pos + 1 }}</div>
+              <div class="clause-content">
+                <div class="clause-text">{{ contractSentences[idx] }}</div>
+                <div v-if="showResults" class="clause-result">
                   <span
                     v-if="errorSentences.includes(idx) && selectedSentences.includes(idx)"
-                    class="indicator correct-found"
+                    class="result-indicator correct"
                   >
                     ✅ 已找到
                   </span>
                   <span
                     v-else-if="errorSentences.includes(idx) && !selectedSentences.includes(idx)"
-                    class="indicator correct-missed"
+                    class="result-indicator missed"
                   >
                     ❌ 未发现
                   </span>
                   <span
                     v-else-if="!errorSentences.includes(idx) && selectedSentences.includes(idx)"
-                    class="indicator wrong-selected"
+                    class="result-indicator wrong"
                   >
                     ❌ 错误选择
                   </span>
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div class="game-actions">
-            <button class="btn reset-btn" @click="resetGame">
-              <span class="btn-icon">🔄</span>
-              <span class="btn-text">重新开始</span>
-              <div class="btn-particles"></div>
-            </button>
-
-            <div class="selection-info">
-              <div class="selection-counter">
-                <span class="counter-label">已选择:</span>
-                <span class="counter-value">{{ selectedSentences.length }}/5</span>
-                <div class="counter-progress">
-                  <div class="progress-bar" :style="{ width: (selectedSentences.length / 5) * 100 + '%' }"></div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 游戏操作区域 -->
+      <div class="game-actions-section">
+        <div class="actions-content">
+          <div class="action-buttons">
+            <button class="action-btn reset-btn" @click="resetGame">
+              <span class="btn-icon">🔄</span>
+              <span class="btn-text">重新开始</span>
+            </button>
 
             <button
-              class="btn submit-btn"
+              class="action-btn submit-btn"
               @click="submitAnswers"
               :disabled="selectedSentences.length !== 5 || showResults"
+              :class="{ disabled: selectedSentences.length !== 5 || showResults }"
             >
               <span class="btn-icon">✅</span>
               <span class="btn-text">确认提交</span>
-              <div class="btn-glow"></div>
             </button>
           </div>
 
           <div class="hint-section" v-if="!showResults">
-            <div class="hint-box">
-              <span class="hint-icon">💡</span>
-              <span class="hint-text">提示: 合同中有5处与相关法律不符的描述，请仔细查找</span>
-              <div class="hint-sparkle"></div>
+            <div class="hint-card">
+              <div class="hint-icon">💡</div>
+              <div class="hint-content">
+                <span class="hint-text">提示: 合同中有5处与相关法律不符的描述，请仔细查找</span>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
           <div class="result-section" v-if="showResults">
             <div class="result-card">
@@ -281,8 +286,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -371,6 +374,11 @@ export default {
           resetGame()
         }
       }
+    }
+
+    // 返回上一页
+    const goBack = () => {
+      router.back()
     }
 
     // 返回合同选择界面
@@ -688,6 +696,27 @@ export default {
       ]
     }
 
+    // 获取消息样式类
+    const getMessageClass = () => {
+      if (correctCount.value === 5) return 'perfect'
+      if (correctCount.value >= 3) return 'good'
+      return 'poor'
+    }
+
+    // 获取消息图标
+    const getMessageIcon = () => {
+      if (correctCount.value === 5) return '🎉'
+      if (correctCount.value >= 3) return '👍'
+      return '💪'
+    }
+
+    // 获取消息文本
+    const getMessageText = () => {
+      if (correctCount.value === 5) return '太棒了！你找到了所有错误！'
+      if (correctCount.value >= 3) return '不错，但还有改进空间！'
+      return '需要加强对相关法律的了解哦！'
+    }
+
     return {
       availableContracts,
       selectedContract,
@@ -701,6 +730,7 @@ export default {
       errorExplanations,
       stats,
       selectContract,
+      goBack,
       backToSelection,
       toggleSelection,
       submitAnswers,
@@ -713,16 +743,16 @@ export default {
       headerInfoSentences,
       displayedIndices,
       goToResultsDetail,
-      goToAIAnalysis
+      goToAIAnalysis,
+      getMessageClass,
+      getMessageIcon,
+      getMessageText
     }
   }
 }
 </script>
 <style>
-/* 引入拆分后的样式文件 */
+/* 引入腾讯电子签风格的样式文件 */
 @import '../assets/styles/game/base.css';
-@import '../assets/styles/game/selection.css';
-@import '../assets/styles/game/interface.css';
-@import '../assets/styles/game/result.css';
-@import '../assets/styles/game/responsive.css';
+@import '../assets/styles/game/game-tencent.css';
 </style>

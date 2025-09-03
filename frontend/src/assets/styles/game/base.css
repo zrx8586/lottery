@@ -12,16 +12,25 @@
     overflow-y: auto;
   }
 
-  /* 移动端优化 - 减少左右边距 */
+  /* 移动端优化 - 全屏显示 */
   @media (max-width: 768px) {
     .game-container {
-      padding: 12px;
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+    }
+    
+    .game-wrapper {
+      margin: 0;
+      border-radius: 0;
+      min-height: 100vh;
     }
   }
 
   @media (max-width: 480px) {
     .game-container {
-      padding: 8px;
+      padding: 0;
+      margin: 0;
     }
   }
 
@@ -33,28 +42,53 @@
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body { overscroll-behavior: none; }
   
-  /* 全屏显示优化 */
+  /* 全屏显示优化 - 参考Trip.com设计 */
   html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    position: relative;
   }
   
-  /* 微信浏览器全屏优化 */
+  /* 移动端全屏优化 */
   @media screen and (max-width: 768px) {
     html, body {
       position: fixed;
       width: 100%;
       height: 100%;
       overflow: hidden;
+      -webkit-overflow-scrolling: touch;
     }
     
     #app {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      background: #f5f7fa;
+    }
+    
+    /* 确保内容容器占满全屏 */
+    .game-container,
+    .contract-selection,
+    .result-section,
+    .results-detail-page,
+    .ai-analysis-page,
+    .game-intro-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0;
+      margin: 0;
     }
   }
   

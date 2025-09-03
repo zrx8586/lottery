@@ -303,16 +303,19 @@ export default {
   font-size: 14px;
 }
 
-/* 移动端适配 */
+/* 移动端适配 - 全屏显示 */
 @media (max-width: 768px) {
   .result-section {
-    padding: 12px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
   }
   
   .result-wrapper {
-    padding: 20px;
-    margin: 8px 0;
-    border-radius: 12px;
+    padding: 16px;
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
   }
   
   .result-stats {
@@ -348,13 +351,14 @@ export default {
 /* 小屏幕适配 */
 @media (max-width: 480px) {
   .result-section {
-    padding: 8px;
+    padding: 0;
+    margin: 0;
   }
   
   .result-wrapper {
-    padding: 16px;
-    margin: 4px 0;
-    border-radius: 8px;
+    padding: 12px;
+    margin: 0;
+    border-radius: 0;
   }
   
   .result-title {

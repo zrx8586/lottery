@@ -293,16 +293,19 @@ export default {
   border-color: #e9ecef;
 }
 
-/* 移动端适配 */
+/* 移动端适配 - 全屏显示 */
 @media (max-width: 768px) {
   .results-detail-page {
-    padding: 12px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
   }
   
   .detail-wrapper {
-    padding: 20px;
-    margin: 8px 0;
-    border-radius: 12px;
+    padding: 16px;
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
   }
   
   .summary {
@@ -321,13 +324,14 @@ export default {
 
 @media (max-width: 480px) {
   .results-detail-page {
-    padding: 8px;
+    padding: 0;
+    margin: 0;
   }
   
   .detail-wrapper {
-    padding: 16px;
-    margin: 4px 0;
-    border-radius: 8px;
+    padding: 12px;
+    margin: 0;
+    border-radius: 0;
   }
   
   .title {

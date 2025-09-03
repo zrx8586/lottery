@@ -96,16 +96,38 @@ export default {
   align-items: center;
 }
 
-/* 移动端优化 - 减少左右边距 */
+/* 移动端优化 - 全屏显示 */
 @media (max-width: 768px) {
   .contract-selection {
-    padding: 12px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .selection-header {
+    margin: 0;
+    border-radius: 0;
+    min-height: auto;
+    padding: 16px;
+  }
+  
+  .contract-grid {
+    padding: 0 16px 16px;
   }
 }
 
 @media (max-width: 480px) {
   .contract-selection {
-    padding: 8px;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .selection-header {
+    padding: 12px;
+  }
+  
+  .contract-grid {
+    padding: 0 12px 12px;
   }
 }
 

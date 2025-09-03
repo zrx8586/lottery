@@ -49,6 +49,11 @@ export function forceFullscreen() {
   // 延迟再次隐藏地址栏，确保生效
   setTimeout(hideAddressBar, 100);
   setTimeout(hideAddressBar, 500);
+  setTimeout(hideAddressBar, 1000);
+  
+  // 强制设置视口高度
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
   
   // 微信浏览器特殊处理
   if (isWeChat()) {
@@ -64,7 +69,15 @@ export function forceFullscreen() {
         e.preventDefault();
       }
     }, { passive: false });
+    
+    // 微信浏览器中禁用长按菜单
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    }, false);
   }
+  
+  // 添加全屏类名
+  addFullscreenClass();
 }
 
 /**

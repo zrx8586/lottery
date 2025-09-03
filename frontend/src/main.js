@@ -13,6 +13,15 @@ setVh();
 window.addEventListener('resize', setVh);
 window.addEventListener('orientationchange', setVh);
 
+// 导入全屏工具函数
+import { initFullscreen, addFullscreenClass } from './utils/fullscreen.js';
+
+// 页面加载完成后初始化全屏
+document.addEventListener('DOMContentLoaded', () => {
+    initFullscreen();
+    addFullscreenClass();
+});
+
 const app = createApp(App);
 
 // 添加全局事件总线

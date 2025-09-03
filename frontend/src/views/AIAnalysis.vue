@@ -10,23 +10,23 @@
     </div>
     <div class="analysis-wrapper">
       <div class="header">
-        <h2 class="title">总体评估</h2>
+        <h2 class="section-title">总体评估</h2>
       </div>
 
       <div class="grid">
       <section class="card highlight">
-        <h3>总体评估</h3>
-        <p>此处展示模型给出的总体风险分布、分数或等级。</p>
+        <h3 class="card-title">总体评估</h3>
+        <p class="card-desc">此处展示模型给出的总体风险分布、分数或等级。</p>
         <div class="placeholder">待接入AI数据</div>
       </section>
       <section class="card">
-        <h3>高风险条款</h3>
+        <h3 class="card-title">高风险条款</h3>
         <ul class="list">
           <li v-for="i in 4" :key="i">高风险条款占位 {{ i }}</li>
         </ul>
       </section>
       <section class="card">
-        <h3>改进建议</h3>
+        <h3 class="card-title">改进建议</h3>
         <ul class="list">
           <li v-for="i in 4" :key="i">建议占位 {{ i }}</li>
         </ul>
@@ -102,12 +102,9 @@ export default { name: 'AIAnalysis' }
   color: #495057;
 }
 
-.title { 
-  margin: 0; 
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-}
+.section-title { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: #333; }
+.card-title { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: #333; }
+.card-desc { margin: 0 0 12px; color: #6c757d; font-size: 14px; line-height: 1.5; }
 
 .grid { 
   display: grid; 
@@ -129,7 +126,7 @@ export default { name: 'AIAnalysis' }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.card.highlight { border-color: #00BFA5; box-shadow: 0 4px 12px rgba(0, 191, 165, 0.15); }
+.card.highlight { border-color: #e9ecef; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 
 .card h3 {
   margin: 0 0 12px 0;
@@ -157,7 +154,7 @@ export default { name: 'AIAnalysis' }
   line-height: 1.5;
 }
 
-.placeholder { margin-top: 12px; padding: 12px; border: 1px dashed #00BFA5; border-radius: 8px; color: #00BFA5; background: #f0fffe; text-align: center; font-size: 14px; font-weight: 500; }
+.placeholder { margin-top: 12px; padding: 12px; border: 1px dashed #e9ecef; border-radius: 8px; color: #6c757d; background: #f8f9fa; text-align: center; font-size: 14px; font-weight: 500; }
 
 .brand { 
   margin-top: 20px; 

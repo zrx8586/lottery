@@ -11,7 +11,7 @@
 
     <div class="detail-wrapper">
       <div class="header">
-        <h2 class="title">合同内容与判定</h2>
+        <h2 class="section-title">合同内容与判定</h2>
       </div>
 
       <div class="content">
@@ -26,7 +26,7 @@
         <button :class="['filter-btn', { active: filterMode==='missed' }]" @click="setFilter('missed')">仅看未找到</button>
       </div>
 
-      <h3 class="sub-title">📋 合同内容与判定</h3>
+      <h3 class="list-title">合同内容与判定</h3>
       <div class="list">
         <div
           v-for="(idx, pos) in filteredIndices"
@@ -144,14 +144,9 @@ export default {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e9ecef; }
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 0 0 12px; border-bottom: 1px solid #e9ecef; background: transparent; }
 
-.title { 
-  margin: 0; 
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-}
+.title { margin: 0; font-size: 18px; font-weight: 600; color: #333; }
 
 .summary { 
   display: flex; 
@@ -178,12 +173,8 @@ export default {
   font-weight: 600;
 }
 
-.sub-title { 
-  margin: 20px 0 12px; 
-  color: #333; 
-  font-weight: 600;
-  font-size: 1.1rem;
-}
+.section-title { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: #333; }
+.list-title { margin: 20px 0 12px; color: #333; font-weight: 600; font-size: 16px; }
 
 .filters { 
   display: flex; 

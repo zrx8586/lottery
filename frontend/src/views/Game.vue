@@ -139,8 +139,8 @@
           <div class="clauses-header">
             <h3 class="clauses-title">合同条款</h3>
             <span class="clauses-count">{{ displayedIndices.length }} 条</span>
-          </div>
-          
+      </div>
+
           <div class="clauses-list">
             <div
               v-for="(idx, pos) in displayedIndices"
@@ -153,52 +153,52 @@
               <div class="clause-content">
                 <div class="clause-text">{{ contractSentences[idx] }}</div>
                 <div v-if="showResults" class="clause-result">
-                  <span
+                <span
                     v-if="errorSentences.includes(idx) && selectedSentences.includes(idx)"
                     class="result-indicator correct"
-                  >
-                    ✅ 已找到
-                  </span>
-                  <span
+                >
+                  ✅ 已找到
+                </span>
+                <span
                     v-else-if="errorSentences.includes(idx) && !selectedSentences.includes(idx)"
                     class="result-indicator missed"
-                  >
-                    ❌ 未发现
-                  </span>
-                  <span
+                >
+                  ❌ 未发现
+                </span>
+                <span
                     v-else-if="!errorSentences.includes(idx) && selectedSentences.includes(idx)"
                     class="result-indicator wrong"
-                  >
-                    ❌ 错误选择
-                  </span>
+                >
+                  ❌ 错误选择
+                </span>
                 </div>
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
 
       <!-- 游戏操作区域 -->
       <div class="game-actions-section">
         <div class="actions-content">
           <div class="action-buttons">
             <button class="action-btn reset-btn" @click="resetGame">
-              <span class="btn-icon">🔄</span>
-              <span class="btn-text">重新开始</span>
-            </button>
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">重新开始</span>
+          </button>
 
-            <button
+          <button
               class="action-btn submit-btn"
-              @click="submitAnswers"
-              :disabled="selectedSentences.length !== 5 || showResults"
+            @click="submitAnswers"
+            :disabled="selectedSentences.length !== 5 || showResults"
               :class="{ disabled: selectedSentences.length !== 5 || showResults }"
-            >
-              <span class="btn-icon">✅</span>
-              <span class="btn-text">确认提交</span>
-            </button>
-          </div>
+          >
+            <span class="btn-icon">✅</span>
+            <span class="btn-text">确认提交</span>
+          </button>
+        </div>
 
-          <div class="hint-section" v-if="!showResults">
+        <div class="hint-section" v-if="!showResults">
             <div class="hint-card">
               <div class="hint-icon">💡</div>
               <div class="hint-content">
@@ -206,11 +206,11 @@
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
 
-          <div class="result-section" v-if="showResults">
-            <div class="result-card">
+        <div class="result-section" v-if="showResults">
+          <div class="result-card">
               <div class="result-header">
                 <h2 class="result-title">🎉 游戏结果 🎉</h2>
                 <div class="result-decoration">
@@ -220,23 +220,23 @@
                 </div>
               </div>
               
-              <div class="result-stats">
-                <div class="stat-item">
+            <div class="result-stats">
+              <div class="stat-item">
                   <div class="stat-icon">🎯</div>
-                  <span class="stat-label">找到错误:</span>
-                  <span class="stat-value">{{ correctCount }} 个</span>
-                </div>
-                <div class="stat-item">
+                <span class="stat-label">找到错误:</span>
+                <span class="stat-value">{{ correctCount }} 个</span>
+              </div>
+              <div class="stat-item">
                   <div class="stat-icon">🏆</div>
-                  <span class="stat-label">得分:</span>
-                  <span class="stat-value score">{{ score }}/100</span>
-                </div>
+                <span class="stat-label">得分:</span>
+                <span class="stat-value score">{{ score }}/100</span>
+              </div>
                 <div class="stat-item">
                   <div class="stat-icon">⏱️</div>
                   <span class="stat-label">用时:</span>
                   <span class="stat-value">{{ 60 - timeLeft }}s</span>
-                </div>
-              </div>
+            </div>
+            </div>
 
               <!-- 用户 vs AI 对比（占位AI值，后续接入真实数据） -->
               <div class="user-ai-compare">
@@ -244,14 +244,14 @@
                   <div class="compare-title">你的成绩</div>
                   <div class="compare-number">{{ correctCount }}</div>
                   <div class="compare-sub">在 {{ 60 - timeLeft }}s 内找到</div>
-                </div>
+                  </div>
                 <div class="compare-card ai">
                   <div class="compare-title">AI成绩</div>
                   <div class="compare-number">{{ correctCount }}</div>
                   <div class="compare-sub">同样用时可找到</div>
-                </div>
               </div>
-              
+            </div>
+
               <div class="result-message">
                 <p v-if="correctCount === 5" class="message perfect">�� 太棒了！你找到了所有错误！🎊</p>
                 <p v-else-if="correctCount >= 3" class="message good">👍 不错，但还有改进空间！</p>
@@ -261,9 +261,9 @@
               <!-- 详细的正确答案已迁移至结果详情页（ResultsDetail.vue） -->
 
               <div class="action-buttons">
-                <button class="btn play-again-btn" @click="resetGame">
-                  <span class="btn-icon">🎮</span>
-                  <span class="btn-text">再玩一次</span>
+            <button class="btn play-again-btn" @click="resetGame">
+              <span class="btn-icon">🎮</span>
+              <span class="btn-text">再玩一次</span>
                   <div class="btn-particles"></div>
                 </button>
                 <button class="btn select-other-btn" @click="backToSelection">
@@ -280,12 +280,12 @@
                   <span class="btn-icon">🤖</span>
                   <span class="btn-text">AI分析</span>
                   <div class="btn-glow"></div>
-                </button>
-              </div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -324,6 +324,7 @@ export default {
       { icon: '⏱️', value: 60, label: '秒时限' },
       { icon: '🎯', value: 5, label: '个错误点' }
     ])
+
 
     // Note: 合同选择已移至 ContractSelect.vue，这里不再拉取选择列表
 
@@ -378,27 +379,12 @@ export default {
 
     // 返回上一页
     const goBack = () => {
-      router.back()
+      router.push('/select')
     }
 
     // 返回合同选择界面
     const backToSelection = () => {
-      // 若来自结果详情且带有缓存，则恢复结果页而不是回到选择
-      try {
-        const cached = JSON.parse(sessionStorage.getItem('resultsDetail') || 'null')
-        if (cached && cached.sentences && cached.errorIndices) {
-          // 恢复到结果视图
-          contractSentences.value = cached.sentences
-          errorSentences.value = cached.errorIndices
-          selectedSentences.value = cached.userSelections || []
-          errorExplanations.value = cached.errorExplanations || {}
-          showResults.value = true
-          correctCount.value = cached.userFound || 0
-          score.value = Math.min(100, (cached.userFound || 0) * 20 + Math.floor(timeLeft.value / 2))
-          return
-        }
-      } catch (e) { /* ignore */ }
-
+      // 清理所有状态
       selectedContract.value = null
       contractSentences.value = []
       errorSentences.value = []
@@ -410,6 +396,16 @@ export default {
       timeLeft.value = 60
       gameActive.value = false
       if (timer) clearInterval(timer)
+      
+      // 清理缓存
+      try {
+        sessionStorage.removeItem('resultsDetail')
+        sessionStorage.removeItem('gameResult')
+      } catch (e) { /* ignore */ }
+      
+      // 跳转到选择页面
+      router.push('/select')
+      
       // 更新页面标题
       document.title = '合同纠错游戏'
     }
@@ -571,8 +567,9 @@ export default {
     })
 
     onMounted(() => {
-      // 1) 如果路由带有 id（从选择页进入），优先开始新游戏并清理旧缓存
-      const idStr = (typeof window !== 'undefined' && window.location && new URL(window.location.href).searchParams.get('id')) || null
+      // 如果路由带有 id（从选择页进入），开始新游戏
+      const route = router.currentRoute.value
+      const idStr = route.query.id || (typeof window !== 'undefined' && window.location && new URL(window.location.href).searchParams.get('id')) || null
       if (idStr) {
         try { sessionStorage.removeItem('resultsDetail') } catch (e) { /* ignore */ }
         const id = parseInt(idStr, 10)
@@ -583,24 +580,8 @@ export default {
         return
       }
 
-      // 2) 否则：若从详情页返回且有缓存，直接恢复结果视图
-      try {
-        const cached = JSON.parse(sessionStorage.getItem('resultsDetail') || 'null')
-        if (cached && cached.sentences && cached.errorIndices) {
-          contractSentences.value = cached.sentences
-          errorSentences.value = cached.errorIndices
-          selectedSentences.value = cached.userSelections || []
-          errorExplanations.value = cached.errorExplanations || {}
-          showResults.value = true
-          correctCount.value = cached.userFound || 0
-          score.value = Math.min(100, (cached.userFound || 0) * 20 + Math.floor(timeLeft.value / 2))
-          document.title = '合同纠错游戏'
-          return
-        }
-      } catch (e) { /* ignore */ }
-
-      // 3) 两者都没有，则回到选择页
-      try { router.replace({ name: 'GameSelect' }) } catch (e) { /* ignore navigation error */ }
+      // 如果没有合同ID，则跳转到选择页面
+      router.push('/select')
       document.title = '合同纠错游戏'
     })
 

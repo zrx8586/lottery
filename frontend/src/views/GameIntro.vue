@@ -1,45 +1,11 @@
 <template>
   <div class="game-intro-container safe-area-bottom">
-    <!-- 顶部状态栏 -->
-    <div class="status-bar">
-      <div class="status-left">
-        <span class="time">{{ currentTime }}</span>
-      </div>
-      <div class="status-center">
-        <div class="network-indicator">
-          <div class="signal-bars">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
-          <span class="network-text">4G</span>
-        </div>
-      </div>
-      <div class="status-right">
-        <span class="battery">76%</span>
-        <div class="battery-icon"></div>
-      </div>
-    </div>
+
 
     <!-- 头部区域 -->
     <div class="header-section">
       <div class="header-content">
-        <div class="header-left">
-          <div class="version-selector">
-            <span class="version-text">企业版</span>
-            <span class="dropdown-arrow">▼</span>
-          </div>
-        </div>
-        <div class="header-center">
-          <h1 class="app-title">合同找错游戏</h1>
-        </div>
-        <div class="header-right">
-          <div class="header-actions">
-            <span class="action-icon">⋯</span>
-            <span class="action-icon">🎯</span>
-          </div>
-        </div>
+        <h1 class="app-title">合同找错游戏</h1>
       </div>
     </div>
 
@@ -53,7 +19,7 @@
           <span class="user-name">法律学习者</span>
           <span class="user-status">准备开始挑战</span>
         </div>
-        <div class="user-action">
+        <div class="user-action" @click="startRandomGame">
           <span class="action-text">开始游戏 ></span>
         </div>
       </div>
@@ -71,10 +37,6 @@
           <div class="action-icon">📋</div>
           <span class="action-text">游戏规则</span>
         </div>
-        <div class="quick-action-card" @click="showStats">
-          <div class="action-icon">📊</div>
-          <span class="action-text">历史记录</span>
-        </div>
       </div>
     </div>
 
@@ -85,7 +47,7 @@
         <span class="more-link">更多模板 ></span>
       </div>
       <div class="templates-grid">
-        <div class="template-card" v-for="contract in contractTypes.slice(0, 3)" :key="contract.id">
+        <div class="template-card" v-for="contract in contractTypes" :key="contract.id" @click="startGame">
           <div class="template-preview">
             <div class="template-icon">{{ contract.icon }}</div>
             <div class="template-content">
@@ -101,55 +63,9 @@
       </div>
     </div>
 
-    <!-- 游戏管理区域 -->
-    <div class="game-management-section">
-      <h2 class="section-title">游戏管理</h2>
-      <div class="management-grid">
-        <div class="management-item">
-          <div class="management-icon">📚</div>
-          <span class="management-text">合同库</span>
-        </div>
-        <div class="management-item">
-          <div class="management-icon">🎯</div>
-          <span class="management-text">难度设置</span>
-        </div>
-        <div class="management-item">
-          <div class="management-icon">👥</div>
-          <span class="management-text">排行榜</span>
-        </div>
-        <div class="management-item">
-          <div class="management-icon">⚙️</div>
-          <span class="management-text">设置</span>
-        </div>
-        <div class="management-item">
-          <div class="management-icon">📈</div>
-          <span class="management-text">统计</span>
-        </div>
-        <div class="management-item">
-          <div class="management-icon">💡</div>
-          <span class="management-text">帮助</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- 游戏工具区域 -->
-    <div class="game-tools-section">
-      <h2 class="section-title">游戏工具</h2>
-      <div class="tools-list">
-        <div class="tool-item">
-          <div class="tool-icon">🔍</div>
-          <span class="tool-text">合同分析</span>
-        </div>
-        <div class="tool-item">
-          <div class="tool-icon">📝</div>
-          <span class="tool-text">错误记录</span>
-        </div>
-        <div class="tool-item">
-          <div class="tool-icon">🤖</div>
-          <span class="tool-text">AI助手</span>
-        </div>
-      </div>
-    </div>
+
+
 
     <!-- 底部导航 -->
     <div class="bottom-navigation">
@@ -170,6 +86,67 @@
         <span class="nav-text">设置</span>
       </div>
     </div>
+
+    <!-- 游戏规则弹窗 -->
+    <div v-if="showRulesModal" class="modal-overlay" @click="closeRulesModal">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span class="modal-icon">📋</span>
+            游戏规则
+          </h3>
+          <button class="modal-close-btn" @click="closeRulesModal">
+            <span class="close-icon">×</span>
+          </button>
+        </div>
+        
+        <div class="modal-content">
+          <div class="rules-section">
+            <h4 class="rules-subtitle">🎯 游戏目标</h4>
+            <p class="rules-text">仔细阅读合同内容，找出与相关法律法规不符的条款</p>
+          </div>
+          
+          <div class="rules-section">
+            <h4 class="rules-subtitle">⏱️ 时间限制</h4>
+            <p class="rules-text">每局游戏限时60秒，时间到后自动提交答案</p>
+          </div>
+          
+          <div class="rules-section">
+            <h4 class="rules-subtitle">🎯 错误点数量</h4>
+            <p class="rules-text">每份合同包含5个错误点，需要全部找出</p>
+          </div>
+          
+          <div class="rules-section">
+            <h4 class="rules-subtitle">🏆 计分规则</h4>
+            <ul class="rules-list">
+              <li class="rules-item">每找到一个错误点：+20分</li>
+              <li class="rules-item">剩余时间奖励：每2秒+1分</li>
+              <li class="rules-item">最高得分：100分</li>
+            </ul>
+          </div>
+          
+          <div class="rules-section">
+            <h4 class="rules-subtitle">💡 游戏技巧</h4>
+            <ul class="rules-list">
+              <li class="rules-item">仔细阅读每一条款</li>
+              <li class="rules-item">关注法律术语和表述</li>
+              <li class="rules-item">注意权利义务的平衡</li>
+              <li class="rules-item">合理分配时间</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="modal-btn primary-btn" @click="startRandomGame">
+            <span class="btn-icon">🎮</span>
+            <span class="btn-text">开始游戏</span>
+          </button>
+          <button class="modal-btn secondary-btn" @click="closeRulesModal">
+            <span class="btn-text">我知道了</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -182,44 +159,49 @@ export default {
   name: 'GameIntro',
   setup() {
     const router = useRouter()
-    const currentTime = ref('10:47')
+    const showRulesModal = ref(false)
     const contractTypes = ref([])
 
     const getIconById = (id) => ({ 1:'💼',2:'🏠',3:'📦',4:'💻',5:'🔧',6:'🛡️' }[id] || '📄')
     const getDifficultyById = (id) => ({ 1:'⭐',2:'⭐⭐',3:'⭐⭐⭐',4:'⭐⭐⭐⭐',5:'⭐⭐⭐⭐⭐',6:'⭐⭐⭐' }[id] || '⭐')
 
-    // 开始游戏
+    // 开始游戏 - 跳转到选择页面
     const startGame = () => {
       router.push('/select')
     }
 
+    // 随机开始游戏 - 随机选择一套合同直接开始
+    const startRandomGame = () => {
+      if (contractTypes.value.length === 0) {
+        console.log('没有可用的合同')
+        return
+      }
+      
+      // 随机选择一个合同
+      const randomIndex = Math.floor(Math.random() * contractTypes.value.length)
+      const randomContract = contractTypes.value[randomIndex]
+      
+      // 跳转到游戏页面，并传递合同ID
+      router.push(`/game?id=${randomContract.id}`)
+    }
+
     // 显示规则
     const showRules = () => {
-      // 可以添加规则弹窗或跳转到规则页面
-      alert('游戏规则：\n1. 仔细阅读合同内容\n2. 找出其中的法律错误\n3. 60秒内完成挑战\n4. 根据准确率计算得分')
+      showRulesModal.value = true
     }
 
-    // 显示统计
-    const showStats = () => {
-      // 可以添加统计页面
-      alert('历史记录功能开发中...')
+    // 关闭规则弹窗
+    const closeRulesModal = () => {
+      showRulesModal.value = false
     }
 
-    // 更新当前时间
-    const updateTime = () => {
-      const now = new Date()
-      const hours = now.getHours().toString().padStart(2, '0')
-      const minutes = now.getMinutes().toString().padStart(2, '0')
-      currentTime.value = `${hours}:${minutes}`
-    }
+
+
+
 
     onMounted(() => {
       // 设置页面标题
       document.title = '合同找错游戏'
-      
-      // 更新当前时间
-      updateTime()
-      setInterval(updateTime, 60000) // 每分钟更新一次
       
       // 获取实际合同数量与类型列表
       try {
@@ -243,11 +225,12 @@ export default {
     })
 
     return {
-      currentTime,
+      showRulesModal,
       contractTypes,
       startGame,
+      startRandomGame,
       showRules,
-      showStats
+      closeRulesModal
     }
   }
 }

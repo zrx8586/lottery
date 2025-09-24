@@ -32,3 +32,5 @@ public class GameUser {
         datachangeLastTime = LocalDateTime.now();
     }
 }
+
+

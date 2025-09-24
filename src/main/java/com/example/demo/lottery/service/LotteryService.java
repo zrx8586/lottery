@@ -3,6 +3,7 @@ package com.example.demo.lottery.service;
 import com.example.demo.lottery.dao.model.*;
 import com.example.demo.lottery.dao.repository.*;
 import com.example.demo.lottery.dto.response.LotteryDrawResponse;
+import com.example.demo.lottery.dto.response.EligibilityResponse;
 import com.example.demo.lottery.dto.response.LotteryRecordResponse;
 import com.example.demo.lottery.exception.BusinessException;
 import com.example.demo.lottery.exception.BusinessExceptionEnum;
@@ -109,6 +110,41 @@ public class LotteryService {
             logger.warn("抽奖失败: 用户名={}, 活动ID={}", username, activityId);
             return createFailureResponse();
         }
+    }
+
+    /**
+     * 查询抽奖资格与剩余次数
+     */
+    public EligibilityResponse getEligibility(String username, Long activityId) {
+        EligibilityResponse resp = new EligibilityResponse();
+        resp.setEligible(false);
+        resp.setAttempts(0);
+        resp.setReason("");
+
+        // 验证活动
+        LotteryActivity activity = validateActivity(activityId);
+
+        // 验证用户
+        User user = validateUser(username);
+
+        // 查询或校验次数
+        LotteryActivityUser l = activityUserRepository.findByUserIdAndActivityId(user.getUserId(), activityId);
+        if (l == null) {
+            resp.setEligible(false);
+            resp.setAttempts(0);
+            resp.setReason("用户无该活动资格");
+            return resp;
+        }
+
+        int attempts = l.getLotteryAttempts();
+        resp.setAttempts(attempts);
+        if (attempts > 0) {
+            resp.setEligible(true);
+        } else {
+            resp.setEligible(false);
+            resp.setReason("剩余次数为0");
+        }
+        return resp;
     }
 
     /**

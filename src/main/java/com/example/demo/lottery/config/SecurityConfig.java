@@ -43,13 +43,13 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
-                    "/api/test/**",       // 允许 /api/test/** 路径
-                    "/api/game/**",       // 允许 /api/game/** 路径
+                    // "/api/test/**",    // 已删除测试相关接口
+                    // "/api/game/**",    // 已删除游戏相关接口
                     "/api/auth/**",       // 允许 /api/auth/** 路径（认证相关）
-                    "/test/**",           // 允许 /test/** 路径
-                    "/game",              // 允许 /game 路径（游戏页面）
-                    "/game/**",           // 允许 /game 相关路径
-                    "/test",              // 允许 /test 路径（测试页面）
+                    // "/test/**",
+                    // "/game",
+                    // "/game/**",
+                    // "/test",
                     "/public/**").permitAll() // 公共路径允许访问
                 .requestMatchers(permitAllPaths).permitAll() // 允许的路径 从配置文件中读取
                 .anyRequest().authenticated() // 其他路径需要认证

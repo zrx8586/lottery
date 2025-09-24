@@ -36,3 +36,5 @@ public interface SeasonLeaderboardRecordRepository extends JpaRepository<SeasonL
     @Query("UPDATE SeasonLeaderboardRecord r SET r.score = :score WHERE r.season.seasonId = :seasonId AND r.user.userId = :userId")
     int updateScoreBySeasonIdAndUserId(Long seasonId, Long userId, double score);
 }
+
+

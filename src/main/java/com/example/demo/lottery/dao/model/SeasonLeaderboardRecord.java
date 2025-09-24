@@ -40,3 +40,5 @@ public class SeasonLeaderboardRecord {
         datachangeLastTime = LocalDateTime.now();
     }
 }
+
+

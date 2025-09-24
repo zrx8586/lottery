@@ -39,3 +39,5 @@ public class LeaderboardController {
         return ResponseEntity.ok(score);
     }
 }
+
+

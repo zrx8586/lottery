@@ -11,3 +11,5 @@ public class RedisKeyUtil {
         return String.format(LEADERBOARD_KEY_FORMAT, seasonId);
     }
 }
+
+
